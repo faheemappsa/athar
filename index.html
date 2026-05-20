@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1f1916" />
+  <meta name="description" content="أثر: تجربة عربية راقية لنشر آية أو حديث أو ذكر ببطاقات جميلة قابلة للمشاركة." />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="stylesheet" href="/styles.css" />
+  <title>أثر</title>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero" aria-label="واجهة أثر">
+      <div class="topbar">
+        <div>
+          <p class="eyebrow">أثر</p>
+          <h1>انشر خيرًا بصورة تليق بالمعنى.</h1>
+        </div>
+        <button id="installBtn" class="ghost" hidden>تثبيت</button>
+      </div>
+
+      <section class="status-grid" aria-label="الوقت والصلاة">
+        <article class="status-card">
+          <span>الوقت الآن</span>
+          <strong id="clock">--:--</strong>
+        </article>
+        <article class="status-card prayer-card">
+          <span id="locationLabel">الصلاة القادمة</span>
+          <strong id="nextPrayer">جاري التحديد</strong>
+          <small id="prayerCountdown">اسمح بالموقع أو اختر المدينة يدويًا</small>
+        </article>
+      </section>
+
+      <section class="stage" aria-label="البطاقة اليومية">
+        <div id="previewCard" class="share-card bg-heritage" data-ratio="story">
+          <div class="card-shade"></div>
+          <div class="card-content">
+            <p id="cardType" class="card-type">آية</p>
+            <h2 id="cardText">فَإِنَّ مَعَ الْعُسْرِ يُسْرًا</h2>
+            <p id="cardSource" class="card-source">الشرح: 5</p>
+          </div>
+          <div class="card-footer">
+            <span>أثر</span>
+            <small>athar</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="controls" aria-label="خيارات البطاقة">
+        <div class="segmented" role="tablist" aria-label="نوع المحتوى">
+          <button class="segment active" data-kind="ayah">آية</button>
+          <button class="segment" data-kind="hadith">حديث</button>
+          <button class="segment" data-kind="dhikr">ذكر</button>
+        </div>
+
+        <label class="select-wrap">
+          <span>مقاس النشر</span>
+          <select id="sizeSelect">
+            <option value="story">حالة واتساب / سناب / تيك توك</option>
+            <option value="square">منشور مربع</option>
+            <option value="portrait">بوست عمودي</option>
+          </select>
+        </label>
+
+        <div class="actions">
+          <button id="shuffleBtn" class="secondary">غيّر البطاقة</button>
+          <button id="exportBtn" class="primary">تصدير الصورة</button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <canvas id="exportCanvas" hidden></canvas>
+  <script src="/data/content.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
