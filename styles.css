@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+/* Athar visual system — locked to uploaded Thmanyah Sans files */
 
 :root {
   --bg: #1f1916;
@@ -9,22 +9,25 @@
   --cream: #f3dfc4;
   --ink: #211713;
   --border: rgba(255,255,255,0.10);
+  --athar-font: 'Thmanyah Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html { scroll-behavior: smooth; }
+html, body, button, select, input, textarea { font-family: var(--athar-font) !important; }
 body {
   margin: 0;
-  font-family: 'AtharDisplay', 'Tajawal', system-ui, sans-serif;
   background:
     radial-gradient(circle at 20% 0%, rgba(216,185,142,.22), transparent 34%),
     radial-gradient(circle at 80% 20%, rgba(112,66,48,.25), transparent 34%),
     linear-gradient(180deg, #30251f 0%, #1a1411 48%, #100c0b 100%);
   color: var(--text);
   min-height: 100vh;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-button, select { font: inherit; }
 button { cursor: pointer; }
 
 .shell {
@@ -48,15 +51,17 @@ button { cursor: pointer; }
 .eyebrow {
   color: var(--accent);
   margin: 0 0 8px;
-  letter-spacing: .08em;
-  font-size: .9rem;
+  letter-spacing: 0;
+  font-size: .92rem;
+  font-weight: 400;
 }
 
 h1 {
   margin: 0;
-  line-height: 1.35;
-  font-size: clamp(1.8rem, 7vw, 2.65rem);
-  font-weight: 800;
+  line-height: 1.25;
+  font-size: clamp(2.05rem, 7.6vw, 3.15rem);
+  font-weight: 900;
+  letter-spacing: -0.025em;
 }
 
 .status-grid {
@@ -76,8 +81,8 @@ h1 {
 }
 
 .status-card span,
-.status-card small { color: var(--muted); }
-.status-card strong { display: block; margin-top: 9px; font-size: 1.15rem; }
+.status-card small { color: var(--muted); font-weight: 300; }
+.status-card strong { display: block; margin-top: 9px; font-size: 1.2rem; font-weight: 700; }
 .status-card small { display: block; margin-top: 8px; line-height: 1.5; }
 
 .stage { margin-bottom: 20px; }
@@ -129,16 +134,17 @@ h1 {
 }
 
 .card-content { position: relative; z-index: 2; padding-top: 36px; }
-.card-type { color: rgba(255,245,232,.74); margin: 0 0 26px; font-size: 1rem; }
+.card-type { color: rgba(255,245,232,.74); margin: 0 0 26px; font-size: 1rem; font-weight: 300; }
 .share-card h2 {
-  font-size: clamp(2.1rem, 9vw, 3.35rem);
-  line-height: 1.78;
+  font-size: clamp(2.35rem, 10vw, 4rem);
+  line-height: 1.45;
   margin: 0;
-  font-weight: 800;
+  font-weight: 900;
+  letter-spacing: -0.03em;
   text-wrap: balance;
   text-shadow: 0 2px 18px rgba(0,0,0,.18);
 }
-.card-source { margin: 28px 0 0; color: rgba(255,239,217,.78); font-size: 1.08rem; }
+.card-source { margin: 28px 0 0; color: rgba(255,239,217,.78); font-size: 1.1rem; font-weight: 400; }
 .card-footer {
   position: relative;
   z-index: 2;
@@ -150,8 +156,8 @@ h1 {
   border-top: 1px solid rgba(255,255,255,.13);
   padding-top: 18px;
 }
-.card-footer span { font-weight: 800; font-size: 1.25rem; }
-.card-footer small { line-height: 1.5; text-align: left; max-width: 220px; }
+.card-footer span { font-weight: 900; font-size: 1.28rem; }
+.card-footer small { line-height: 1.5; text-align: left; max-width: 220px; font-weight: 300; }
 
 .share-card[data-ratio="square"] { min-height: 520px; }
 .share-card[data-ratio="portrait"] { min-height: 680px; }
@@ -172,10 +178,11 @@ h1 {
   background: rgba(255,255,255,0.08);
   color: var(--text);
   padding: 13px 14px;
+  font-weight: 400;
 }
-.segment.active { background: var(--cream); color: var(--ink); font-weight: 800; }
+.segment.active { background: var(--cream); color: var(--ink); font-weight: 900; }
 
-.select-wrap { display: flex; flex-direction: column; gap: 10px; color: var(--muted); }
+.select-wrap { display: flex; flex-direction: column; gap: 10px; color: var(--muted); font-weight: 300; }
 select {
   width: 100%;
   background: rgba(255,255,255,0.10);
@@ -195,7 +202,7 @@ select {
   font-size: 1rem;
   min-height: 54px;
 }
-.primary { background: var(--cream); color: var(--ink); font-weight: 800; }
+.primary { background: var(--cream); color: var(--ink); font-weight: 900; }
 .secondary, .ghost { background: rgba(255,255,255,0.08); color: white; }
 .ghost { border: 1px solid rgba(255,255,255,.12); padding: 10px 14px; border-radius: 999px; }
 
