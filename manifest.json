@@ -1,11 +1,25 @@
 {
   "name": "أثر",
   "short_name": "أثر",
-  "description": "تجربة روحانية عربية مع مواقيت الصلاة والأذكار",
+  "description": "تجربة روحانية عربية مع مواقيت صلاة دقيقة، أذكار، وبطاقات يومية فاخرة",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#1B6B6F",
   "background_color": "#E8F4F8",
   "lang": "ar",
-  "dir": "rtl"
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/faheemappsa/athar/main/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/faheemappsa/athar/main/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
