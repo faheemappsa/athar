@@ -1,8 +1,9 @@
-// ========================
+// ==========================================
 // تطبيق أثر - الإصدار النهائي المتكامل
-// ========================
+// جميع الوظائف: الوقت، التاريخ، الصلاة، البطاقة، الأذكار، السبحة، الوضع الليلي، الإشعارات
+// ==========================================
 
-// العناصر
+// ========== 1. العناصر (DOM Elements) ==========
 const currentTimeEl = document.getElementById('currentTime');
 const hijriDateEl = document.getElementById('hijriDate');
 const gregorianDateEl = document.getElementById('gregorianDate');
@@ -10,21 +11,29 @@ const nextPrayerNameEl = document.getElementById('nextPrayerName');
 const remainingTimeEl = document.getElementById('remainingTime');
 const iqamaTimeEl = document.getElementById('iqamaTime');
 const locationBtn = document.getElementById('locationBtn');
+const locationStatus = document.getElementById('locationStatus');
 const shareBtn = document.getElementById('shareBtn');
 const cardContentEl = document.getElementById('cardContent');
 const cardReferenceEl = document.getElementById('cardReference');
 const cardTypeBadge = document.getElementById('cardTypeBadge');
+const shareCard = document.getElementById('shareCard');
 const morningDhikrBtn = document.getElementById('morningDhikrBtn');
 const eveningDhikrBtn = document.getElementById('eveningDhikrBtn');
+const dhikrCounterValue = document.getElementById('dhikrCounterValue');
+const dhikrCounterBtn = document.getElementById('dhikrCounterBtn');
+const dhikrCounterReset = document.getElementById('dhikrCounterReset');
+const darkModeToggleBtn = document.getElementById('darkModeToggleBtn');
+const bgOptions = document.querySelectorAll('.bg-option');
 
-// حالة المستخدم
-let userCity = "Makkah";
-let userCountry = "SA";
+// ========== 2. المتغيرات العامة ==========
 let prayerTimes = null;
 let isLocationRequestInProgress = false;
 const LOCATION_STORAGE_KEY = 'athar_user_location';
+let currentCardData = null;
+let notificationPermissionGranted = false;
+let prayerNotificationInterval = null;
 
-// أذكار الصباح والمساء (موسعة)
+// أذكار الصباح والمساء (موسعة ومتنوعة)
 const morningAdhkar = [
     "اللهمَّ بك أصبحنا، وبك أمسينا، وبك نحيا، وبك نموت، وإليك النشور",
     "أصبحنا على فطرة الإسلام، وكلمة الإخلاص، ودين نبينا محمد ﷺ، وملة أبينا إبراهيم حنيفًا مسلمًا وما كان من المشركين",
@@ -32,9 +41,9 @@ const morningAdhkar = [
     "سبحان الله وبحمده عدد خلقه ورضا نفسه وزنة عرشه ومداد كلماته",
     "اللهم إني أسألك العفو والعافية في الدنيا والآخرة",
     "رضيت بالله رباً، وبالإسلام ديناً، وبمحمد ﷺ نبياً",
-    "حسبي الله لا إله إلا هو عليه توكلت وهو رب العرش العظيم"
+    "حسبي الله لا إله إلا هو عليه توكلت وهو رب العرش العظيم",
+    "اللهم صلِّ وسلم على نبينا محمد"
 ];
-
 const eveningAdhkar = [
     "اللهمَّ بك أمسينا، وبك أصبحنا، وبك نحيا، وبك نموت، وإليك المصير",
     "أمسينا على فطرة الإسلام، وكلمة الإخلاص، ودين نبينا محمد ﷺ، وملة أبينا إبراهيم حنيفًا مسلمًا وما كان من المشركين",
@@ -42,16 +51,26 @@ const eveningAdhkar = [
     "اللهم إني أسألك خير هذه الليلة وخير ما بعدها، وأعوذ بك من شر هذه الليلة وشر ما بعدها",
     "آمنت بالله رباً، وبالإسلام ديناً، وبمحمد ﷺ نبياً",
     "اللهم قني عذابك يوم تبعث عبادك",
-    "أمسينا وأمسى الملك لله والحمد لله"
+    "أمسينا وأمسى الملك لله والحمد لله",
+    "اللهم صلِّ وسلم على نبينا محمد"
 ];
 
-// ========== 1. الوقت والتاريخ ==========
+// بيانات احتياطية للبطاقة (في حال فشل الـ API)
+const fallbackCards = [
+    { type: "آية قرآنية", content: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ", ref: "البقرة 201" },
+    { type: "آية قرآنية", content: "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", ref: "البقرة 153" },
+    { type: "حديث نبوي", content: "مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ", ref: "صحيح البخاري" },
+    { type: "ذكر", content: "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ", ref: "تسبيح" },
+    { type: "ذكر", content: "لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ", ref: "ذكر" }
+];
+
+// ========== 3. الوقت والتاريخ (محسّن) ==========
 function updateTimeAndDate() {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
     currentTimeEl.innerText = timeStr;
     
-    // التاريخ الميلادي - طريقة مضمونة في كل المتصفحات
+    // التاريخ الميلادي باستخدام Intl.DateTimeFormat (مضمون)
     const gregorianFormatter = new Intl.DateTimeFormat('ar-SA', { 
         year: 'numeric', 
         month: 'long', 
@@ -62,7 +81,7 @@ function updateTimeAndDate() {
 setInterval(updateTimeAndDate, 1000);
 updateTimeAndDate();
 
-// التاريخ الهجري من API
+// جلب التاريخ الهجري
 async function fetchHijriDate() {
     try {
         const today = new Date();
@@ -83,7 +102,7 @@ async function fetchHijriDate() {
 }
 fetchHijriDate();
 
-// ========== 2. مواقيت الصلاة ==========
+// ========== 4. مواقيت الصلاة مع حفظ الموقع (لا يطلب كل مرة) ==========
 async function fetchPrayerTimes(lat, lon, saveToStorage = false) {
     try {
         let url;
@@ -92,12 +111,10 @@ async function fetchPrayerTimes(lat, lon, saveToStorage = false) {
             if (saveToStorage) {
                 const locationData = { lat, lon, timestamp: Date.now() };
                 localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(locationData));
-                locationBtn.innerText = '✅ تم التحديث حسب موقعك';
+                if (locationStatus) locationStatus.innerText = '✅ تم حفظ موقعك، لن يُطلب مجدداً';
                 setTimeout(() => {
-                    if (locationBtn.innerText === '✅ تم التحديث حسب موقعك') {
-                        locationBtn.innerText = '📍 توقيت منطقتي';
-                    }
-                }, 3000);
+                    if (locationStatus) locationStatus.innerText = '';
+                }, 4000);
             }
         } else {
             url = `https://api.aladhan.com/v1/timingsByCity?city=Makkah&country=SA&method=4`;
@@ -107,6 +124,8 @@ async function fetchPrayerTimes(lat, lon, saveToStorage = false) {
         if (data.data && data.data.timings) {
             prayerTimes = data.data.timings;
             updateNextPrayer();
+            // جدولة الإشعارات بعد تحديث الأوقات
+            schedulePrayerNotifications();
         } else {
             console.warn("لم يتم استلام مواقيت الصلاة");
         }
@@ -175,7 +194,10 @@ function loadSavedLocation() {
             const isRecent = (Date.now() - timestamp) < 30 * 24 * 60 * 60 * 1000;
             if (lat && lon && isRecent) {
                 fetchPrayerTimes(lat, lon, false);
-                locationBtn.innerText = '📍 توقيت منطقتي (محفوظ)';
+                if (locationStatus) locationStatus.innerText = '📍 تم استعادة موقعك المحفوظ';
+                setTimeout(() => {
+                    if (locationStatus) locationStatus.innerText = '';
+                }, 3000);
                 return true;
             } else {
                 localStorage.removeItem(LOCATION_STORAGE_KEY);
@@ -185,7 +207,7 @@ function loadSavedLocation() {
     return false;
 }
 
-// طلب الموقع
+// طلب الموقع (مرة واحدة فقط)
 locationBtn.addEventListener('click', () => {
     if (isLocationRequestInProgress) {
         alert('جاري تحديث الموقع، يرجى الانتظار...');
@@ -200,6 +222,7 @@ locationBtn.addEventListener('click', () => {
             (pos) => {
                 fetchPrayerTimes(pos.coords.latitude, pos.coords.longitude, true);
                 isLocationRequestInProgress = false;
+                locationBtn.innerText = '📍 توقيت منطقتي (محفوظ)';
             },
             (error) => {
                 isLocationRequestInProgress = false;
@@ -216,7 +239,53 @@ locationBtn.addEventListener('click', () => {
     }
 });
 
-// ========== 3. البطاقة اليومية (آية/حديث/ذكر) ==========
+// ========== 5. إشعارات الأذان (Push Notifications) ==========
+function requestNotificationPermission() {
+    if ('Notification' in window && navigator.serviceWorker) {
+        Notification.requestPermission().then(permission => {
+            notificationPermissionGranted = permission === 'granted';
+            if (notificationPermissionGranted) {
+                console.log('إشعارات مفعلة');
+            }
+        });
+    }
+}
+
+function schedulePrayerNotifications() {
+    if (!notificationPermissionGranted || !prayerTimes) return;
+    // إلغاء الإشعارات السابقة
+    if (prayerNotificationInterval) clearInterval(prayerNotificationInterval);
+    
+    // التحقق كل دقيقة إذا حان وقت صلاة
+    prayerNotificationInterval = setInterval(() => {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        for (let [prayer, time] of Object.entries(prayerTimes)) {
+            if (['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'].includes(prayer)) {
+                const [hour, minute] = time.split(':').map(Number);
+                if (hour === currentHour && minute === currentMinute) {
+                    const namesAr = { Fajr: 'الفجر', Dhuhr: 'الظهر', Asr: 'العصر', Maghrib: 'المغرب', Isha: 'العشاء' };
+                    new Notification(`🕌 حان وقت صلاة ${namesAr[prayer]}`, {
+                        body: 'اللهم تقبل منا الصلاة والطاعات',
+                        icon: 'https://raw.githubusercontent.com/faheemappsa/athar/main/icon-192.png',
+                        vibrate: [200, 100, 200]
+                    });
+                }
+            }
+        }
+    }, 60000);
+}
+
+// تفعيل الإشعارات عند تحميل الصفحة
+if ('Notification' in window && navigator.serviceWorker) {
+    requestNotificationPermission();
+    navigator.serviceWorker.ready.then(() => {
+        console.log('Service Worker جاهز للإشعارات');
+    });
+}
+
+// ========== 6. البطاقة الدينية (آية/حديث/ذكر) ==========
 async function loadCard() {
     try {
         const types = ['ayah', 'hadith', 'dhikr'];
@@ -228,22 +297,22 @@ async function loadCard() {
                 cardContentEl.innerText = `"${data.data.text}"`;
                 cardReferenceEl.innerText = `${data.data.surah.name} ${data.data.numberInSurah}`;
                 cardTypeBadge.innerText = 'آية قرآنية';
-            } else {
-                throw new Error('API response invalid');
+                return;
             }
         } else if (type === 'hadith') {
-            // محاولة جلب حديث عشوائي - استخدام API بديل موثوق
-            const res = await fetch('https://hadith-api-dusky.vercel.app/api/hadiths/random');
-            if (!res.ok) throw new Error('Hadith API failed');
-            const data = await res.json();
-            if (data && data.text) {
-                cardContentEl.innerText = `"${data.text}"`;
-                cardReferenceEl.innerText = data.reference || 'صحيح البخاري';
-                cardTypeBadge.innerText = 'حديث نبوي';
-            } else {
-                throw new Error('No hadith data');
+            // محاولة جلب حديث عشوائي
+            const res = await fetch('https://random-hadith-generator.vercel.app/bukhari/random');
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.textAr) {
+                    cardContentEl.innerText = `"${data.textAr}"`;
+                    cardReferenceEl.innerText = 'صحيح البخاري';
+                    cardTypeBadge.innerText = 'حديث نبوي';
+                    return;
+                }
             }
         } else {
+            // أذكار متنوعة
             const adhkarList = [
                 "سبحان الله وبحمده سبحان الله العظيم",
                 "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير",
@@ -255,26 +324,28 @@ async function loadCard() {
             cardContentEl.innerText = `"${random}"`;
             cardReferenceEl.innerText = 'ذكر';
             cardTypeBadge.innerText = 'ذكر';
+            return;
         }
+        throw new Error('فشل جلب المحتوى');
     } catch(e) {
-        console.log(e);
-        // بيانات احتياطية ثابتة
-        cardContentEl.innerText = '"ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار"';
-        cardReferenceEl.innerText = 'البقرة 201';
-        cardTypeBadge.innerText = 'آية قرآنية';
+        console.log('استخدام بيانات احتياطية', e);
+        const fallback = fallbackCards[Math.floor(Math.random() * fallbackCards.length)];
+        cardContentEl.innerText = `"${fallback.content}"`;
+        cardReferenceEl.innerText = fallback.ref;
+        cardTypeBadge.innerText = fallback.type;
     }
 }
 
-// ========== 4. مشاركة البطاقة كصورة ==========
-function generateAndShare(card, html2canvasLib) {
-    html2canvasLib(card, { scale: 2, backgroundColor: '#FFFFFF' }).then(canvas => {
+// ========== 7. مشاركة البطاقة كصورة ==========
+function generateAndShare(cardElement, html2canvasLib) {
+    html2canvasLib(cardElement, { scale: 2, backgroundColor: '#FFFFFF' }).then(canvas => {
         canvas.toBlob(async (blob) => {
             const file = new File([blob], 'athar-card.png', { type: 'image/png' });
             if (navigator.share && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
                 try {
                     await navigator.share({ files: [file], title: 'أثر', text: 'شارك بطاقة روحانية' });
                 } catch(shareErr) {
-                    console.log('Share cancelled', shareErr);
+                    console.log('تم إلغاء المشاركة');
                 }
             } else {
                 const link = document.createElement('a');
@@ -291,15 +362,13 @@ function generateAndShare(card, html2canvasLib) {
 }
 
 shareBtn.addEventListener('click', () => {
-    const card = document.getElementById('shareCard');
     if (typeof html2canvas !== 'undefined') {
-        generateAndShare(card, html2canvas);
+        generateAndShare(shareCard, html2canvas);
     } else {
-        // تحميل المكتبة ديناميكياً إذا لم تكن موجودة
         const script = document.createElement('script');
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
         script.onload = () => {
-            generateAndShare(card, html2canvas);
+            generateAndShare(shareCard, html2canvas);
         };
         script.onerror = () => {
             alert('تعذر تحميل مكتبة مشاركة الصور، يرجى تحديث الصفحة');
@@ -308,7 +377,28 @@ shareBtn.addEventListener('click', () => {
     }
 });
 
-// ========== 5. أذكار الصباح والمساء ==========
+// ========== 8. خلفيات البطاقة ==========
+function setCardBackground(bgClass) {
+    shareCard.classList.remove('bg-gold', 'bg-blue', 'bg-green');
+    shareCard.classList.add(bgClass);
+    localStorage.setItem('athar_card_bg', bgClass);
+}
+bgOptions.forEach(opt => {
+    opt.addEventListener('click', () => {
+        const bg = opt.getAttribute('data-bg');
+        if (bg === 'gold') setCardBackground('bg-gold');
+        else if (bg === 'blue') setCardBackground('bg-blue');
+        else if (bg === 'green') setCardBackground('bg-green');
+    });
+});
+const savedBg = localStorage.getItem('athar_card_bg');
+if (savedBg && ['bg-gold', 'bg-blue', 'bg-green'].includes(savedBg)) {
+    shareCard.classList.add(savedBg);
+} else {
+    shareCard.classList.add('bg-blue'); // افتراضي
+}
+
+// ========== 9. أذكار الصباح والمساء (تفاعلية) ==========
 function openDhikrList(adhkarArray, title) {
     let index = 0;
     const displayDhikr = () => {
@@ -324,12 +414,49 @@ function openDhikrList(adhkarArray, title) {
 morningDhikrBtn.addEventListener('click', () => openDhikrList(morningAdhkar, 'أذكار الصباح'));
 eveningDhikrBtn.addEventListener('click', () => openDhikrList(eveningAdhkar, 'أذكار المساء'));
 
-// ========== 6. التشغيل الأولي واستعادة الحالة ==========
-// محاولة استعادة موقع المستخدم المحفوظ، وإلا استخدم مكة
+// ========== 10. السبحة الرقمية ==========
+let counter = parseInt(localStorage.getItem('athar_dhikr_counter') || '0');
+dhikrCounterValue.innerText = counter;
+dhikrCounterBtn.addEventListener('click', () => {
+    counter++;
+    dhikrCounterValue.innerText = counter;
+    localStorage.setItem('athar_dhikr_counter', counter);
+    // تأثير اهتزاز بسيط
+    dhikrCounterBtn.style.transform = 'scale(0.95)';
+    setTimeout(() => { dhikrCounterBtn.style.transform = ''; }, 100);
+});
+dhikrCounterReset.addEventListener('click', () => {
+    counter = 0;
+    dhikrCounterValue.innerText = counter;
+    localStorage.setItem('athar_dhikr_counter', counter);
+});
+
+// ========== 11. الوضع الليلي (Dark Mode) ==========
+function toggleDarkMode() {
+    document.body.classList.toggle('dark');
+    const isDark = document.body.classList.contains('dark');
+    localStorage.setItem('athar_dark_mode', isDark ? 'dark' : 'light');
+    darkModeToggleBtn.innerText = isDark ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي';
+    // تحديث لون شريط الحالة
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+        metaTheme.setAttribute('content', isDark ? '#0F2A30' : '#1B6B6F');
+    }
+}
+const savedDark = localStorage.getItem('athar_dark_mode');
+if (savedDark === 'dark') {
+    document.body.classList.add('dark');
+    darkModeToggleBtn.innerText = '☀️ الوضع النهاري';
+} else {
+    darkModeToggleBtn.innerText = '🌙 الوضع الليلي';
+}
+darkModeToggleBtn.addEventListener('click', toggleDarkMode);
+
+// ========== 12. التشغيل الأولي ==========
+// استعادة موقع المستخدم المحفوظ، وإلا استخدم مكة
 if (!loadSavedLocation()) {
     fetchPrayerTimes(null, null);
 }
-
 // تحميل بطاقة عشوائية أول مرة
 loadCard();
 // تحديث البطاقة كل 3 ساعات
