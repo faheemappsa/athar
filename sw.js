@@ -1,124 +1,82 @@
-// ==========================================
-// Service Worker لتطبيق أثر
-// يدعم: التخزين المؤقت، الإشعارات، التحديثات التلقائية
-// ==========================================
-
-const CACHE_NAME = 'athar-v3';
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/style.css',
-  '/script.js',
-  '/manifest.json',
-  '/thmanyahsans-Black.otf'
-];
-
-// تثبيت Service Worker وتخزين الملفات الأساسية
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('[SW] تم فتح الكاش');
-        return cache.addAll(urlsToCache).catch(err => {
-          console.error('[SW] فشل تخزين بعض الملفات', err);
-          // لا نريد أن يفشل التثبيت بسبب خطأ في ملف واحد
-          return Promise.resolve();
-        });
-      })
-  );
-  self.skipWaiting(); // تفعيل الـ SW فوراً
-});
-
-// استراتيجية التخزين: Cache First ثم Network
-self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-  
-  // طلبات APIs الخارجية تذهب مباشرة للشبكة (مع fallback للكاش إن وجد)
-  if (url.hostname.includes('api.aladhan.com') ||
-      url.hostname.includes('api.alquran.cloud') ||
-      url.hostname.includes('random-hadith-generator.vercel.app') ||
-      url.hostname.includes('googletagmanager.com') ||
-      url.hostname.includes('google-analytics.com')) {
-    event.respondWith(
-      fetch(event.request).catch(() => {
-        return caches.match(event.request);
-      })
-    );
-    return;
-  }
-  
-  // للملفات الثابتة: من الكاش أولاً
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request).then(
-          networkResponse => {
-            if (!networkResponse || networkResponse.status !== 200) {
-              return networkResponse;
-            }
-            const responseToCache = networkResponse.clone();
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                cache.put(event.request, responseToCache);
-              });
-            return networkResponse;
-          }
-        );
-      })
-  );
-});
-
-// تفعيل الـ SW الجديد وحذف الكاش القديم
-self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
-  event.waitUntil(clients.claim());
-});
-
-// ========== دعم الإشعارات (Push Notifications) ==========
-self.addEventListener('push', event => {
-  if (!event.data) return;
-  
-  let data = {};
-  try {
-    data = event.data.json();
-  } catch(e) {
-    data = { title: 'أثر', body: event.data.text() };
-  }
-  
-  const title = data.title || 'أثر';
-  const options = {
-    body: data.body || 'حان وقت الصلاة أو ذكر جديد',
-    icon: '/icon-192.png',
-    badge: '/icon-192.png',
-    vibrate: [200, 100, 200],
-    data: {
-      url: '/'
+{
+  "name": "أثر — كل يوم أثر نور",
+  "short_name": "أثر",
+  "description": "تجربة روحانية عربية مع مواقيت صلاة دقيقة، أذكار، وبطاقات يومية فاخرة",
+  "start_url": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "theme_color": "#1B6B6F",
+  "background_color": "#1B6B6F",
+  "lang": "ar",
+  "dir": "rtl",
+  "scope": "/",
+  "orientation": "portrait",
+  "categories": ["lifestyle", "utilities", "religion"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  };
-  
-  event.waitUntil(
-    self.registration.showNotification(title, options)
-  );
-});
-
-// عند النقر على الإشعار
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
-  event.waitUntil(
-    clients.openWindow('/')
-  );
-});
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-home.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "الصفحة الرئيسية — أثر اليوم"
+    },
+    {
+      "src": "screenshot-prayer.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "مواقيت الصلاة والإقامة"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "أذكار الصباح",
+      "short_name": "الصباح",
+      "description": "افتح أذكار الصباح مباشرة",
+      "url": "/?action=morning-dhikr",
+      "icons": [{ "src": "shortcut-morning.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "أذكار المساء",
+      "short_name": "المساء",
+      "description": "افتح أذكار المساء مباشرة",
+      "url": "/?action=evening-dhikr",
+      "icons": [{ "src": "shortcut-evening.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "مواقيت الصلاة",
+      "short_name": "الصلاة",
+      "description": "اعرض مواقيت الصلاة الحالية",
+      "url": "/?action=prayer-times",
+      "icons": [{ "src": "shortcut-prayer.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
