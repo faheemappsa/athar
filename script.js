@@ -1,5 +1,5 @@
 // ========================
-// تطبيق أثر - الإصدار النهائي
+// تطبيق أثر - الإصدار النهائي المتكامل
 // ========================
 
 // العناصر
@@ -21,42 +21,60 @@ const eveningDhikrBtn = document.getElementById('eveningDhikrBtn');
 let userCity = "Makkah";
 let userCountry = "SA";
 let prayerTimes = null;
+let isLocationRequestInProgress = false;
+const LOCATION_STORAGE_KEY = 'athar_user_location';
 
-// أذكار الصباح والمساء
+// أذكار الصباح والمساء (موسعة)
 const morningAdhkar = [
     "اللهمَّ بك أصبحنا، وبك أمسينا، وبك نحيا، وبك نموت، وإليك النشور",
     "أصبحنا على فطرة الإسلام، وكلمة الإخلاص، ودين نبينا محمد ﷺ، وملة أبينا إبراهيم حنيفًا مسلمًا وما كان من المشركين",
     "اللهمَّ ما أصبح بي من نعمة أو بأحد من خلقك فمنك وحدك لا شريك لك، فلك الحمد ولك الشكر",
     "سبحان الله وبحمده عدد خلقه ورضا نفسه وزنة عرشه ومداد كلماته",
-    "اللهم إني أسألك العفو والعافية في الدنيا والآخرة"
+    "اللهم إني أسألك العفو والعافية في الدنيا والآخرة",
+    "رضيت بالله رباً، وبالإسلام ديناً، وبمحمد ﷺ نبياً",
+    "حسبي الله لا إله إلا هو عليه توكلت وهو رب العرش العظيم"
 ];
+
 const eveningAdhkar = [
-    "اللهمَّ بك أمسينا، وبك أصبحنا،وبك نحيا، وبك نموت، وإليك المصير",
+    "اللهمَّ بك أمسينا، وبك أصبحنا، وبك نحيا، وبك نموت، وإليك المصير",
     "أمسينا على فطرة الإسلام، وكلمة الإخلاص، ودين نبينا محمد ﷺ، وملة أبينا إبراهيم حنيفًا مسلمًا وما كان من المشركين",
     "اللهمَّ ما أمسى بي من نعمة أو بأحد من خلقك فمنك وحدك لا شريك لك، فلك الحمد ولك الشكر",
     "اللهم إني أسألك خير هذه الليلة وخير ما بعدها، وأعوذ بك من شر هذه الليلة وشر ما بعدها",
-    "آمنت بالله رباً، وبالإسلام ديناً، وبمحمد نبياً"
+    "آمنت بالله رباً، وبالإسلام ديناً، وبمحمد ﷺ نبياً",
+    "اللهم قني عذابك يوم تبعث عبادك",
+    "أمسينا وأمسى الملك لله والحمد لله"
 ];
 
-// تحديث الوقت والتاريخ
+// ========== 1. الوقت والتاريخ ==========
 function updateTimeAndDate() {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' });
     currentTimeEl.innerText = timeStr;
     
-    const gregorian = now.toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
-    gregorianDateEl.innerText = gregorian;
+    // التاريخ الميلادي - طريقة مضمونة في كل المتصفحات
+    const gregorianFormatter = new Intl.DateTimeFormat('ar-SA', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    gregorianDateEl.innerText = gregorianFormatter.format(now);
 }
 setInterval(updateTimeAndDate, 1000);
 updateTimeAndDate();
 
-// جلب التاريخ الهجري
+// التاريخ الهجري من API
 async function fetchHijriDate() {
     try {
-        const res = await fetch('https://api.aladhan.com/v1/gToH?date=' + new Date().toISOString().split('T')[0]);
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const res = await fetch(`https://api.aladhan.com/v1/gToH/${day}-${month}-${year}`);
         const data = await res.json();
-        if (data.data) {
+        if (data.data && data.data.hijri) {
             hijriDateEl.innerText = `${data.data.hijri.day} ${data.data.hijri.month.ar} ${data.data.hijri.year}`;
+        } else {
+            hijriDateEl.innerText = "-- -- ----";
         }
     } catch(e) { 
         console.log(e); 
@@ -65,20 +83,32 @@ async function fetchHijriDate() {
 }
 fetchHijriDate();
 
-// جلب مواقيت الصلاة
-async function fetchPrayerTimes(lat, lon) {
+// ========== 2. مواقيت الصلاة ==========
+async function fetchPrayerTimes(lat, lon, saveToStorage = false) {
     try {
         let url;
         if (lat && lon) {
             url = `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=4`;
+            if (saveToStorage) {
+                const locationData = { lat, lon, timestamp: Date.now() };
+                localStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(locationData));
+                locationBtn.innerText = '✅ تم التحديث حسب موقعك';
+                setTimeout(() => {
+                    if (locationBtn.innerText === '✅ تم التحديث حسب موقعك') {
+                        locationBtn.innerText = '📍 توقيت منطقتي';
+                    }
+                }, 3000);
+            }
         } else {
             url = `https://api.aladhan.com/v1/timingsByCity?city=Makkah&country=SA&method=4`;
         }
         const res = await fetch(url);
         const data = await res.json();
-        if (data.data) {
+        if (data.data && data.data.timings) {
             prayerTimes = data.data.timings;
             updateNextPrayer();
+        } else {
+            console.warn("لم يتم استلام مواقيت الصلاة");
         }
     } catch(e) { 
         console.error(e); 
@@ -94,6 +124,7 @@ function updateNextPrayer() {
     let next = null;
     let nextName = '';
     for (let p of prayers) {
+        if (!prayerTimes[p]) continue;
         const [hour, minute] = prayerTimes[p].split(':').map(Number);
         if (hour > currentHour || (hour === currentHour && minute > currentMinute)) {
             next = { hour, minute };
@@ -103,8 +134,12 @@ function updateNextPrayer() {
     }
     if (!next) {
         nextName = 'Fajr';
-        const [hour, minute] = prayerTimes['Fajr'].split(':').map(Number);
-        next = { hour: hour+24, minute };
+        if (prayerTimes.Fajr) {
+            const [hour, minute] = prayerTimes.Fajr.split(':').map(Number);
+            next = { hour: hour+24, minute };
+        } else {
+            next = { hour: 24, minute: 0 };
+        }
     }
     
     const namesAr = { Fajr: 'الفجر', Dhuhr: 'الظهر', Asr: 'العصر', Maghrib: 'المغرب', Isha: 'العشاء' };
@@ -119,7 +154,7 @@ function updateNextPrayer() {
     const seconds = Math.floor((60 - now.getSeconds()) % 60);
     remainingTimeEl.innerText = `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
     
-    // وقت الإقامة (نضيف 10 دقائق افتراضياً)
+    // وقت الإقامة (إضافة 10 دقائق افتراضياً)
     let iqamaHour = next.hour % 24;
     let iqamaMinute = next.minute + 10;
     if (iqamaMinute >= 60) {
@@ -131,22 +166,57 @@ function updateNextPrayer() {
     setTimeout(updateNextPrayer, 1000);
 }
 
+// استعادة الموقع المحفوظ
+function loadSavedLocation() {
+    const saved = localStorage.getItem(LOCATION_STORAGE_KEY);
+    if (saved) {
+        try {
+            const { lat, lon, timestamp } = JSON.parse(saved);
+            const isRecent = (Date.now() - timestamp) < 30 * 24 * 60 * 60 * 1000;
+            if (lat && lon && isRecent) {
+                fetchPrayerTimes(lat, lon, false);
+                locationBtn.innerText = '📍 توقيت منطقتي (محفوظ)';
+                return true;
+            } else {
+                localStorage.removeItem(LOCATION_STORAGE_KEY);
+            }
+        } catch(e) { console.error(e); }
+    }
+    return false;
+}
+
 // طلب الموقع
 locationBtn.addEventListener('click', () => {
+    if (isLocationRequestInProgress) {
+        alert('جاري تحديث الموقع، يرجى الانتظار...');
+        return;
+    }
+    
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
-            fetchPrayerTimes(pos.coords.latitude, pos.coords.longitude);
-            locationBtn.innerText = '✅ تم تحديث التوقيت حسب موقعك';
-            setTimeout(() => locationBtn.innerText = '📍 توقيت منطقتي (السماح بالموقع)', 3000);
-        }, () => {
-            alert('لم نتمكن من الوصول إلى موقعك. سيتم استخدام توقيت مكة.');
-        });
+        isLocationRequestInProgress = true;
+        locationBtn.innerText = '⏳ جاري تحديد الموقع...';
+        
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                fetchPrayerTimes(pos.coords.latitude, pos.coords.longitude, true);
+                isLocationRequestInProgress = false;
+            },
+            (error) => {
+                isLocationRequestInProgress = false;
+                let errorMessage = 'لم نتمكن من الوصول إلى موقعك. سيتم استخدام توقيت مكة.';
+                if (error.code === error.PERMISSION_DENIED) {
+                    errorMessage = 'الرجاء السماح بالوصول إلى الموقع للحصول على توقيت دقيق.';
+                }
+                alert(errorMessage);
+                locationBtn.innerText = '📍 توقيت منطقتي';
+            }
+        );
     } else {
         alert('المتصفح لا يدعم تحديد الموقع');
     }
 });
 
-// تحميل البطاقة (آية/حديث/ذكر) من API
+// ========== 3. البطاقة اليومية (آية/حديث/ذكر) ==========
 async function loadCard() {
     try {
         const types = ['ayah', 'hadith', 'dhikr'];
@@ -154,22 +224,32 @@ async function loadCard() {
         if (type === 'ayah') {
             const res = await fetch('https://api.alquran.cloud/v1/ayah/random/ar');
             const data = await res.json();
-            cardContentEl.innerText = `"${data.data.text}"`;
-            cardReferenceEl.innerText = `${data.data.surah.name} ${data.data.numberInSurah}`;
-            cardTypeBadge.innerText = 'آية قرآنية';
+            if (data && data.data) {
+                cardContentEl.innerText = `"${data.data.text}"`;
+                cardReferenceEl.innerText = `${data.data.surah.name} ${data.data.numberInSurah}`;
+                cardTypeBadge.innerText = 'آية قرآنية';
+            } else {
+                throw new Error('API response invalid');
+            }
         } else if (type === 'hadith') {
-            // استخدام Hadith API (random hadith from Bukhari)
-            const res = await fetch('https://random-hadith-generator.vercel.app/bukhari/random');
+            // محاولة جلب حديث عشوائي - استخدام API بديل موثوق
+            const res = await fetch('https://hadith-api-dusky.vercel.app/api/hadiths/random');
+            if (!res.ok) throw new Error('Hadith API failed');
             const data = await res.json();
-            cardContentEl.innerText = `"${data.textAr || data.text}"`;
-            cardReferenceEl.innerText = `صحيح البخاري`;
-            cardTypeBadge.innerText = 'حديث نبوي';
+            if (data && data.text) {
+                cardContentEl.innerText = `"${data.text}"`;
+                cardReferenceEl.innerText = data.reference || 'صحيح البخاري';
+                cardTypeBadge.innerText = 'حديث نبوي';
+            } else {
+                throw new Error('No hadith data');
+            }
         } else {
             const adhkarList = [
                 "سبحان الله وبحمده سبحان الله العظيم",
                 "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير",
                 "حسبي الله لا إله إلا هو عليه توكلت وهو رب العرش العظيم",
-                "اللهم صل على محمد وعلى آل محمد كما صليت على إبراهيم وعلى آل إبراهيم إنك حميد مجيد"
+                "اللهم صل على محمد وعلى آل محمد كما صليت على إبراهيم وعلى آل إبراهيم إنك حميد مجيد",
+                "أستغفر الله العظيم الذي لا إله إلا هو الحي القيوم وأتوب إليه"
             ];
             const random = adhkarList[Math.floor(Math.random() * adhkarList.length)];
             cardContentEl.innerText = `"${random}"`;
@@ -178,34 +258,24 @@ async function loadCard() {
         }
     } catch(e) {
         console.log(e);
-        // البيانات الاحتياطية
+        // بيانات احتياطية ثابتة
         cardContentEl.innerText = '"ربنا آتنا في الدنيا حسنة وفي الآخرة حسنة وقنا عذاب النار"';
         cardReferenceEl.innerText = 'البقرة 201';
         cardTypeBadge.innerText = 'آية قرآنية';
     }
 }
 
-// مشاركة البطاقة كصورة
-shareBtn.addEventListener('click', async () => {
-    const card = document.getElementById('shareCard');
-    // تحميل html2canvas من CDN ديناميكياً
-    if (typeof html2canvas === 'undefined') {
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-        script.onload = () => generateAndShare(card);
-        document.head.appendChild(script);
-    } else {
-        generateAndShare(card);
-    }
-});
-
-async function generateAndShare(card) {
-    try {
-        const canvas = await html2canvas(card, { scale: 2, backgroundColor: '#FFFFFF' });
+// ========== 4. مشاركة البطاقة كصورة ==========
+function generateAndShare(card, html2canvasLib) {
+    html2canvasLib(card, { scale: 2, backgroundColor: '#FFFFFF' }).then(canvas => {
         canvas.toBlob(async (blob) => {
             const file = new File([blob], 'athar-card.png', { type: 'image/png' });
             if (navigator.share && /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                await navigator.share({ files: [file], title: 'أثر', text: 'شارك بطاقة روحانية' });
+                try {
+                    await navigator.share({ files: [file], title: 'أثر', text: 'شارك بطاقة روحانية' });
+                } catch(shareErr) {
+                    console.log('Share cancelled', shareErr);
+                }
             } else {
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
@@ -214,12 +284,31 @@ async function generateAndShare(card) {
                 alert('تم تحميل الصورة بنجاح');
             }
         });
-    } catch(e) {
+    }).catch(err => {
+        console.error(err);
         alert('يمكنك مشاركة البطاقة عبر التقاط صورة للشاشة حالياً');
-    }
+    });
 }
 
-// أذكار الصباح والمساء
+shareBtn.addEventListener('click', () => {
+    const card = document.getElementById('shareCard');
+    if (typeof html2canvas !== 'undefined') {
+        generateAndShare(card, html2canvas);
+    } else {
+        // تحميل المكتبة ديناميكياً إذا لم تكن موجودة
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        script.onload = () => {
+            generateAndShare(card, html2canvas);
+        };
+        script.onerror = () => {
+            alert('تعذر تحميل مكتبة مشاركة الصور، يرجى تحديث الصفحة');
+        };
+        document.head.appendChild(script);
+    }
+});
+
+// ========== 5. أذكار الصباح والمساء ==========
 function openDhikrList(adhkarArray, title) {
     let index = 0;
     const displayDhikr = () => {
@@ -235,10 +324,13 @@ function openDhikrList(adhkarArray, title) {
 morningDhikrBtn.addEventListener('click', () => openDhikrList(morningAdhkar, 'أذكار الصباح'));
 eveningDhikrBtn.addEventListener('click', () => openDhikrList(eveningAdhkar, 'أذكار المساء'));
 
-// تحميل البطاقة أول مرة
+// ========== 6. التشغيل الأولي واستعادة الحالة ==========
+// محاولة استعادة موقع المستخدم المحفوظ، وإلا استخدم مكة
+if (!loadSavedLocation()) {
+    fetchPrayerTimes(null, null);
+}
+
+// تحميل بطاقة عشوائية أول مرة
 loadCard();
 // تحديث البطاقة كل 3 ساعات
 setInterval(loadCard, 3 * 60 * 60 * 1000);
-
-// جلب مواقيت مكة افتراضياً
-fetchPrayerTimes(null, null);
