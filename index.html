@@ -19,16 +19,31 @@
         <div>
           <p class="eyebrow">ATHAR / أثر</p>
           <h1>انشر خيرًا بصورة تليق بالمعنى.</h1>
+          <p class="waqf-line">وقف خيري عن مسلّم عوده البويني</p>
         </div>
         <button id="installBtn" class="ghost" hidden>تثبيت</button>
       </div>
 
-      <section class="status-grid" aria-label="الوقت والصلاة">
+      <section class="daily-panel" aria-label="أثر اليوم">
+        <div>
+          <span>أثر اليوم</span>
+          <strong id="dailyPrompt">خذ أثرك اليوم وشاركه</strong>
+        </div>
+        <small id="streakLabel">ابدأ سلسلة الأثر اليوم</small>
+      </section>
+
+      <section class="status-grid" aria-label="الوقت والصلاة والتاريخ">
         <article class="status-card">
           <span>الوقت الآن</span>
           <strong id="clock">--:--</strong>
+          <small id="gregorianDate">--</small>
         </article>
-        <article class="status-card prayer-card">
+        <article class="status-card">
+          <span>التاريخ الهجري</span>
+          <strong id="hijriDate">--</strong>
+          <small>يتحدث حسب جهازك</small>
+        </article>
+        <article class="status-card prayer-card wide">
           <span id="locationLabel">الصلاة القادمة</span>
           <strong id="nextPrayer">جاري التحديد</strong>
           <small id="prayerCountdown">اسمح بالموقع لعرض الصلاة حسب موقعك</small>
@@ -45,7 +60,7 @@
           </div>
           <div class="card-footer">
             <span>أثر</span>
-            <small>صدقة جارية عن مسلّم رحمه الله</small>
+            <small>امسح الرمز وشارك الأجر</small>
           </div>
         </div>
       </section>
