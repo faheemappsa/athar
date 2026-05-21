@@ -1,8 +1,6 @@
 /* --------------------------------------------------
-   أثر - التصميم البصري الكامل
-   الخط: Thmanyah Sans (ملف واحد فقط)
-   الألوان: أزرق سماوي، أخضر زمردي، ذهبي فاخر
-   يدعم: الوضع الليلي، ثلاث خلفيات للبطاقة، responsiveness
+   أثر - التصميم البصري النهائي
+   إحساس تطبيق حقيقي | هوية فاخرة | أيقونات متناسقة | تباعد مثالي
 -------------------------------------------------- */
 
 /* -------------------- الخط -------------------- */
@@ -13,69 +11,66 @@
     font-style: normal;
 }
 
-/* -------------------- الإعدادات العامة -------------------- */
+/* -------------------- Reset وتحسينات الأداء -------------------- */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
-    transition: background-color 0.3s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 body {
     font-family: 'Thmanyah Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, system-ui, sans-serif;
-    padding: 20px;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     background: linear-gradient(145deg, #E8F4F8 0%, #D1E9F0 100%);
+    min-height: 100vh;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
 }
 
-/* الوضع الليلي للخلفية */
+/* الوضع الليلي */
 body.dark {
     background: linear-gradient(145deg, #0A1A1F 0%, #0F2A30 100%);
-    color: #E0F0F5;
 }
 
-/* الحاوية الرئيسية */
+/* الحاوية الرئيسية - كتطبيق */
 .app-container {
     max-width: 500px;
     width: 100%;
     margin: auto;
-    background: rgba(255, 255, 255, 0.92);
+    background: rgba(255, 255, 255, 0.96);
     border-radius: 48px;
-    box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(2px);
-    padding: 24px 20px 40px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(0px);
+    padding: 24px 20px 32px;
     display: flex;
     flex-direction: column;
     gap: 24px;
+    transition: background 0.3s, box-shadow 0.3s;
 }
 
 body.dark .app-container {
-    background: rgba(20, 40, 45, 0.95);
-    backdrop-filter: blur(2px);
+    background: rgba(18, 30, 35, 0.98);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-/* -------------------- الهوك (الشعار العلوي) -------------------- */
+/* -------------------- الهوك -------------------- */
 .hook {
     text-align: center;
-    background: rgba(27, 107, 111, 0.1);
+    background: rgba(27, 107, 111, 0.12);
     border-radius: 60px;
-    padding: 8px 12px;
-    margin-bottom: 8px;
+    padding: 10px 16px;
+    margin-bottom: 4px;
 }
 .hook-line {
     font-size: 0.9rem;
     color: #1B6B6F;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.3px;
 }
 body.dark .hook-line {
     color: #7FDBE0;
-}
-body.dark .hook {
-    background: rgba(127, 219, 224, 0.1);
 }
 
 /* -------------------- الوقت والتاريخ -------------------- */
@@ -83,9 +78,10 @@ body.dark .hook {
     text-align: center;
 }
 .current-time {
-    font-size: 3.2rem;
+    font-size: 3.4rem;
     color: #1B6B6F;
-    letter-spacing: -0.5px;
+    letter-spacing: -1px;
+    font-weight: bold;
 }
 body.dark .current-time {
     color: #7FDBE0;
@@ -94,20 +90,26 @@ body.dark .current-time {
     display: flex;
     justify-content: center;
     gap: 12px;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: #4A7C7F;
+    margin-top: 6px;
 }
-body.dark .date-row {
-    color: #A0C4C7;
+.gregorian-date {
+    font-weight: bold;
+    color: #1B6B6F;
+}
+body.dark .gregorian-date {
+    color: #BAE6FD;
 }
 
 /* -------------------- بطاقة الصلاة -------------------- */
 .prayer-card {
     background: white;
-    border-radius: 32px;
+    border-radius: 36px;
     padding: 20px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03);
-    border: 1px solid rgba(72, 156, 162, 0.2);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(72, 156, 162, 0.25);
+    transition: all 0.2s;
 }
 body.dark .prayer-card {
     background: #1F3A3F;
@@ -121,7 +123,7 @@ body.dark .prayer-card {
     margin-bottom: 12px;
 }
 .prayer-name {
-    font-size: 1.6rem;
+    font-size: 1.7rem;
     color: #1B6B6F;
 }
 body.dark .prayer-name {
@@ -133,46 +135,79 @@ body.dark .prayer-name {
     border-radius: 40px;
     font-size: 0.9rem;
     color: #489CA2;
+    font-weight: bold;
 }
 .iqama {
     font-size: 0.9rem;
     color: #5F8B8E;
     border-top: 1px dashed #C5E0E5;
     padding-top: 12px;
-    margin-top: 8px;
+    margin-top: 6px;
 }
 .location-btn {
     background: none;
     border: 1px solid #489CA2;
     color: #489CA2;
-    padding: 10px 16px;
+    padding: 10px;
     border-radius: 40px;
-    font-size: 0.75rem;
-    margin-top: 16px;
     width: 100%;
+    margin-top: 16px;
     font-family: inherit;
+    font-size: 0.8rem;
     cursor: pointer;
     transition: 0.2s;
 }
 .location-btn:active {
     background: #489CA210;
+    transform: scale(0.98);
 }
 .location-status {
     font-size: 0.7rem;
-    color: #7EAEB2;
     text-align: center;
     margin-top: 8px;
+    color: #7EAEB2;
 }
 
-/* -------------------- البطاقة الدينية (الفاخرة) -------------------- */
+/* -------------------- أزرار اختيار المحتوى -------------------- */
+.content-type-selector {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.content-type-btn {
+    background: white;
+    border: 1px solid #C5E0E5;
+    padding: 10px 20px;
+    border-radius: 60px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #1B6B6F;
+    cursor: pointer;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.content-type-btn:active {
+    background: #EFF9FC;
+    transform: scale(0.96);
+}
+body.dark .content-type-btn {
+    background: #1F3A3F;
+    border-color: #2E6B70;
+    color: #7FDBE0;
+}
+
+/* -------------------- البطاقة الدينية (داخل التطبيق) -------------------- */
 .share-card {
-    border-radius: 32px;
+    border-radius: 40px;
     padding: 24px 20px;
     text-align: center;
-    transition: background 0.3s;
+    transition: background 0.3s, transform 0.1s;
 }
-
-/* خلفيات البطاقة الثلاث */
+/* خلفيات البطاقة */
 .share-card.bg-gold {
     background: linear-gradient(135deg, #FDF4E3, #F3E5C0);
     border: 1px solid #D4AF37;
@@ -202,7 +237,7 @@ body.dark .share-card.bg-green {
     display: flex;
     justify-content: center;
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
 }
 .bg-label {
@@ -210,85 +245,78 @@ body.dark .share-card.bg-green {
     color: #4A7C7F;
 }
 .bg-option {
-    background: rgba(0,0,0,0.05);
+    background: rgba(0, 0, 0, 0.06);
     border: none;
-    padding: 4px 12px;
-    border-radius: 30px;
+    padding: 6px 14px;
+    border-radius: 60px;
     font-size: 0.7rem;
     font-family: inherit;
     cursor: pointer;
     transition: 0.2s;
 }
 .bg-option:active {
-    transform: scale(0.95);
+    transform: scale(0.94);
 }
-body.dark .bg-option {
-    background: rgba(255,255,255,0.1);
-    color: #E0F0F5;
-}
-
 .badge {
     display: inline-block;
-    padding: 4px 16px;
+    padding: 6px 18px;
     border-radius: 60px;
-    font-size: 0.7rem;
-    background: rgba(0,0,0,0.08);
+    font-size: 0.75rem;
+    background: rgba(0, 0, 0, 0.08);
     margin-bottom: 16px;
 }
 .ayat-text {
-    font-size: 1.5rem;
-    line-height: 1.6;
+    font-size: 1.55rem;
+    line-height: 1.65;
     margin: 16px 0;
     word-wrap: break-word;
 }
 .card-reference {
-    font-size: 0.8rem;
-    opacity: 0.8;
+    font-size: 0.85rem;
+    opacity: 0.75;
 }
 .share-btn {
     background: #1B6B6F;
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 60px;
+    padding: 14px 20px;
+    border-radius: 80px;
     font-size: 1rem;
     font-family: inherit;
-    margin-top: 16px;
+    font-weight: bold;
     cursor: pointer;
+    width: 100%;
     transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 .share-btn:active {
     background: #0E4F52;
-    transform: scale(0.98);
+    transform: scale(0.97);
 }
 
-/* -------------------- أذكار وسبحة -------------------- */
-.dhikr-section {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
+/* -------------------- الأذكار والسبحة -------------------- */
 .dhikr-row {
     display: flex;
     gap: 16px;
-    justify-content: center;
 }
 .dhikr-btn {
+    flex: 1;
     background: white;
     border: 1px solid #C5E0E5;
-    padding: 12px;
-    border-radius: 30px;
-    flex: 1;
+    padding: 14px 8px;
+    border-radius: 60px;
     text-align: center;
-    font-size: 1rem;
     font-family: inherit;
-    color: #1B6B6F;
+    font-size: 0.9rem;
     cursor: pointer;
     transition: 0.2s;
 }
 .dhikr-btn:active {
-    background: #EFF9FC;
     transform: scale(0.97);
+    background: #EFF9FC;
 }
 body.dark .dhikr-btn {
     background: #1F3A3F;
@@ -301,18 +329,18 @@ body.dark .dhikr-btn {
     justify-content: center;
     gap: 12px;
     flex-wrap: wrap;
-    background: rgba(0,0,0,0.03);
-    padding: 12px;
-    border-radius: 60px;
+    background: rgba(0, 0, 0, 0.04);
+    padding: 12px 20px;
+    border-radius: 80px;
 }
 .counter-label {
     font-size: 0.85rem;
 }
 .counter-value {
-    font-size: 1.6rem;
+    font-size: 1.7rem;
     font-weight: bold;
     color: #1B6B6F;
-    min-width: 50px;
+    min-width: 60px;
     text-align: center;
 }
 body.dark .counter-value {
@@ -322,85 +350,103 @@ body.dark .counter-value {
     background: #1B6B6F;
     color: white;
     border: none;
-    padding: 6px 16px;
-    border-radius: 40px;
+    padding: 8px 18px;
+    border-radius: 50px;
     font-family: inherit;
     font-size: 0.8rem;
     cursor: pointer;
+    transition: 0.2s;
+}
+.counter-btn:active, .counter-reset:active {
+    transform: scale(0.96);
 }
 .counter-reset {
     background: #B0BEC5;
     color: #1B6B6F;
 }
-body.dark .counter-reset {
-    background: #4A7C7F;
-    color: #E0F0F5;
-}
 hr {
     margin: 8px 0;
     border-color: #C5E0E5;
 }
-body.dark hr {
-    border-color: #2E6B70;
-}
-
-/* -------------------- الوقف الخيري -------------------- */
 .waqf {
     text-align: center;
     padding: 8px;
-    border-radius: 30px;
-    background: rgba(27, 107, 111, 0.05);
-}
-.waqf-line {
     font-size: 0.7rem;
     color: #7EAEB2;
 }
-body.dark .waqf-line {
-    color: #A0C4C7;
-}
-
-/* -------------------- زر الوضع الليلي -------------------- */
 .dark-mode-toggle {
     text-align: center;
-    margin-top: 8px;
 }
 #darkModeToggleBtn {
     background: none;
     border: 1px solid #489CA2;
-    padding: 6px 16px;
-    border-radius: 40px;
+    padding: 8px 20px;
+    border-radius: 50px;
     font-family: inherit;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: #489CA2;
     cursor: pointer;
+    transition: 0.2s;
 }
-body.dark #darkModeToggleBtn {
-    border-color: #7FDBE0;
-    color: #7FDBE0;
+#darkModeToggleBtn:active {
+    background: #489CA210;
 }
 
-/* -------------------- تحسينات اللمس والاستجابة -------------------- */
+/* -------------------- بطاقة المشاركة الاحترافية (للتخزين فقط) -------------------- */
+#exportCardContainer {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    z-index: -1;
+}
+.export-card {
+    width: 500px;
+    background: linear-gradient(145deg, #FFFFFF, #F4F9FC);
+    border-radius: 56px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
+    font-family: 'Thmanyah Sans', sans-serif;
+    border: 1px solid rgba(27, 107, 111, 0.2);
+}
+.export-header {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1B6B6F;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+.export-content {
+    font-size: 1.9rem;
+    line-height: 1.6;
+    color: #235B5E;
+    margin: 25px 0;
+    padding: 20px;
+    background: rgba(27, 107, 111, 0.05);
+    border-radius: 48px;
+}
+.export-reference {
+    font-size: 1.1rem;
+    color: #489CA2;
+    margin-bottom: 25px;
+}
+.export-footer {
+    font-size: 0.9rem;
+    color: #7EAEB2;
+    border-top: 1px solid #C5E0E5;
+    padding-top: 20px;
+    direction: ltr;
+}
+body.dark .export-card {
+    background: linear-gradient(145deg, #1F3A3F, #142B33);
+    color: #E0F0F5;
+}
+body.dark .export-header { color: #7FDBE0; }
+body.dark .export-content { color: #BAE6FD; background: rgba(127, 219, 224, 0.1); }
+body.dark .export-footer { color: #A0C4C7; }
+
+/* -------------------- تحسينات اللمس والتفاعل -------------------- */
 button {
     touch-action: manipulation;
-}
-
-/* للأجهزة الصغيرة جدًا */
-@media (max-width: 450px) {
-    .app-container {
-        padding: 16px 16px 32px;
-        gap: 18px;
-    }
-    .current-time {
-        font-size: 2.8rem;
-    }
-    .prayer-name {
-        font-size: 1.3rem;
-    }
-    .ayat-text {
-        font-size: 1.2rem;
-    }
-    .dhikr-btn {
-        font-size: 0.85rem;
-        padding: 10px;
-    }
+    user-select: none;
 }
