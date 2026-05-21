@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#1B6B6F">
+    <meta name="theme-color" content="#1B6B6F" id="themeColorMeta">
     <meta name="description" content="أثر - تجربة روحانية عربية مع مواقيت صلاة دقيقة، أذكار، وبطاقات يومية فاخرة">
     <title>أثر | Athar</title>
     <link rel="stylesheet" href="style.css">
@@ -11,7 +11,13 @@
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/faheemappsa/athar/main/icon-192.png">
 </head>
 <body>
-    <div class="app-container">
+    <div class="app-container" id="appContainer">
+        <!-- الهوك العلوي (شعار جذاب) -->
+        <div class="hook">
+            <p class="hook-line">🕊️ أثرٌ باقٍ، وذكرٌ يُحيي القلوب 🕊️</p>
+        </div>
+
+        <!-- قسم الوقت والتاريخ (محسن) -->
         <div class="time-section">
             <div class="current-time" id="currentTime">--:--</div>
             <div class="date-row">
@@ -21,16 +27,25 @@
             </div>
         </div>
 
+        <!-- بطاقة مواقيت الصلاة -->
         <div class="prayer-card" id="prayerCard">
             <div class="next-prayer">
                 <span class="prayer-name" id="nextPrayerName">----</span>
                 <span class="remaining" id="remainingTime">--:--:--</span>
             </div>
             <div class="iqama" id="iqamaTime">⏱️ وقت الإقامة: --:--</div>
-            <button class="location-btn" id="locationBtn">📍 توقيت منطقتي (السماح بالموقع)</button>
+            <button class="location-btn" id="locationBtn">📍 توقيت منطقتي (اضغط للسماح)</button>
+            <div class="location-status" id="locationStatus"></div>
         </div>
 
+        <!-- البطاقة الدينية الفاخرة مع اختيار الخلفية -->
         <div class="share-card" id="shareCard">
+            <div class="card-background-selector">
+                <span class="bg-label">خلفية البطاقة:</span>
+                <button class="bg-option" data-bg="gold">ذهبي</button>
+                <button class="bg-option" data-bg="blue">أزرق سماوي</button>
+                <button class="bg-option" data-bg="green">أخضر زمردي</button>
+            </div>
             <div class="badge" id="cardTypeBadge">آية قرآنية</div>
             <div class="ayat-text" id="cardContent">
                 "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً"
@@ -39,15 +54,33 @@
             <button class="share-btn" id="shareBtn">📤 مشاركة البطاقة</button>
         </div>
 
-        <div class="dhikr-row">
-            <button class="dhikr-btn" id="morningDhikrBtn">🌅 أذكار الصباح</button>
-            <button class="dhikr-btn" id="eveningDhikrBtn">🌙 أذكار المساء</button>
+        <!-- قسم الأذكار والسبحة الرقمية -->
+        <div class="dhikr-section">
+            <div class="dhikr-row">
+                <button class="dhikr-btn" id="morningDhikrBtn">🌅 أذكار الصباح</button>
+                <button class="dhikr-btn" id="eveningDhikrBtn">🌙 أذكار المساء</button>
+            </div>
+            <div class="counter-dhikr">
+                <span class="counter-label">🔁 سبحة رقمية:</span>
+                <span class="counter-value" id="dhikrCounterValue">0</span>
+                <button class="counter-btn" id="dhikrCounterBtn">+1</button>
+                <button class="counter-reset" id="dhikrCounterReset">إعادة تعيين</button>
+            </div>
         </div>
+
         <hr />
-        <div class="footnote">
-            * كل ذكر تكمله يثبت في ميزان حسنات والد صاحب التطبيق - رحمه الله
+
+        <!-- السطر السفلي (الوقف الخيري) -->
+        <div class="waqf">
+            <p class="waqf-line">وقف خيري عن مسلّم عوده البويني رحمه الله</p>
+        </div>
+
+        <!-- زر الوضع الليلي -->
+        <div class="dark-mode-toggle">
+            <button id="darkModeToggleBtn">🌙 الوضع الليلي</button>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
