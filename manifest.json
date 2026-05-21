@@ -1,21 +1,82 @@
 {
-  "name": "أثر",
+  "name": "أثر — كل يوم أثر نور",
   "short_name": "أثر",
   "description": "تجربة روحانية عربية مع مواقيت صلاة دقيقة، أذكار، وبطاقات يومية فاخرة",
   "start_url": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "theme_color": "#1B6B6F",
-  "background_color": "#E8F4F8",
+  "background_color": "#1B6B6F",
   "lang": "ar",
   "dir": "rtl",
   "scope": "/",
   "orientation": "portrait",
+  "categories": ["lifestyle", "utilities", "religion"],
   "icons": [
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%231B6B6F'/%3E%3Ctext x='256' y='380' font-family='Arial' font-size='300' font-weight='900' fill='%23FFFFFF' text-anchor='middle'%3Eأ%3C/text%3E%3C/svg%3E",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot-home.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "الصفحة الرئيسية — أثر اليوم"
+    },
+    {
+      "src": "screenshot-prayer.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "مواقيت الصلاة والإقامة"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "أذكار الصباح",
+      "short_name": "الصباح",
+      "description": "افتح أذكار الصباح مباشرة",
+      "url": "/?action=morning-dhikr",
+      "icons": [{ "src": "shortcut-morning.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "أذكار المساء",
+      "short_name": "المساء",
+      "description": "افتح أذكار المساء مباشرة",
+      "url": "/?action=evening-dhikr",
+      "icons": [{ "src": "shortcut-evening.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "مواقيت الصلاة",
+      "short_name": "الصلاة",
+      "description": "اعرض مواقيت الصلاة الحالية",
+      "url": "/?action=prayer-times",
+      "icons": [{ "src": "shortcut-prayer.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }
