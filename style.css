@@ -1,29 +1,30 @@
 @font-face {
     font-family: 'Thmanyah Sans';
-    src: url('fonts/thmanyahsans-Black.otf') format('opentype');
+    src: url('https://raw.githubusercontent.com/faheemappsa/athar/main/thmanyahsans-Black.otf') format('opentype');
     font-weight: 900;
 }
 @font-face {
     font-family: 'Thmanyah Sans';
-    src: url('fonts/thmanyahsans-Bold.otf') format('opentype');
+    src: url('https://raw.githubusercontent.com/faheemappsa/athar/main/thmanyahsans-Bold.otf') format('opentype');
     font-weight: 700;
 }
 @font-face {
     font-family: 'Thmanyah Sans';
-    src: url('fonts/thmanyahsans-Medium.otf') format('opentype');
+    src: url('https://raw.githubusercontent.com/faheemappsa/athar/main/thmanyahsans-Medium.otf') format('opentype');
     font-weight: 500;
 }
 @font-face {
     font-family: 'Thmanyah Sans';
-    src: url('fonts/thmanyahsns-Regular.otf') format('opentype');
+    src: url('https://raw.githubusercontent.com/faheemappsa/athar/main/thmanayahsans-Regular.otf') format('opentype');
     font-weight: 400;
 }
 @font-face {
     font-family: 'Thmanyah Sans';
-    src: url('fonts/thmanyahsns-Light.otf') format('opentype');
+    src: url('https://raw.githubusercontent.com/faheemappsa/athar/main/thmanayahsans-Light.otf') format('opentype');
     font-weight: 300;
 }
 
+/* باقي الكود كما هو دون تغيير */
 * {
     margin: 0;
     padding: 0;
