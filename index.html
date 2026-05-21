@@ -37,44 +37,58 @@
                 <button class="icon-btn" id="darkModeToggleBtn" aria-label="الوضع الليلي">☾</button>
             </header>
 
-            <!-- Hook -->
+            <!-- Hook - يتغير حسب الوقت -->
             <div class="hook" id="dailyHook">
                 <p class="hook-line">أصبحنا وأصبح الملك لله...</p>
+                <p class="hook-sub">اللهم بك أصبحنا وبك أمسينا</p>
             </div>
 
-            <!-- Hero Visual -->
+            <!-- Hero Visual - مشهد فلكي -->
             <section class="visual-hero" id="visualHero" aria-label="مشهد أثر">
                 <div class="sun-orb" id="sunOrb"></div>
+                <div class="moon-orb" id="moonOrb"></div>
+                <div class="star-field" id="starField"></div>
                 <div class="mountain-layer layer-a"></div>
                 <div class="mountain-layer layer-b"></div>
                 <div class="hero-arch"></div>
+                <div class="hero-time-badge" id="heroTimeBadge">فجر</div>
             </section>
 
             <!-- الوقت والتاريخ -->
             <section class="time-section glass-panel">
                 <div class="date-row">
-                    <div class="date-block">
+                    <div class="date-block hijri">
                         <span id="hijriDate">-- -- ----</span>
                         <small>الهجري</small>
                     </div>
                     <span class="date-divider"></span>
-                    <div class="date-block">
+                    <div class="date-block day">
                         <span id="dayAndOccasion">--</span>
                         <small id="occasionLabel">--</small>
                     </div>
                 </div>
-                <div class="gregorian-mini" id="gregorianDate">-- -- ----</div>
-                <div class="current-time" id="currentTime">--:--</div>
+                <div class="gregorian-full" id="gregorianDate">-- -- ----</div>
+                <div class="current-time" id="currentTime">--:--:--</div>
             </section>
 
             <!-- بطاقة مواقيت الصلاة -->
             <section class="prayer-card glass-panel" id="prayerCard">
                 <div class="section-label">
                     <span>مواقيت الصلاة</span>
-                    <small>حسب موقعك</small>
+                    <small id="locationLabel">مكة المكرمة</small>
+                </div>
+
+                <!-- قائمة أوقات الصلاة الخمسة -->
+                <div class="prayer-times-list" id="prayerTimesList">
+                    <div class="prayer-time-item loading">
+                        <span class="prayer-icon">⏳</span>
+                        <span class="prayer-name">جاري التحميل...</span>
+                        <span class="prayer-time">--:--</span>
+                    </div>
                 </div>
 
                 <div class="next-prayer">
+                    <div class="next-prayer-label">الصلاة القادمة</div>
                     <span class="prayer-name" id="nextPrayerName">----</span>
                     <span class="remaining" id="remainingTime">--:--:--</span>
                 </div>
@@ -149,7 +163,7 @@
             <section class="qibla-section glass-panel" id="qiblaSection">
                 <div class="section-label">
                     <span>اتجاه القبلة</span>
-                    <small>وجه الجهاز للقبلة</small>
+                    <small>اضغط لتفعيل البوصلة</small>
                 </div>
                 <div class="compass-container" id="compassContainer">
                     <div class="compass-ring" id="compassRing">
