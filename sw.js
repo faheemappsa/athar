@@ -1,82 +1,146 @@
-{
-  "name": "أثر — كل يوم أثر نور",
-  "short_name": "أثر",
-  "description": "تجربة روحانية عربية مع مواقيت صلاة دقيقة، أذكار، وبطاقات يومية فاخرة",
-  "start_url": "/",
-  "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
-  "theme_color": "#1B6B6F",
-  "background_color": "#1B6B6F",
-  "lang": "ar",
-  "dir": "rtl",
-  "scope": "/",
-  "orientation": "portrait",
-  "categories": ["lifestyle", "utilities", "religion"],
-  "icons": [
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-maskable-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icon-maskable-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+// ==========================================
+// Service Worker — أثر v4
+// Offline-First | Background Sync | Periodic Sync
+// ==========================================
+
+const STATIC_CACHE = 'athar-static-v4';
+const DATA_CACHE = 'athar-data-v4';
+
+// الملفات الثابتة
+const staticUrls = [
+  '/',
+  '/index.html',
+  '/style.css',
+  '/script.js',
+  '/manifest.json',
+  '/thmanyahsans-Regular.otf',
+  '/thmanyahsans-Bold.otf',
+  '/thmanyahsans-Black.otf',
+  '/icon-192.png',
+  '/icon-512.png',
+  '/icon-maskable-192.png',
+  '/icon-maskable-512.png',
+  '/shortcut-morning.png',
+  '/shortcut-evening.png',
+  '/shortcut-prayer.png'
+];
+
+// المكتبة الدينية
+const dataUrls = [
+  '/data/quran-short-ayahs.json',
+  '/data/authentic-hadiths.json',
+  '/data/hisn-al-muslim-adhkar.json'
+];
+
+// ========== INSTALL ==========
+self.addEventListener('install', event => {
+  event.waitUntil(
+    Promise.all([
+      caches.open(STATIC_CACHE).then(cache => 
+        cache.addAll(staticUrls).catch(() => Promise.resolve())
+      ),
+      caches.open(DATA_CACHE).then(cache =>
+        cache.addAll(dataUrls).catch(() => Promise.resolve())
+      )
+    ])
+  );
+  self.skipWaiting();
+});
+
+// ========== FETCH ==========
+self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  
+  if (isExternalAPI(url)) {
+    event.respondWith(networkFirst(event.request));
+    return;
+  }
+  
+  if (url.pathname.startsWith('/data/')) {
+    event.respondWith(cacheFirst(event.request, DATA_CACHE));
+    return;
+  }
+  
+  event.respondWith(cacheFirst(event.request, STATIC_CACHE));
+});
+
+// ========== ACTIVATE ==========
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [STATIC_CACHE, DATA_CACHE];
+  event.waitUntil(
+    caches.keys().then(cacheNames => 
+      Promise.all(
+        cacheNames
+          .filter(name => !cacheWhitelist.includes(name))
+          .map(name => caches.delete(name))
+      )
+    )
+  );
+  event.waitUntil(clients.claim());
+});
+
+// ========== BACKGROUND SYNC ==========
+self.addEventListener('sync', event => {
+  if (event.tag === 'update-athar') {
+    event.waitUntil(updateDailyAthar());
+  }
+});
+
+// ========== PERIODIC BACKGROUND SYNC ==========
+self.addEventListener('periodicsync', event => {
+  if (event.tag === 'daily-athar-update') {
+    event.waitUntil(updateDailyAthar());
+  }
+});
+
+// ========== HELPERS ==========
+function isExternalAPI(url) {
+  const apiHosts = [
+    'api.aladhan.com',
+    'api.alquran.cloud',
+    'googletagmanager.com',
+    'google-analytics.com'
+  ];
+  return apiHosts.some(host => url.hostname.includes(host));
+}
+
+async function cacheFirst(request, cacheName) {
+  const cache = await caches.open(cacheName);
+  const cached = await cache.match(request);
+  if (cached) return cached;
+  
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse && networkResponse.status === 200) {
+      cache.put(request, networkResponse.clone());
     }
-  ],
-  "screenshots": [
-    {
-      "src": "screenshot-home.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "الصفحة الرئيسية — أثر اليوم"
-    },
-    {
-      "src": "screenshot-prayer.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "مواقيت الصلاة والإقامة"
+    return networkResponse;
+  } catch (err) {
+    if (request.mode === 'navigate') {
+      return caches.match('/index.html');
     }
-  ],
-  "shortcuts": [
-    {
-      "name": "أذكار الصباح",
-      "short_name": "الصباح",
-      "description": "افتح أذكار الصباح مباشرة",
-      "url": "/?action=morning-dhikr",
-      "icons": [{ "src": "shortcut-morning.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "أذكار المساء",
-      "short_name": "المساء",
-      "description": "افتح أذكار المساء مباشرة",
-      "url": "/?action=evening-dhikr",
-      "icons": [{ "src": "shortcut-evening.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "مواقيت الصلاة",
-      "short_name": "الصلاة",
-      "description": "اعرض مواقيت الصلاة الحالية",
-      "url": "/?action=prayer-times",
-      "icons": [{ "src": "shortcut-prayer.png", "sizes": "96x96" }]
+    throw err;
+  }
+}
+
+async function networkFirst(request) {
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse && networkResponse.status === 200) {
+      const cache = await caches.open(DATA_CACHE);
+      cache.put(request, networkResponse.clone());
     }
-  ],
-  "related_applications": [],
-  "prefer_related_applications": false
+    return networkResponse;
+  } catch (err) {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    throw err;
+  }
+}
+
+async function updateDailyAthar() {
+  const clients = await self.clients.matchAll();
+  clients.forEach(client => {
+    client.postMessage({ type: 'ATHAR_UPDATED' });
+  });
 }
