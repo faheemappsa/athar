@@ -1,0 +1,11 @@
+{
+  "name": "أثر",
+  "short_name": "أثر",
+  "description": "تجربة روحانية عربية مع مواقيت الصلاة والأذكار",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#1B6B6F",
+  "background_color": "#E8F4F8",
+  "lang": "ar",
+  "dir": "rtl"
+}
