@@ -9,6 +9,15 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/faheemappsa/athar/main/icon-192.png">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H9NQ6TLRS5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-H9NQ6TLRS5');
+    </script>
 </head>
 <body>
     <div class="app-container" id="appContainer">
@@ -23,7 +32,7 @@
             <div class="date-row">
                 <span id="hijriDate">-- -- ----</span>
                 <span>•</span>
-                <span id="gregorianDate">-- -- ----</span>
+                <span id="gregorianDate" class="gregorian-date">-- -- ----</span>
             </div>
         </div>
 
@@ -38,7 +47,14 @@
             <div class="location-status" id="locationStatus"></div>
         </div>
 
-        <!-- البطاقة الدينية الفاخرة مع اختيار الخلفية -->
+        <!-- أزرار اختيار نوع المحتوى (أعلى البطاقة) -->
+        <div class="content-type-selector">
+            <button class="content-type-btn" data-type="ayah">📖 آية قرآنية</button>
+            <button class="content-type-btn" data-type="hadith">🕌 حديث نبوي</button>
+            <button class="content-type-btn" data-type="dhikr">📿 ذكر</button>
+        </div>
+
+        <!-- البطاقة الدينية الفاخرة (المرئية داخل التطبيق) -->
         <div class="share-card" id="shareCard">
             <div class="card-background-selector">
                 <span class="bg-label">خلفية البطاقة:</span>
@@ -51,8 +67,10 @@
                 "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً"
             </div>
             <div class="card-reference" id="cardReference">البقرة ٢٠١</div>
-            <button class="share-btn" id="shareBtn">📤 مشاركة البطاقة</button>
         </div>
+
+        <!-- زر مشاركة البطاقة -->
+        <button class="share-btn" id="shareBtn">📤 مشاركة البطاقة كصورة فاخرة</button>
 
         <!-- قسم الأذكار والسبحة الرقمية -->
         <div class="dhikr-section">
@@ -78,6 +96,16 @@
         <!-- زر الوضع الليلي -->
         <div class="dark-mode-toggle">
             <button id="darkModeToggleBtn">🌙 الوضع الليلي</button>
+        </div>
+    </div>
+
+    <!-- عنصر مخفي لإنشاء بطاقة المشاركة الاحترافية -->
+    <div id="exportCardContainer" style="position: absolute; left: -9999px; top: -9999px; z-index: -1;">
+        <div id="exportCard" class="export-card">
+            <div class="export-header">🕊️ أثر 🕊️</div>
+            <div class="export-content" id="exportCardContent">نص البطاقة</div>
+            <div class="export-reference" id="exportCardRef">المرجع</div>
+            <div class="export-footer">athar-sandy.vercel.app</div>
         </div>
     </div>
 
