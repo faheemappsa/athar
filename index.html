@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#1B6B6F" id="themeColorMeta">
+    <meta name="theme-color" content="#FFF6EA" id="themeColorMeta">
     <meta name="description" content="أثر - تجربة روحانية عربية مع مواقيت صلاة دقيقة، أذكار، وبطاقات يومية فاخرة">
     <title>أثر | Athar</title>
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/faheemappsa/athar/main/icon-192.png">
-    
+
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-H9NQ6TLRS5"></script>
     <script>
@@ -19,83 +19,116 @@
       gtag('config', 'G-H9NQ6TLRS5');
     </script>
 </head>
+
 <body>
-    <div class="app-container" id="appContainer">
-        <!-- الهوك العلوي (شعار جذاب) -->
-        <div class="hook">
-            <p class="hook-line">🕊️ أثرٌ باقٍ، وذكرٌ يُحيي القلوب 🕊️</p>
-        </div>
+    <div class="app-shell">
+        <div class="app-container" id="appContainer">
 
-        <!-- قسم الوقت والتاريخ (محسن) -->
-        <div class="time-section">
-            <div class="current-time" id="currentTime">--:--</div>
-            <div class="date-row">
-                <span id="hijriDate">-- -- ----</span>
-                <span>•</span>
-                <span id="gregorianDate" class="gregorian-date">-- -- ----</span>
-            </div>
-        </div>
+            <!-- Header -->
+            <header class="app-header">
+                <button class="icon-btn" aria-label="تنبيه">♡</button>
+                <div class="brand">
+                    <span class="brand-mark">أثر</span>
+                    <small>كل يوم أثر نور</small>
+                </div>
+                <button class="icon-btn" id="darkModeToggleBtn" aria-label="الوضع الليلي">☾</button>
+            </header>
 
-        <!-- بطاقة مواقيت الصلاة -->
-        <div class="prayer-card" id="prayerCard">
-            <div class="next-prayer">
-                <span class="prayer-name" id="nextPrayerName">----</span>
-                <span class="remaining" id="remainingTime">--:--:--</span>
-            </div>
-            <div class="iqama" id="iqamaTime">⏱️ وقت الإقامة: --:--</div>
-            <button class="location-btn" id="locationBtn">📍 توقيت منطقتي (اضغط للسماح)</button>
-            <div class="location-status" id="locationStatus"></div>
-        </div>
+            <!-- Hero Visual -->
+            <section class="visual-hero" aria-label="مشهد أثر">
+                <div class="sun-orb"></div>
+                <div class="mountain-layer layer-a"></div>
+                <div class="mountain-layer layer-b"></div>
+                <div class="hero-arch"></div>
+            </section>
 
-        <!-- أزرار اختيار نوع المحتوى (أعلى البطاقة) -->
-        <div class="content-type-selector">
-            <button class="content-type-btn" data-type="ayah">📖 آية قرآنية</button>
-            <button class="content-type-btn" data-type="hadith">🕌 حديث نبوي</button>
-            <button class="content-type-btn" data-type="dhikr">📿 ذكر</button>
-        </div>
+            <!-- الوقت والتاريخ -->
+            <section class="time-section glass-panel">
+                <div class="date-row">
+                    <div class="date-block">
+                        <span id="hijriDate">-- -- ----</span>
+                        <small>الهجري</small>
+                    </div>
+                    <span class="date-divider"></span>
+                    <div class="date-block">
+                        <span id="gregorianDate" class="gregorian-date">-- -- ----</span>
+                        <small>الميلادي</small>
+                    </div>
+                </div>
+                <div class="current-time" id="currentTime">--:--</div>
+            </section>
 
-        <!-- البطاقة الدينية الفاخرة (المرئية داخل التطبيق) -->
-        <div class="share-card" id="shareCard">
-            <div class="card-background-selector">
-                <span class="bg-label">خلفية البطاقة:</span>
-                <button class="bg-option" data-bg="gold">ذهبي</button>
-                <button class="bg-option" data-bg="blue">أزرق سماوي</button>
-                <button class="bg-option" data-bg="green">أخضر زمردي</button>
-            </div>
-            <div class="badge" id="cardTypeBadge">آية قرآنية</div>
-            <div class="ayat-text" id="cardContent">
-                "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً"
-            </div>
-            <div class="card-reference" id="cardReference">البقرة ٢٠١</div>
-        </div>
+            <!-- بطاقة مواقيت الصلاة -->
+            <section class="prayer-card glass-panel" id="prayerCard">
+                <div class="section-label">
+                    <span>مواقيت الصلاة</span>
+                    <small>حسب موقعك</small>
+                </div>
 
-        <!-- زر مشاركة البطاقة -->
-        <button class="share-btn" id="shareBtn">📤 مشاركة البطاقة كصورة فاخرة</button>
+                <div class="next-prayer">
+                    <span class="prayer-name" id="nextPrayerName">----</span>
+                    <span class="remaining" id="remainingTime">--:--:--</span>
+                </div>
 
-        <!-- قسم الأذكار والسبحة الرقمية -->
-        <div class="dhikr-section">
-            <div class="dhikr-row">
-                <button class="dhikr-btn" id="morningDhikrBtn">🌅 أذكار الصباح</button>
-                <button class="dhikr-btn" id="eveningDhikrBtn">🌙 أذكار المساء</button>
-            </div>
-            <div class="counter-dhikr">
-                <span class="counter-label">🔁 سبحة رقمية:</span>
-                <span class="counter-value" id="dhikrCounterValue">0</span>
-                <button class="counter-btn" id="dhikrCounterBtn">+1</button>
-                <button class="counter-reset" id="dhikrCounterReset">إعادة تعيين</button>
-            </div>
-        </div>
+                <div class="iqama" id="iqamaTime">⏱️ وقت الإقامة: --:--</div>
+                <button class="location-btn" id="locationBtn">📍 توقيت منطقتي (اضغط للسماح)</button>
+                <div class="location-status" id="locationStatus"></div>
+            </section>
 
-        <hr />
+            <!-- أثر اليوم -->
+            <section class="daily-athar glass-panel">
+                <div class="section-label">
+                    <span>أثر اليوم</span>
+                    <small>اختر نوع الأثر</small>
+                </div>
 
-        <!-- السطر السفلي (الوقف الخيري) -->
-        <div class="waqf">
-            <p class="waqf-line">وقف خيري عن مسلّم عوده البويني رحمه الله</p>
-        </div>
+                <div class="content-type-selector">
+                    <button class="content-type-btn" data-type="ayah">📖 آية</button>
+                    <button class="content-type-btn" data-type="hadith">🕌 حديث</button>
+                    <button class="content-type-btn" data-type="dhikr">📿 ذكر</button>
+                </div>
+            </section>
 
-        <!-- زر الوضع الليلي -->
-        <div class="dark-mode-toggle">
-            <button id="darkModeToggleBtn">🌙 الوضع الليلي</button>
+            <!-- البطاقة الدينية -->
+            <section class="share-card" id="shareCard">
+                <div class="card-background-selector">
+                    <span class="bg-label">خلفية البطاقة</span>
+                    <button class="bg-option" data-bg="gold">ذهبي</button>
+                    <button class="bg-option" data-bg="blue">أزرق</button>
+                    <button class="bg-option" data-bg="green">أخضر</button>
+                </div>
+
+                <div class="badge" id="cardTypeBadge">آية قرآنية</div>
+
+                <div class="ayat-text" id="cardContent">
+                    "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً"
+                </div>
+
+                <div class="card-reference" id="cardReference">البقرة ٢٠١</div>
+            </section>
+
+            <button class="share-btn" id="shareBtn">📤 مشاركة البطاقة كصورة فاخرة</button>
+
+            <!-- الأذكار والسبحة -->
+            <section class="dhikr-section">
+                <div class="dhikr-row">
+                    <button class="dhikr-btn" id="morningDhikrBtn">🌅 أذكار الصباح</button>
+                    <button class="dhikr-btn" id="eveningDhikrBtn">🌙 أذكار المساء</button>
+                </div>
+
+                <div class="counter-dhikr">
+                    <span class="counter-label">سبحة رقمية</span>
+                    <span class="counter-value" id="dhikrCounterValue">0</span>
+                    <button class="counter-btn" id="dhikrCounterBtn">+1</button>
+                    <button class="counter-reset" id="dhikrCounterReset">إعادة</button>
+                </div>
+            </section>
+
+            <!-- الوقف -->
+            <footer class="waqf">
+                <p class="waqf-line">وقف خيري عن مسلّم عوده البويني رحمه الله</p>
+            </footer>
+
         </div>
     </div>
 
