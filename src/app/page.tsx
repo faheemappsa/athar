@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Moon, Heart, Settings, Share2, Bookmark, RefreshCw } from "lucide-react";
+import { Moon, Heart, Settings, Share2, Bookmark, RefreshCw, MessageCircle } from "lucide-react";
+import { WHATSAPP_LINK } from "@/lib/constants";
+import { trackSupportClick, trackAtharView } from "@/lib/analytics";
 import AtharCard from "@/components/AtharCard";
 import PrayerTimes from "@/components/PrayerTimes";
 import Streak from "@/components/Streak";
@@ -18,11 +20,10 @@ export default function Home() {
   useEffect(() => {
     const saved = localStorage.getItem("athar-streak");
     if (saved) setStreak(parseInt(saved));
+    
+    // Track page view
+    trackAtharView("daily", "home");
   }, []);
-
-  const formatHijri = () => {
-    return "٥ ذو الحجة ١٤٤٧ هـ";
-  };
 
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString("ar-SA", {
@@ -32,8 +33,13 @@ export default function Home() {
     });
   };
 
+  const handleSupportClick = () => {
+    trackSupportClick();
+    window.open(WHATSAPP_LINK, "_blank");
+  };
+
   return (
-    <main className="min-h-screen pb-20">
+    <main className="min-h-screen pb-24">
       {/* Header */}
       <header className="flex items-center justify-between p-4">
         <button className="p-2 rounded-full bg-white/80 shadow-sm">
@@ -62,6 +68,17 @@ export default function Home() {
 
       {/* Streak */}
       <Streak streak={streak} />
+
+      {/* WhatsApp Support Button */}
+      <section className="px-4 py-4">
+        <button
+          onClick={handleSupportClick}
+          className="w-full flex items-center justify-center gap-2 bg-green-500 text-white py-3 rounded-xl font-medium transition-all hover:bg-green-600 active:scale-95"
+        >
+          <MessageCircle className="w-5 h-5" />
+          تواصل معنا عبر واتساب
+        </button>
+      </section>
 
       {/* Bottom Nav */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-3 flex justify-around items-center">
