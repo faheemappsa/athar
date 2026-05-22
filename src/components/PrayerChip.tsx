@@ -4,13 +4,20 @@ import { clsx } from "clsx";
 
 interface PrayerChipProps {
   name: string;
-  time: string;
+  time: string; // بصيغة HH:mm (24 ساعة)
   icon: string;
   isActive?: boolean;
   onClick?: () => void;
 }
 
+function getPeriod(time: string): string {
+  const hour = parseInt(time.split(":")[0], 10);
+  return hour < 12 ? "ص" : "م";
+}
+
 export default function PrayerChip({ name, time, icon, isActive = false, onClick }: PrayerChipProps) {
+  const period = getPeriod(time);
+
   return (
     <button
       onClick={onClick}
@@ -23,7 +30,10 @@ export default function PrayerChip({ name, time, icon, isActive = false, onClick
     >
       <span className="text-lg">{icon}</span>
       <span className="text-xs font-medium">{name}</span>
-      <span className="text-sm font-bold">{time}</span>
+      <span className="text-sm font-bold">
+        {time}
+        <span className="text-xs ml-0.5 opacity-70">{period}</span>
+      </span>
     </button>
   );
 }
