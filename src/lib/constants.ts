@@ -2,11 +2,11 @@
 // وقف خيري عن مسلم عوده البويني رحمه الله
 
 // WhatsApp Support Number
-// TODO: Replace with your real number (format: 9665xxxxxxxx)
-export const WHATSAPP_NUMBER = "WHATSAPP_NUMBER_HERE";
-
-// WhatsApp Link
+export const WHATSAPP_NUMBER = "966556445919";
 export const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`;
+
+// Google Analytics
+export const GA_MEASUREMENT_ID = "G-H9NQ6TLRS5";
 
 // App Info
 export const APP_NAME = "أثر";
