@@ -10,13 +10,18 @@ interface PrayerChipProps {
   onClick?: () => void;
 }
 
-function getPeriod(time: string): string {
-  const hour = parseInt(time.split(":")[0], 10);
-  return hour < 12 ? "ص" : "م";
+function formatTime12(time: string): { display: string; period: string } {
+  const [h, m] = time.split(":").map(Number);
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  const period = h < 12 ? "ص" : "م";
+  return {
+    display: `${hour12}:${String(m).padStart(2, "0")}`,
+    period,
+  };
 }
 
 export default function PrayerChip({ name, time, icon, isActive = false, onClick }: PrayerChipProps) {
-  const period = getPeriod(time);
+  const { display, period } = formatTime12(time);
 
   return (
     <button
@@ -31,7 +36,7 @@ export default function PrayerChip({ name, time, icon, isActive = false, onClick
       <span className="text-lg">{icon}</span>
       <span className="text-xs font-medium">{name}</span>
       <span className="text-sm font-bold">
-        {time}
+        {display}
         <span className="text-xs ml-0.5 opacity-70">{period}</span>
       </span>
     </button>
