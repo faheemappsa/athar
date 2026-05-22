@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Share2, Bookmark, RefreshCw, Loader2 } from "lucide-react";
 import { fetchDailyAthar } from "@/lib/api";
 import type { AtharItem } from "@/lib/api";
+import Badge from "./Badge";
 
 export default function AtharCard() {
   const [athar, setAthar] = useState<AtharItem | null>(null);
@@ -57,9 +58,7 @@ export default function AtharCard() {
           <>
             {/* Category */}
             <div className="flex items-center justify-between">
-              <span className="text-sm text-athar-muted bg-athar-bg px-3 py-1 rounded-full">
-                {athar.category}
-              </span>
+              <Badge label={athar.category} variant="muted" />
               <span className="text-xs text-athar-muted">أثر اليوم</span>
             </div>
 
