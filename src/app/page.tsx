@@ -20,9 +20,21 @@ export default function Home() {
   useEffect(() => {
     const saved = localStorage.getItem("athar-streak");
     if (saved) setStreak(parseInt(saved));
-    
-    // Track page view
     trackAtharView("daily", "home");
+  }, []);
+
+  // Register Service Worker
+  useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register("/sw.js")
+        .then((registration) => {
+          console.log("SW registered:", registration.scope);
+        })
+        .catch((error) => {
+          console.log("SW registration failed:", error);
+        });
+    }
   }, []);
 
   const formatTime = (date: Date) => {
