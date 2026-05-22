@@ -3,24 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#1B6B6F" id="themeColorMeta">
+    <meta name="theme-color" content="#FFF6EA" id="themeColorMeta">
     <meta name="description" content="أثر - تجربة روحانية عربية مع مواقيت صلاة دقيقة، أذكار، وبطاقات يومية فاخرة">
-    
-    <!-- iOS PWA -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="أثر">
-    
     <title>أثر | Athar</title>
-    
-    <!-- Preload Fonts -->
-    <link rel="preload" href="thmanyahsans-Regular.otf" as="font" type="font/otf" crossorigin>
-    <link rel="preload" href="thmanyahsans-Bold.otf" as="font" type="font/otf" crossorigin>
-    <link rel="preload" href="thmanyahsans-Black.otf" as="font" type="font/otf" crossorigin>
-    
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/faheemappsa/athar/main/icon-192.png">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H9NQ6TLRS5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-H9NQ6TLRS5');
+    </script>
 </head>
 
 <body>
@@ -29,7 +26,7 @@
 
             <!-- Header -->
             <header class="app-header">
-                <button class="icon-btn" id="favoritesBtn" aria-label="المفضلة">♡</button>
+                <button class="icon-btn" aria-label="تنبيه">♡</button>
                 <div class="brand">
                     <span class="brand-mark">أثر</span>
                     <small>كل يوم أثر نور</small>
@@ -37,65 +34,44 @@
                 <button class="icon-btn" id="darkModeToggleBtn" aria-label="الوضع الليلي">☾</button>
             </header>
 
-            <!-- Hook - يتغير حسب الوقت -->
-            <div class="hook" id="dailyHook">
-                <p class="hook-line">أصبحنا وأصبح الملك لله...</p>
-                <p class="hook-sub">اللهم بك أصبحنا وبك أمسينا</p>
-            </div>
-
-            <!-- Hero Visual - مشهد فلكي -->
-            <section class="visual-hero" id="visualHero" aria-label="مشهد أثر">
-                <div class="sun-orb" id="sunOrb"></div>
-                <div class="moon-orb" id="moonOrb"></div>
-                <div class="star-field" id="starField"></div>
+            <!-- Hero Visual -->
+            <section class="visual-hero" aria-label="مشهد أثر">
+                <div class="sun-orb"></div>
                 <div class="mountain-layer layer-a"></div>
                 <div class="mountain-layer layer-b"></div>
                 <div class="hero-arch"></div>
-                <div class="hero-time-badge" id="heroTimeBadge">فجر</div>
             </section>
 
             <!-- الوقت والتاريخ -->
             <section class="time-section glass-panel">
                 <div class="date-row">
-                    <div class="date-block hijri">
+                    <div class="date-block">
                         <span id="hijriDate">-- -- ----</span>
                         <small>الهجري</small>
                     </div>
                     <span class="date-divider"></span>
-                    <div class="date-block day">
-                        <span id="dayAndOccasion">--</span>
-                        <small id="occasionLabel">--</small>
+                    <div class="date-block">
+                        <span id="gregorianDate" class="gregorian-date">-- -- ----</span>
+                        <small>الميلادي</small>
                     </div>
                 </div>
-                <div class="gregorian-full" id="gregorianDate">-- -- ----</div>
-                <div class="current-time" id="currentTime">--:--:--</div>
+                <div class="current-time" id="currentTime">--:--</div>
             </section>
 
             <!-- بطاقة مواقيت الصلاة -->
             <section class="prayer-card glass-panel" id="prayerCard">
                 <div class="section-label">
                     <span>مواقيت الصلاة</span>
-                    <small id="locationLabel">مكة المكرمة</small>
-                </div>
-
-                <!-- قائمة أوقات الصلاة الخمسة -->
-                <div class="prayer-times-list" id="prayerTimesList">
-                    <div class="prayer-time-item loading">
-                        <span class="prayer-icon">⏳</span>
-                        <span class="prayer-name">جاري التحميل...</span>
-                        <span class="prayer-time">--:--</span>
-                    </div>
+                    <small>حسب موقعك</small>
                 </div>
 
                 <div class="next-prayer">
-                    <div class="next-prayer-label">الصلاة القادمة</div>
                     <span class="prayer-name" id="nextPrayerName">----</span>
                     <span class="remaining" id="remainingTime">--:--:--</span>
                 </div>
 
                 <div class="iqama" id="iqamaTime">⏱️ وقت الإقامة: --:--</div>
-                
-                <button class="location-btn" id="locationBtn">📍 حدد موقعي</button>
+                <button class="location-btn" id="locationBtn">📍 توقيت منطقتي (اضغط للسماح)</button>
                 <div class="location-status" id="locationStatus"></div>
             </section>
 
@@ -106,17 +82,8 @@
                     <small>اختر نوع الأثر</small>
                 </div>
 
-                <div class="mood-selector" id="moodSelector">
-                    <button class="mood-btn" data-mood="rizq">🌱 رزق</button>
-                    <button class="mood-btn" data-mood="sad">😔 حزن</button>
-                    <button class="mood-btn" data-mood="dua">🤲 دعاء</button>
-                    <button class="mood-btn" data-mood="power">💪 قوة</button>
-                    <button class="mood-btn" data-mood="tawbah">🌙 توبة</button>
-                    <button class="mood-btn" data-mood="sakinah">😌 سكينة</button>
-                </div>
-
                 <div class="content-type-selector">
-                    <button class="content-type-btn is-active" data-type="ayah">📖 آية</button>
+                    <button class="content-type-btn" data-type="ayah">📖 آية</button>
                     <button class="content-type-btn" data-type="hadith">🕌 حديث</button>
                     <button class="content-type-btn" data-type="dhikr">📿 ذكر</button>
                 </div>
@@ -126,7 +93,7 @@
             <section class="share-card" id="shareCard">
                 <div class="card-background-selector">
                     <span class="bg-label">خلفية البطاقة</span>
-                    <button class="bg-option is-active" data-bg="gold">ذهبي</button>
+                    <button class="bg-option" data-bg="gold">ذهبي</button>
                     <button class="bg-option" data-bg="blue">أزرق</button>
                     <button class="bg-option" data-bg="green">أخضر</button>
                 </div>
@@ -138,8 +105,6 @@
                 </div>
 
                 <div class="card-reference" id="cardReference">البقرة ٢٠١</div>
-                
-                <button class="refresh-btn" id="refreshCardBtn">🔄 أثر جديد</button>
             </section>
 
             <button class="share-btn" id="shareBtn">📤 مشاركة البطاقة كصورة فاخرة</button>
@@ -155,57 +120,28 @@
                     <span class="counter-label">سبحة رقمية</span>
                     <span class="counter-value" id="dhikrCounterValue">0</span>
                     <button class="counter-btn" id="dhikrCounterBtn">+1</button>
-                    <button class="counter-reset" id="dhikrCounterReset">↺</button>
+                    <button class="counter-reset" id="dhikrCounterReset">إعادة</button>
                 </div>
-            </section>
-
-            <!-- البوصلة -->
-            <section class="qibla-section glass-panel" id="qiblaSection">
-                <div class="section-label">
-                    <span>اتجاه القبلة</span>
-                    <small>اضغط لتفعيل البوصلة</small>
-                </div>
-                <div class="compass-container" id="compassContainer">
-                    <div class="compass-ring" id="compassRing">
-                        <div class="compass-arrow" id="compassArrow">↑</div>
-                        <div class="compass-degree" id="compassDegree">--°</div>
-                    </div>
-                </div>
-                <div class="qibla-status" id="qiblaStatus">اضغط لتفعيل البوصلة</div>
             </section>
 
             <!-- الوقف -->
             <footer class="waqf">
                 <p class="waqf-line">وقف خيري عن مسلّم عوده البويني رحمه الله</p>
-                <span class="waqf-dove">🕊️</span>
             </footer>
 
         </div>
     </div>
 
-    <!-- عنصر مخفي لتصدير البطاقة -->
-    <div id="exportCardContainer" style="position: absolute; left: -9999px; top: -9999px; z-index: -1; overflow: hidden; width: 0; height: 0;">
+    <!-- عنصر مخفي لإنشاء بطاقة المشاركة الاحترافية -->
+    <div id="exportCardContainer" style="position: absolute; left: -9999px; top: -9999px; z-index: -1;">
         <div id="exportCard" class="export-card">
-            <div class="export-frame">
-                <div class="export-header">
-                    <span class="export-dove">🕊️</span>
-                    <span class="export-brand">أثر</span>
-                    <span class="export-dove">🕊️</span>
-                </div>
-                <div class="export-divider"></div>
-                <div class="export-content" id="exportCardContent">نص البطاقة</div>
-                <div class="export-reference" id="exportCardRef">المرجع</div>
-                <div class="export-hashtag">#أثر_كل_يوم_أثر_نور</div>
-                <div class="export-footer">
-                    <div class="export-qr" id="exportQR">QR</div>
-                    <div class="export-url">athar.app</div>
-                </div>
-            </div>
+            <div class="export-header">🕊️ أثر 🕊️</div>
+            <div class="export-content" id="exportCardContent">نص البطاقة</div>
+            <div class="export-reference" id="exportCardRef">المرجع</div>
+            <div class="export-footer">athar-sandy.vercel.app</div>
         </div>
     </div>
 
-    <!-- مكتبة html-to-image -->
-    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
