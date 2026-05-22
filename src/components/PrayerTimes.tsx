@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from "react";
 import { MapPin, Clock, Loader2, AlertCircle } from "lucide-react";
 import { fetchPrayerTimes, getIslamicEvents } from "@/lib/api";
 import type { PrayerTimesData, HijriDate, IslamicEvent } from "@/lib/api";
+import Badge from "./Badge";
+import PrayerChip from "./PrayerChip";
 
 export default function PrayerTimes() {
   const [location, setLocation] = useState<string>("مكة المكرمة");
@@ -34,7 +36,6 @@ export default function PrayerTimes() {
   }, []);
 
   useEffect(() => {
-    // محاولة استخدام موقع المستخدم
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -44,7 +45,6 @@ export default function PrayerTimes() {
           loadPrayerTimes(latitude, longitude);
         },
         () => {
-          // فشل الموقع، استخدام مكة
           loadPrayerTimes(21.4225, 39.8262);
         }
       );
@@ -53,7 +53,6 @@ export default function PrayerTimes() {
     }
   }, [loadPrayerTimes]);
 
-  // تحديث الوقت المتبقي كل دقيقة
   useEffect(() => {
     if (!nextPrayer) return;
     const interval = setInterval(async () => {
@@ -110,12 +109,7 @@ export default function PrayerTimes() {
             {events.length > 0 && (
               <div className="mt-2 flex flex-wrap justify-center gap-2">
                 {events.map((event) => (
-                  <span
-                    key={event.name}
-                    className="text-xs bg-athar-accent/20 text-athar-accent px-2 py-1 rounded-full"
-                  >
-                    {event.name}
-                  </span>
+                  <Badge key={event.name} label={event.name} variant="accent" />
                 ))}
               </div>
             )}
@@ -135,18 +129,13 @@ export default function PrayerTimes() {
         ) : (
           <div className="flex gap-2 overflow-x-auto pb-2">
             {prayerTimes.map((prayer) => (
-              <div
+              <PrayerChip
                 key={prayer.name}
-                className={`flex-shrink-0 flex flex-col items-center gap-1 p-3 rounded-xl min-w-[70px] transition-all ${
-                  nextPrayer?.name === prayer.name
-                    ? "bg-athar-primary text-white shadow-md"
-                    : "bg-athar-bg text-athar-text"
-                }`}
-              >
-                <span className="text-lg">{prayer.icon}</span>
-                <span className="text-xs font-medium">{prayer.name}</span>
-                <span className="text-sm font-bold">{prayer.time}</span>
-              </div>
+                name={prayer.name}
+                time={prayer.time}
+                icon={prayer.icon}
+                isActive={nextPrayer?.name === prayer.name}
+              />
             ))}
           </div>
         )}
