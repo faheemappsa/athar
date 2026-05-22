@@ -1,5 +1,8 @@
-// ==========================================
-// أثر v5 — Aladhan API | دقيق | موثوق | PWA
+
+# I'll create the updated script.js file with all the fixes and improvements
+
+script_js_content = '''// ==========================================
+// أثر v6 — Aladhan API | دقيق | موثوق | PWA
 // ==========================================
 
 // ========== 1. DOM Elements ==========
@@ -52,6 +55,7 @@ const CARD_BG_KEY = 'athar_card_bg';
 let currentCardData = null;
 let qiblaActive = false;
 let updateInterval = null;
+let currentExportType = 'story'; // 'story' or 'post'
 
 // ========== 3. Aladhan API Integration ==========
 const ALADHAN_API = 'https://api.aladhan.com/v1';
@@ -81,15 +85,34 @@ async function fetchQiblaDirection(lat, lon) {
     return data.data.direction;
 }
 
-// ========== 4. Time & Date ==========
+// ========== 4. Time & Date Helpers ==========
+// Convert 24h to 12h format with ص/م
+function to12Hour(time24) {
+    if (!time24) return '--:--';
+    const [h, m] = time24.split(':').map(Number);
+    const period = h >= 12 ? 'م' : 'ص';
+    const h12 = h % 12 || 12;
+    return `${h12.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')} ${period}`;
+}
+
+// Convert minutes to 12h format
+function minutesTo12Hour(totalMinutes) {
+    const h = Math.floor(totalMinutes / 60) % 24;
+    const m = totalMinutes % 60;
+    const period = h >= 12 ? 'م' : 'ص';
+    const h12 = h % 12 || 12;
+    return `${h12.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')} ${period}`;
+}
+
 function updateTimeAndDate() {
     const now = new Date();
     
-    // Current time
+    // Current time - 12 hour format
     const timeStr = now.toLocaleTimeString('ar-SA', { 
         hour: '2-digit', 
         minute: '2-digit',
-        second: '2-digit'
+        second: '2-digit',
+        hour12: true
     });
     currentTimeEl.innerText = timeStr;
     
@@ -253,10 +276,13 @@ function updateHeroByTime(date, prayerTimesData) {
     
     // Update hook with animation
     const hookLine = dailyHook.querySelector('.hook-line');
+    const hookSub = dailyHook.querySelector('.hook-sub');
+    
     if (hookLine.innerText !== hookText) {
         dailyHook.style.opacity = '0';
         setTimeout(() => {
             hookLine.innerText = hookText;
+            if (hookSub) hookSub.innerText = hookSubtext;
             dailyHook.style.opacity = '1';
         }, 300);
     }
@@ -355,8 +381,9 @@ function updatePrayerDisplay() {
     
     let html = '';
     prayers.forEach(prayer => {
-        const time = t[prayer.key];
-        const prayerTotal = timeToMinutes(time);
+        const time24 = t[prayer.key];
+        const time12 = to12Hour(time24);
+        const prayerTotal = timeToMinutes(time24);
         const isPast = currentTotal > prayerTotal;
         const isCurrent = Math.abs(currentTotal - prayerTotal) < 30; // Within 30 min
         
@@ -367,7 +394,7 @@ function updatePrayerDisplay() {
             <div class="prayer-time-item ${statusClass}">
                 <span class="prayer-icon">${prayer.icon}</span>
                 <span class="prayer-name">${prayer.ar}</span>
-                <span class="prayer-time">${time}</span>
+                <span class="prayer-time">${time12}</span>
                 ${currentIndicator}
             </div>
         `;
@@ -455,9 +482,8 @@ function startPrayerCountdown() {
             let nextIqamaTotal = nextTotal + nextIqamaDelay;
             if (nextIqamaTotal >= 24 * 60) nextIqamaTotal -= 24 * 60;
             
-            const iqH = Math.floor(nextIqamaTotal / 60) % 24;
-            const iqM = nextIqamaTotal % 60;
-            iqamaTimeEl.innerHTML = `⏱️ وقت الإقامة القادم: ${iqH.toString().padStart(2,'0')}:${iqM.toString().padStart(2,'0')}`;
+            const iqTimeStr = minutesTo12Hour(nextIqamaTotal);
+            iqamaTimeEl.innerHTML = `⏱️ وقت الإقامة القادم: ${iqTimeStr}`;
             iqamaTimeEl.classList.remove('iqama-active');
         }
         
@@ -515,6 +541,10 @@ locationBtn.addEventListener('click', () => {
 // ========== 6. Content Loading (Local Library) ==========
 async function loadContentByType(type, mood = null) {
     try {
+        // Show loading animation
+        cardContentEl.style.opacity = '0';
+        cardReferenceEl.style.opacity = '0';
+        
         let data;
         const today = new Date().toISOString().split('T')[0];
         const cacheKey = `athar_${type}_${today}_${mood || 'all'}`;
@@ -564,19 +594,26 @@ async function loadContentByType(type, mood = null) {
         
         currentCardData = data;
         
-        if (type === 'ayah') {
-            cardContentEl.innerText = `"${data.text}"`;
-            cardReferenceEl.innerText = `${data.surah} ${data.verse} (ص${data.page})`;
-            cardTypeBadge.innerText = 'آية قرآنية';
-        } else if (type === 'hadith') {
-            cardContentEl.innerText = `"${data.text}"`;
-            cardReferenceEl.innerText = `${data.source} - ${data.book}`;
-            cardTypeBadge.innerText = 'حديث نبوي';
-        } else {
-            cardContentEl.innerText = `"${data.text}"`;
-            cardReferenceEl.innerText = `${data.category} - ${data.reference}`;
-            cardTypeBadge.innerText = 'ذكر';
-        }
+        // Update with animation
+        setTimeout(() => {
+            if (type === 'ayah') {
+                cardContentEl.innerText = `"${data.text}"`;
+                cardReferenceEl.innerText = `${data.surah} ${data.verse} (ص${data.page})`;
+                cardTypeBadge.innerText = 'آية قرآنية';
+            } else if (type === 'hadith') {
+                cardContentEl.innerText = `"${data.text}"`;
+                cardReferenceEl.innerText = `${data.source} - ${data.book}`;
+                cardTypeBadge.innerText = 'حديث نبوي';
+            } else {
+                cardContentEl.innerText = `"${data.text}"`;
+                cardReferenceEl.innerText = `${data.category} - ${data.reference}`;
+                cardTypeBadge.innerText = 'ذكر';
+            }
+            
+            cardContentEl.style.opacity = '1';
+            cardReferenceEl.style.opacity = '1';
+        }, 200);
+        
     } catch(e) {
         console.error('Error loading content:', e);
         // Fallback
@@ -589,13 +626,24 @@ async function loadContentByType(type, mood = null) {
         cardContentEl.innerText = `"${fb.text}"`;
         cardReferenceEl.innerText = fb.ref;
         cardTypeBadge.innerText = type === 'ayah' ? 'آية قرآنية' : type === 'hadith' ? 'حديث نبوي' : 'ذكر';
+        
+        cardContentEl.style.opacity = '1';
+        cardReferenceEl.style.opacity = '1';
     }
 }
 
+// ========== 7. Event Listeners for Content ==========
 contentTypeBtns.forEach(btn => {
     btn.addEventListener('click', () => {
+        // Remove active from all
         contentTypeBtns.forEach(b => b.classList.remove('is-active'));
+        // Add active to clicked
         btn.classList.add('is-active');
+        
+        // Add click animation
+        btn.style.transform = 'scale(0.95)';
+        setTimeout(() => btn.style.transform = '', 150);
+        
         const type = btn.getAttribute('data-type');
         loadContentByType(type);
     });
@@ -603,29 +651,124 @@ contentTypeBtns.forEach(btn => {
 
 moodBtns.forEach(btn => {
     btn.addEventListener('click', () => {
+        // Remove active from all
         moodBtns.forEach(b => b.classList.remove('is-active'));
+        // Add active to clicked
         btn.classList.add('is-active');
+        
+        // Add click animation
+        btn.style.transform = 'scale(0.95)';
+        setTimeout(() => btn.style.transform = '', 150);
+        
         const mood = btn.getAttribute('data-mood');
+        
+        // Auto-select ayah type when mood is clicked
+        contentTypeBtns.forEach(b => b.classList.remove('is-active'));
+        document.querySelector('[data-type="ayah"]').classList.add('is-active');
+        
         loadContentByType('ayah', mood);
     });
 });
 
 refreshCardBtn.addEventListener('click', () => {
+    // Add rotation animation
+    refreshCardBtn.style.transform = 'rotate(360deg)';
+    refreshCardBtn.style.transition = 'transform 0.5s ease';
+    
+    setTimeout(() => {
+        refreshCardBtn.style.transform = '';
+        refreshCardBtn.style.transition = '';
+    }, 500);
+    
     const activeType = document.querySelector('.content-type-btn.is-active')?.getAttribute('data-type') || 'ayah';
     const activeMood = document.querySelector('.mood-btn.is-active')?.getAttribute('data-mood');
+    
+    // Clear cache for new random content
+    const today = new Date().toISOString().split('T')[0];
+    const cacheKey = `athar_${activeType}_${today}_${activeMood || 'all'}`;
+    localStorage.removeItem(cacheKey);
+    
     loadContentByType(activeType, activeMood);
 });
 
-// ========== 7. Export Card ==========
+// ========== 8. Export Card System ==========
 function updateExportCard() {
     exportCardContent.innerText = cardContentEl.innerText;
     exportCardRef.innerText = cardReferenceEl.innerText;
+    
+    // Update QR code dynamically
+    const qrContainer = document.getElementById('exportQR');
+    if (qrContainer) {
+        const siteUrl = 'https://athar-sandy.vercel.app';
+        const qrUrl = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${encodeURIComponent(siteUrl)}&choe=UTF-8`;
+        qrContainer.innerHTML = `<img src="${qrUrl}" alt="QR" style="width:100%;height:100%;border-radius:12px;">`;
+    }
 }
 
-async function shareFancyCard() {
+function showExportOptions() {
+    // Remove existing overlay
+    const existing = document.querySelector('.export-overlay');
+    if (existing) existing.remove();
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'export-overlay';
+    overlay.innerHTML = `
+        <div class="export-modal">
+            <div class="export-header">
+                <span>اختر نوع البطاقة</span>
+                <button class="export-close">✕</button>
+            </div>
+            <div class="export-options">
+                <button class="export-option" data-type="story">
+                    <span class="export-icon">📱</span>
+                    <span class="export-label">حفظ كـ Story</span>
+                    <small>1080 × 1920</small>
+                </button>
+                <button class="export-option" data-type="post">
+                    <span class="export-icon">🖼️</span>
+                    <span class="export-label">حفظ كـ منشور</span>
+                    <small>1080 × 1350</small>
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    
+    // Close button
+    overlay.querySelector('.export-close').addEventListener('click', () => {
+        overlay.remove();
+    });
+    
+    // Click outside to close
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.remove();
+    });
+    
+    // Export options
+    overlay.querySelectorAll('.export-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            const type = opt.getAttribute('data-type');
+            overlay.remove();
+            generateExportCard(type);
+        });
+    });
+}
+
+async function generateExportCard(type) {
+    currentExportType = type;
     updateExportCard();
     
     const cardElement = document.getElementById('exportCard');
+    
+    // Set dimensions based on type
+    if (type === 'story') {
+        cardElement.style.width = '1080px';
+        cardElement.style.height = '1920px';
+    } else {
+        cardElement.style.width = '1080px';
+        cardElement.style.height = '1350px';
+    }
     
     await document.fonts.ready;
     
@@ -634,24 +777,25 @@ async function shareFancyCard() {
             pixelRatio: 1,
             quality: 1,
             backgroundColor: null,
-            width: 1080,
-            height: 1920
+            width: type === 'story' ? 1080 : 1080,
+            height: type === 'story' ? 1920 : 1350
         });
         
         const response = await fetch(dataUrl);
         const blob = await response.blob();
-        const file = new File([blob], 'athar-card.png', { type: 'image/png' });
+        const fileName = type === 'story' ? 'athar-story.png' : 'athar-post.png';
+        const file = new File([blob], fileName, { type: 'image/png' });
         
         if (navigator.share && navigator.canShare({ files: [file] })) {
             await navigator.share({
                 files: [file],
                 title: 'أثر',
-                text: '#أثر_كل_يوم_أثر_نور'
+                text: 'هذا أثرك لليوم ✨'
             });
         } else {
             const link = document.createElement('a');
             link.href = dataUrl;
-            link.download = 'athar-card.png';
+            link.download = fileName;
             link.click();
         }
     } catch(e) {
@@ -660,9 +804,9 @@ async function shareFancyCard() {
     }
 }
 
-shareBtn.addEventListener('click', shareFancyCard);
+shareBtn.addEventListener('click', showExportOptions);
 
-// ========== 8. Card Backgrounds ==========
+// ========== 9. Card Backgrounds ==========
 function setCardBackground(bgClass) {
     shareCard.classList.remove('bg-gold', 'bg-blue', 'bg-green');
     shareCard.classList.add(bgClass);
@@ -691,7 +835,7 @@ if (savedBg && ['bg-gold','bg-blue','bg-green'].includes(savedBg)) {
     shareCard.classList.add('bg-blue');
 }
 
-// ========== 9. Dhikr Counter ==========
+// ========== 10. Dhikr Counter ==========
 let counter = parseInt(localStorage.getItem(COUNTER_KEY) || '0');
 dhikrCounterValue.innerText = counter;
 
@@ -716,7 +860,7 @@ dhikrCounterReset.addEventListener('click', () => {
     localStorage.setItem(COUNTER_KEY, counter);
 });
 
-// ========== 10. Morning/Evening Dhikr ==========
+// ========== 11. Morning/Evening Dhikr ==========
 function openDhikrList(category) {
     // Remove existing overlay
     const existing = document.querySelector('.dhikr-overlay');
@@ -838,7 +982,7 @@ function showCompletionMessage(category, count) {
 morningDhikrBtn.addEventListener('click', () => openDhikrList('أذكار الصباح'));
 eveningDhikrBtn.addEventListener('click', () => openDhikrList('أذكار المساء'));
 
-// ========== 11. Qibla Compass ==========
+// ========== 12. Qibla Compass ==========
 function calculateQibla(lat, lng) {
     const makkahLat = 21.422487;
     const makkahLng = 39.826206;
@@ -918,7 +1062,7 @@ function handleOrientation(event) {
 
 compassContainer.addEventListener('click', activateQibla);
 
-// ========== 12. Dark Mode ==========
+// ========== 13. Dark Mode ==========
 function toggleDarkMode() {
     document.body.classList.toggle('dark');
     const isDark = document.body.classList.contains('dark');
@@ -933,7 +1077,7 @@ if (localStorage.getItem(DARK_MODE_KEY) === 'dark') {
 
 darkModeToggleBtn.addEventListener('click', toggleDarkMode);
 
-// ========== 13. Service Worker ==========
+// ========== 14. Service Worker ==========
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
@@ -944,11 +1088,15 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// ========== 14. Initialization ==========
+// ========== 15. Initialization ==========
 function init() {
     // Start clock
     setInterval(updateTimeAndDate, 1000);
     updateTimeAndDate();
+    
+    // FIX: Update Gregorian date immediately (no API needed)
+    updateGregorianDate(new Date());
+    updateDayAndOccasion(new Date(), null);
     
     // Load location and prayer times
     if (!loadSavedLocation()) {
@@ -962,3 +1110,18 @@ function init() {
 
 // Start
 init();
+'''
+
+# Save to file
+with open('/mnt/agents/output/script.js', 'w', encoding='utf-8') as f:
+    f.write(script_js_content)
+
+print("✅ script.js تم إنشاؤه بنجاح")
+print(f"📊 الحجم: {len(script_js_content)} حرف")
+print("\n📋 التعديلات الرئيسية:")
+print("1. ✅ hour12: true - تحويل الساعة لـ 12h")
+print("2. ✅ updateGregorianDate() في init() - إصلاح التاريخ الميلادي")
+print("3. ✅ to12Hour() - تحويل أوقات الصلاة لـ 12h")
+print("4. ✅ تحديث الأزرار + animation")
+print("5. ✅ QR ديناميكي + Story/Post export")
+print("6. ✅ 'هذا أثرك لليوم' بدل الهاشتاق")
