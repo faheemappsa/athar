@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-thmanyah: 'Thmanyah', sans-serif;
+}
+
+html {
+  direction: rtl;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-thmanyah);
+  background-color: #F5F5F0;
+  color: #1B4332;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer base {
+  * {
+    @apply border-gray-200;
+  }
+}
+
+@layer components {
+  .athar-card {
+    @apply bg-white rounded-2xl shadow-lg p-6;
+  }
+  
+  .btn-primary {
+    @apply bg-[#2D6A4F] text-white px-6 py-3 rounded-xl font-medium 
+           transition-all duration-200 hover:bg-[#40916C] active:scale-95;
+  }
+  
+  .btn-secondary {
+    @apply bg-[#F5F5F0] text-[#1B4332] px-6 py-3 rounded-xl font-medium 
+           transition-all duration-200 hover:bg-[#E8E8E0] active:scale-95;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
