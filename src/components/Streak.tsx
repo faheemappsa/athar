@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Flame, Gift } from "lucide-react";
+import ProgressDots from "./ProgressDots";
 
 export default function Streak({ streak }: { streak: number }) {
   const [showGift, setShowGift] = useState(false);
@@ -41,16 +42,7 @@ export default function Streak({ streak }: { streak: number }) {
         </div>
 
         {/* Progress Dots */}
-        <div className="flex gap-1 mb-3">
-          {Array.from({ length: 7 }).map((_, i) => (
-            <div
-              key={i}
-              className={`h-2 flex-1 rounded-full ${
-                i < (streak % 7 || 7) ? "bg-athar-primary" : "bg-gray-200"
-              }`}
-            />
-          ))}
-        </div>
+        <ProgressDots total={7} filled={streak % 7 || 7} className="mb-3" />
 
         {/* Next Milestone */}
         {nextMilestone && (
