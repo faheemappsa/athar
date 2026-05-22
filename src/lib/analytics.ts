@@ -1,7 +1,7 @@
 // Google Analytics 4 - Athar
 // وقف خيري عن مسلم عوده البويني رحمه الله
 
-const GA_MEASUREMENT_ID = "GA_MEASUREMENT_ID_HERE";
+import { GA_MEASUREMENT_ID } from "./constants";
 
 // Initialize GA
 export const initGA = () => {
