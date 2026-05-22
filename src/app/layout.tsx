@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { initGA } from "@/lib/analytics";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -33,6 +34,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Initialize GA on client side
+  if (typeof window !== "undefined") {
+    initGA();
+  }
+
   return (
     <html lang="ar" dir="rtl">
       <head>
