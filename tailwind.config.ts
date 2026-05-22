@@ -11,6 +11,21 @@ const config: Config = {
       fontFamily: {
         thmanyah: ["Thmanyah", "sans-serif"],
       },
+      fontSize: {
+        "xs": ["0.75rem", { lineHeight: "1rem", fontWeight: "400" }],
+        "sm": ["0.875rem", { lineHeight: "1.5rem", fontWeight: "400" }],
+        "base": ["1rem", { lineHeight: "1.75rem", fontWeight: "400" }],
+        "lg": ["1.125rem", { lineHeight: "2rem", fontWeight: "500" }],
+        "xl": ["1.25rem", { lineHeight: "2rem", fontWeight: "500" }],
+        "2xl": ["1.5rem", { lineHeight: "2.25rem", fontWeight: "700" }],
+        "3xl": ["2rem", { lineHeight: "2.5rem", fontWeight: "700" }],
+      },
+      spacing: {
+        "18": "4.5rem",
+        "22": "5.5rem",
+        "26": "6.5rem",
+        "30": "7.5rem",
+      },
       colors: {
         athar: {
           primary: "#2D6A4F",
