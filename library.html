@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0F111A">
+    <meta name="description" content="مكتبة أثر - أرشيف بطاقات العلم النافع. اقرأ، شارك، وحمّل.">
+    <title>المكتبة | مكتبة أثر</title>
+    <link rel="stylesheet" href="https://font.thmanyah.com/Thmanyah.css">
+    <style>
+        :root {
+            --bg-primary: #0F111A;
+            --bg-secondary: #1A1E2B;
+            --bg-card: #212636;
+            --gold: #C9A84C;
+            --gold-light: #E8D5A0;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A9B2C3;
+            --text-muted: #6B7280;
+            --emerald: #4ADE80;
+            --radius-xl: 28px;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Thmanyah', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 16px;
+        }
+
+        .app-shell {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(26, 30, 43, 0.8);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 40px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.05);
+            overflow: hidden;
+        }
+
+        .content-layer { padding: 20px; }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50%;
+            width: 44px; height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        .back-btn:hover { color: var(--gold); border-color: var(--gold); background: rgba(255,255,255,0.1); }
+
+        .page-title { font-size: 24px; font-weight: 800; color: var(--gold); text-align: center; flex: 1; }
+
+        .header-placeholder { width: 44px; }
+
+        /* شريط البحث والتصفية */
+        .search-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 44px 14px 16px;
+            border-radius: var(--radius-md);
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus { border-color: var(--gold); }
+
+        .search-box .search-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 18px;
+        }
+
+        .filter-btn {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            color: var(--text-secondary);
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover, .filter-btn.active { border-color: var(--gold); color: var(--gold); }
+
+        /* شبكة البطاقات */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .card-item {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .card-item:hover {
+            border-color: rgba(201,168,76,0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+        }
+
+        .card-item .card-icon { font-size: 28px; }
+        .card-item .card-preview {
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card-item .card-ref { font-size: 12px; color: var(--gold); margin-top: auto; }
+        .card-item .card-tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 11px;
+            color: var(--text-muted);
+            width: fit-content;
+        }
+
+        /* مودال معاينة البطاقة */
+        .preview-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s;
+        }
+
+        .preview-modal.active { visibility: visible; opacity: 1; }
+
+        .preview-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-xl);
+            padding: 30px 24px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .preview-card .large-icon { font-size: 50px; margin-bottom: 16px; }
+        .preview-card .full-text { font-size: 22px; font-weight: 700; line-height: 1.7; margin-bottom: 16px; }
+        .preview-card .full-ref { color: var(--gold); font-weight: 600; margin-bottom: 24px; }
+
+        .action-btns { display: flex; gap: 10px; justify-content: center; }
+        .btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-md);
+            padding: 12px 20px;
+            color: white;
+            font-family: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn:hover { background: rgba(255,255,255,0.1); }
+        .btn.primary { background: var(--gold); color: black; border: none; }
+
+        .footer-note {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-shell">
+        <div class="content-layer">
+            <div class="page-header">
+                <a href="index.html" class="back-btn">←</a>
+                <h1 class="page-title">المكتبة</h1>
+                <div class="header-placeholder"></div>
+            </div>
+
+            <!-- بحث -->
+            <div class="search-filter">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="ابحث في البطاقات...">
+                    <span class="search-icon">🔍</span>
+                </div>
+                <button class="filter-btn active" data-filter="all">الكل</button>
+            </div>
+
+            <!-- شبكة البطاقات -->
+            <div class="cards-grid" id="cardsGrid"></div>
+
+            <div class="footer-note">© 2024 أثر · وقف خيري عن والدي رحمه الله</div>
+        </div>
+    </div>
+
+    <!-- مودال المعاينة -->
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-card">
+            <div class="large-icon" id="previewIcon">📖</div>
+            <div class="full-text" id="previewText"></div>
+            <div class="full-ref" id="previewRef"></div>
+            <div class="action-btns">
+                <button class="btn primary" id="sharePreviewBtn">↗️ شارك</button>
+                <button class="btn" id="downloadPreviewBtn">⬇️ تحميل</button>
+            </div>
+            <button class="btn" id="closePreviewBtn" style="margin-top:16px; width:100%;">إغلاق</button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const cardLibrary = [
+                { icon: "📖", text: "إذا مات الإنسان انقطع عنه عمله إلا من ثلاث: إلا من صدقة جارية، أو علم ينتفع به، أو ولد صالح يدعو له", ref: "رواه مسلم", tag: "حديث" },
+                { icon: "🕋", text: "وَمَا أَرْسَلْنَاكَ إِلَّا رَحْمَةً لِّلْعَالَمِينَ", ref: "الأنبياء: 107", tag: "آية" },
+                { icon: "🤲", text: "رَبِّ اغْفِرْ لِي وَلِوَالِدَيَّ وَلِمَن دَخَلَ بَيْتِيَ مُؤْمِنًا", ref: "نوح: 28", tag: "دعاء" },
+                { icon: "📖", text: "مثل المؤمنين في توادهم وتراحمهم وتعاطفهم مثل الجسد", ref: "متفق عليه", tag: "حديث" },
+                { icon: "🕋", text: "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", ref: "البقرة: 153", tag: "آية" },
+                { icon: "🤲", text: "اللهم إني أسألك الهدى والتقى والعفاف والغنى", ref: "رواه مسلم", tag: "دعاء" },
+                { icon: "📖", text: "الكلمة الطيبة صدقة", ref: "متفق عليه", tag: "حديث" },
+                { icon: "🕋", text: "فَاذْكُرُونِي أَذْكُرْكُمْ", ref: "البقرة: 152", tag: "آية" }
+            ];
+
+            const grid = document.getElementById('cardsGrid');
+            const searchInput = document.getElementById('searchInput');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const previewModal = document.getElementById('previewModal');
+
+            let currentFilter = 'all';
+
+            function renderCards(filter, query = '') {
+                grid.innerHTML = '';
+                cardLibrary.forEach(card => {
+                    const matchesFilter = (filter === 'all' || card.tag === filter);
+                    const matchesSearch = card.text.includes(query) || card.ref.includes(query);
+                    if (matchesFilter && matchesSearch) {
+                        const div = document.createElement('div');
+                        div.className = 'card-item';
+                        div.innerHTML = `
+                            <span class="card-icon">${card.icon}</span>
+                            <span class="card-preview">${card.text}</span>
+                            <span class="card-ref">${card.ref}</span>
+                            <span class="card-tag">${card.tag}</span>
+                        `;
+                        div.addEventListener('click', () => openPreview(card));
+                        grid.appendChild(div);
+                    }
+                });
+            }
+
+            function openPreview(card) {
+                document.getElementById('previewIcon').textContent = card.icon;
+                document.getElementById('previewText').textContent = card.text;
+                document.getElementById('previewRef').textContent = card.ref;
+                previewModal.classList.add('active');
+            }
+
+            function closePreview() {
+                previewModal.classList.remove('active');
+            }
+
+            document.getElementById('closePreviewBtn').addEventListener('click', closePreview);
+            previewModal.addEventListener('click', (e) => {
+                if (e.target === previewModal) closePreview();
+            });
+
+            document.getElementById('sharePreviewBtn').addEventListener('click', () => {
+                const text = document.getElementById('previewText').textContent + ' ' + document.getElementById('previewRef').textContent;
+                navigator.clipboard?.writeText(text + ' https://athar-sandy.vercel.app');
+                alert('تم نسخ النص للمشاركة');
+            });
+
+            document.getElementById('downloadPreviewBtn').addEventListener('click', () => {
+                alert('📸 جاري تطوير ميزة تحميل البطاقة كصورة.');
+            });
+
+            searchInput.addEventListener('input', (e) => {
+                renderCards(currentFilter, e.target.value);
+            });
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.dataset.filter;
+                    renderCards(currentFilter, searchInput.value);
+                });
+            });
+
+            // عرض أولي
+            renderCards('all');
+            console.log('📚 مكتبة أثر جاهزة.');
+        })();
+    </script>
+</body>
+</html>
