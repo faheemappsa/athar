@@ -28,7 +28,7 @@ export default function PrayerTimes() {
 
   const athanTimeRef = useRef<number | null>(null);
   const iqamahTimeRef = useRef<number | null>(null);
-  const duhaEndRef = useRef<number | null>(null); // للضحى فقط
+  const duhaEndRef = useRef<number | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const loadPrayerTimes = useCallback(async (lat: number, lng: number) => {
@@ -60,16 +60,14 @@ export default function PrayerTimes() {
       athanTimeRef.current = ah * 60 + am;
 
       if (upcomingPrayer.name === "الضحى") {
-        // وقت انتهاء الضحى = أذان الظهر - 10 دقائق
         const dhuhrPrayer = data.times.find((p) => p.name === "الظهر");
         if (dhuhrPrayer) {
           const [dhH, dhM] = dhuhrPrayer.time.split(":").map(Number);
           duhaEndRef.current = dhH * 60 + dhM - 10;
         } else {
-          duhaEndRef.current = athanTimeRef.current + 60; // احتياطي ساعة
+          duhaEndRef.current = athanTimeRef.current + 60;
         }
-        // الضحى ليس لها إقامة، نتعامل معها كوقت ممتد
-        iqamahTimeRef.current = null; // لا إقامة
+        iqamahTimeRef.current = null;
       } else {
         duhaEndRef.current = null;
         if (upcomingPrayer.iqamah) {
@@ -80,11 +78,10 @@ export default function PrayerTimes() {
         }
       }
 
-      // تحديد المرحلة الحالية
       if (upcomingPrayer.name === "الضحى") {
         const currentMinutes = now.getHours() * 60 + now.getMinutes();
         if (currentMinutes >= athanTimeRef.current && duhaEndRef.current && currentMinutes < duhaEndRef.current) {
-          setIsIqamah(true); // هنا تعني "وقت الضحى ممتد"
+          setIsIqamah(true);
         } else {
           setIsIqamah(false);
         }
@@ -125,7 +122,6 @@ export default function PrayerTimes() {
     }
   }, [loadPrayerTimes, updateCityName]);
 
-  // العداد الحي
   useEffect(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     if (athanTimeRef.current === null) return;
@@ -140,24 +136,19 @@ export default function PrayerTimes() {
       let phaseLabel: "athan" | "iqamah" | "duha" = "athan";
 
       if (nextPrayer?.name === "الضحى") {
-        // منطق خاص بالضحى
         if (currentMinutes >= athanTimeRef.current! && duhaEndRef.current && currentMinutes < duhaEndRef.current) {
-          // داخل وقت الضحى
           targetMinutes = duhaEndRef.current;
           phaseLabel = "duha";
         } else if (currentMinutes < athanTimeRef.current!) {
-          // قبل بدء الضحى
           targetMinutes = athanTimeRef.current;
           phaseLabel = "athan";
         } else {
-          // بعد انتهاء وقت الضحى -> انتقل للظهر (نعيد تحميل البيانات)
           if (coords) loadPrayerTimes(coords.lat, coords.lng);
           else loadPrayerTimes(21.4225, 39.8262);
           return;
         }
         setIsIqamah(phaseLabel === "duha");
       } else {
-        // صلاة عادية
         const iqamah = iqamahTimeRef.current;
         if (iqamah !== null && currentMinutes >= athanTimeRef.current! && currentMinutes < iqamah) {
           targetMinutes = iqamah;
@@ -174,7 +165,6 @@ export default function PrayerTimes() {
 
       const remainingSeconds = (targetMinutes * 60) - currentTotalSeconds;
       if (remainingSeconds <= 0) {
-        // انتهى الوقت المستهدف، نحدث البيانات
         if (coords) loadPrayerTimes(coords.lat, coords.lng);
         else loadPrayerTimes(21.4225, 39.8262);
         return;
@@ -214,6 +204,10 @@ export default function PrayerTimes() {
       );
     }
   };
+
+  // تقسيم الصلوات إلى أساسية ومكملة
+  const mainPrayers = prayerTimes.filter((p) => !["الشروق", "الضحى"].includes(p.name));
+  const supplementaryPrayers = prayerTimes.filter((p) => ["الشروق", "الضحى"].includes(p.name));
 
   return (
     <section className="px-4 py-4">
@@ -259,16 +253,33 @@ export default function PrayerTimes() {
             <span className="text-sm">تعذر جلب مواقيت الصلاة</span>
           </div>
         ) : (
-          <div className="flex justify-between gap-0.5">
-            {prayerTimes.map((prayer) => (
-              <PrayerChip
-                key={prayer.name}
-                name={prayer.name}
-                time={prayer.time}
-                icon={prayer.icon}
-                isActive={nextPrayer?.name === prayer.name}
-              />
-            ))}
+          <div className="space-y-2">
+            {/* السطر الأول: الصلوات الخمس الأساسية */}
+            <div className="flex justify-between gap-0.5">
+              {mainPrayers.map((prayer) => (
+                <PrayerChip
+                  key={prayer.name}
+                  name={prayer.name}
+                  time={prayer.time}
+                  icon={prayer.icon}
+                  isActive={nextPrayer?.name === prayer.name}
+                />
+              ))}
+            </div>
+            {/* السطر الثاني: الشروق والضحى */}
+            {supplementaryPrayers.length > 0 && (
+              <div className="flex justify-center gap-2">
+                {supplementaryPrayers.map((prayer) => (
+                  <PrayerChip
+                    key={prayer.name}
+                    name={prayer.name}
+                    time={prayer.time}
+                    icon={prayer.icon}
+                    isActive={nextPrayer?.name === prayer.name}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
 
