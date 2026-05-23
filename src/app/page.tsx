@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Moon, Heart, MessageCircle } from "lucide-react";
+import { Moon, Heart, MessageCircle, X } from "lucide-react";
 import { WHATSAPP_LINK } from "@/lib/constants";
 import { trackSupportClick, trackAtharView } from "@/lib/analytics";
 import AtharCard from "@/components/AtharCard";
@@ -12,6 +12,8 @@ import BottomNav from "@/components/BottomNav";
 export default function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [streak, setStreak] = useState(0);
+  const [showDuaModal, setShowDuaModal] = useState(false);
+  const [duaSent, setDuaSent] = useState(false);
 
   // تحديث الوقت الحالي كل ثانية
   useEffect(() => {
@@ -50,6 +52,17 @@ export default function Home() {
     setStreak(newStreak);
   }, []);
 
+  const handleHeartClick = () => {
+    setShowDuaModal(true);
+    setDuaSent(false);
+  };
+
+  const handleAmeen = () => {
+    setDuaSent(true);
+    // يمكن إضافة تتبع هنا إن أردت
+    setTimeout(() => setShowDuaModal(false), 1500);
+  };
+
   // التوقيت الحالي لشريط الدعاء (صباح / مساء)
   const hour = currentTime.getHours();
   const isMorning = hour >= 5 && hour < 12;
@@ -66,7 +79,10 @@ export default function Home() {
           <h1 className="text-3xl font-extrabold text-athar-primary">أثر</h1>
           <p className="text-xs text-athar-muted">أثرٌ جارٍ لا ينقطع</p>
         </div>
-        <button className="p-2 rounded-full bg-white/80 shadow-sm">
+        <button
+          onClick={handleHeartClick}
+          className="p-2 rounded-full bg-white/80 shadow-sm transition-all hover:bg-rose-50 active:scale-95"
+        >
           <Heart className="w-5 h-5 text-athar-primary" />
         </button>
       </header>
@@ -124,6 +140,47 @@ export default function Home() {
 
       {/* Bottom Navigation */}
       <BottomNav />
+
+      {/* مودال الدعاء للوقف والمسلمين */}
+      {showDuaModal && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full text-center space-y-5 shadow-2xl animate-scale-up">
+            {/* زر الإغلاق */}
+            <button
+              onClick={() => setShowDuaModal(false)}
+              className="absolute top-4 left-4 p-1 rounded-full hover:bg-gray-100"
+            >
+              <X className="w-5 h-5 text-gray-400" />
+            </button>
+
+            <Heart className="w-10 h-10 text-athar-accent mx-auto" />
+            
+            <h3 className="text-lg font-bold text-athar-text">الدعاء للوقف</h3>
+            
+            <div className="bg-athar-bg rounded-2xl p-4 text-sm leading-relaxed text-athar-text">
+              اللهم اغفر لمسلم عوده البويني وارحمه، واغفر لموتى المسلمين أجمعين، واجعل هذا الأثر جارياً لهم إلى يوم الدين، واجعل أعمالهم نوراً في قبورهم، واجمعنا بهم في جنات النعيم.
+            </div>
+
+            {!duaSent ? (
+              <button
+                onClick={handleAmeen}
+                className="btn-primary w-full flex items-center justify-center gap-2"
+              >
+                <span>آمين</span>
+                <span className="text-lg">🤲</span>
+              </button>
+            ) : (
+              <div className="bg-athar-primary/10 text-athar-primary rounded-xl py-3 px-4 text-sm font-medium">
+                آمين 🤲 جزاك الله خيراً
+              </div>
+            )}
+
+            <p className="text-xs text-athar-muted">
+              شارك في الأجر بنشر التطبيق أو الدعاء
+            </p>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
