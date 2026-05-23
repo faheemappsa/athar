@@ -23,6 +23,7 @@ export default function Home() {
   const [showNameModal, setShowNameModal] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
 
+  // ==================== الأذونات والإشعارات ====================
   useEffect(() => {
     const savedDark = localStorage.getItem("athar-dark-mode") === "true";
     setIsDark(savedDark);
@@ -55,7 +56,6 @@ export default function Home() {
     const today = new Date().toDateString();
     const lastCheck = localStorage.getItem("athar-last-check");
     setIsCheckedToday(lastCheck === today);
-    // تحميل الاسم من localStorage
     const savedName = localStorage.getItem("athar-user-name");
     if (savedName) setUserName(savedName);
   }, []);
@@ -73,6 +73,87 @@ export default function Home() {
     }
   }, []);
 
+  // جدولة الإشعارات
+  useEffect(() => {
+    if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+    let prayerTimer: NodeJS.Timeout;
+    let reminderTimer: NodeJS.Timeout;
+
+    const schedulePrayerNotification = async () => {
+      try {
+        // احصل على الصلاة القادمة من localStorage أو API
+        const savedTimes = localStorage.getItem("athar-prayer-times");
+        if (savedTimes) {
+          const times = JSON.parse(savedTimes);
+          const now = new Date();
+          const currentMinutes = now.getHours() * 60 + now.getMinutes();
+          
+          let nextPrayer = null;
+          for (const prayer of times) {
+            const [h, m] = prayer.time.split(":").map(Number);
+            const prayerMinutes = h * 60 + m;
+            if (prayerMinutes > currentMinutes) {
+              nextPrayer = prayer;
+              break;
+            }
+          }
+
+          if (nextPrayer) {
+            const [h, m] = nextPrayer.time.split(":").map(Number);
+            const prayerTime = new Date();
+            prayerTime.setHours(h, m - 5, 0, 0); // قبل الأذان بـ 5 دقائق
+            const delay = prayerTime.getTime() - Date.now();
+            
+            if (delay > 0) {
+              prayerTimer = setTimeout(() => {
+                new Notification("موعد الصلاة", {
+                  body: `اقترب أذان ${nextPrayer.name} (${nextPrayer.time})`,
+                  icon: "/icons/icon-192x192.png",
+                  badge: "/icons/icon-192x192.png",
+                  tag: "prayer-reminder",
+                  requireInteraction: true,
+                });
+              }, delay);
+            }
+          }
+        }
+      } catch (e) {
+        console.error("فشل جدولة إشعار الصلاة:", e);
+      }
+    };
+
+    const scheduleReminderNotification = () => {
+      // تذكير الساعة 9 مساءً إذا لم يثبت بصمته
+      if (isCheckedToday) return;
+      const now = new Date();
+      const reminderTime = new Date();
+      reminderTime.setHours(21, 0, 0, 0);
+      if (reminderTime.getTime() <= now.getTime()) {
+        reminderTime.setDate(reminderTime.getDate() + 1);
+      }
+      const delay = reminderTime.getTime() - now.getTime();
+      reminderTimer = setTimeout(() => {
+        new Notification("تذكير بصمة أثر", {
+          body: "لم تثبت بصمتك اليوم بعد. بادر قبل منتصف الليل.",
+          icon: "/icons/icon-192x192.png",
+          badge: "/icons/icon-192x192.png",
+          tag: "streak-reminder",
+          requireInteraction: true,
+        });
+      }, delay);
+    };
+
+    schedulePrayerNotification();
+    scheduleReminderNotification();
+
+    return () => {
+      if (prayerTimer) clearTimeout(prayerTimer);
+      if (reminderTimer) clearTimeout(reminderTimer);
+    };
+  }, [isCheckedToday]);
+
+  // ==================== المعالجات ====================
   const handleSupportClick = () => {
     trackSupportClick();
     window.open(WHATSAPP_LINK, "_blank");
@@ -84,12 +165,10 @@ export default function Home() {
   }, []);
 
   const handleHeartClick = () => {
-    // إذا لم يسجل اسمه بعد، نفتح مودال الاسم أولاً
     if (!userName) {
       setShowNameModal(true);
       return;
     }
-    // إذا كان لديه اسم، ننتقل مباشرة للدعاء
     setShowDuaModal(true);
     setDuaSent(false);
     setShowFadfedInvite(false);
@@ -99,7 +178,6 @@ export default function Home() {
     setUserName(name);
     localStorage.setItem("athar-user-name", name);
     setShowNameModal(false);
-    // بعد حفظ الاسم، نفتح مودال الدعاء تلقائياً
     setShowDuaModal(true);
     setDuaSent(false);
     setShowFadfedInvite(false);
@@ -119,13 +197,13 @@ export default function Home() {
     setIsDark((prev) => !prev);
   };
 
+  // ==================== الترحيب ====================
   const hour = currentTime.getHours();
   let greetingText = "";
   let duaText = "";
   let subText = "";
   let greetingEmoji = "";
 
-  // تخصيص التحية حسب الاسم
   const nameSuffix = userName ? ` يا ${userName}` : " يا صاحب الأثر";
 
   if (hour >= 3 && hour < 6) {
@@ -205,13 +283,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Athar Card */}
       <AtharCard />
-
-      {/* Prayer Times */}
       <PrayerTimes />
-
-      {/* بصمة أثر */}
       <Streak streak={streak} onStreakUpdate={handleStreakUpdate} />
 
       {/* Waqf Card */}
@@ -234,14 +307,12 @@ export default function Home() {
 
       <BottomNav />
 
-      {/* مودال الاسم (يظهر مرة واحدة) */}
       <NameModal
         isOpen={showNameModal}
         onSave={handleNameSave}
         onClose={() => setShowNameModal(false)}
       />
 
-      {/* مودال القلب: رحلة الدعاء ← فضفض لأثر */}
       {showDuaModal && (
         <div className="fixed inset-0 bg-black/30 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 max-w-sm w-full text-center space-y-5 shadow-2xl animate-scale-up relative">
@@ -303,7 +374,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* مودال فضفض لأثر الحقيقي */}
       <Fadfed isOpen={showFadfed} onClose={() => setShowFadfed(false)} />
     </main>
   );
