@@ -204,10 +204,10 @@ export default function AtharCard() {
         </div>
       )}
 
-      {/* بطاقة التصدير المخفية - تصميم فائق الفخامة مع كود QR */}
+      {/* بطاقة التصدير - موضوعة خارج الشاشة لكنها مرئية لـ html2canvas */}
       <div
         ref={exportCardRef}
-        className="fixed top-0 left-0 w-[1080px] h-[1920px] z-[-9999] opacity-0 pointer-events-none"
+        className="absolute left-[-9999px] top-0 w-[1080px] h-[1920px] pointer-events-none"
         style={{ direction: "rtl" }}
       >
         {athar && (
@@ -219,17 +219,14 @@ export default function AtharCard() {
               color: "white",
             }}
           >
-            {/* زخارف خلفية فاخرة */}
             <div className="absolute inset-0 opacity-20 pointer-events-none">
               <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-athar-accent blur-3xl"></div>
               <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-athar-secondary blur-3xl"></div>
             </div>
 
-            {/* إطار ذهبي شفاف داخلي */}
             <div className="absolute top-10 left-10 right-10 bottom-10 border border-white/10 rounded-[60px] pointer-events-none"></div>
             <div className="absolute top-12 left-12 right-12 bottom-12 border border-white/5 rounded-[50px] pointer-events-none"></div>
 
-            {/* المحتوى الرئيسي */}
             <div className="relative z-10 space-y-6">
               <h1 className="text-7xl font-extrabold tracking-wider">أثر</h1>
               <p className="text-3xl opacity-80">أثرٌ جارٍ لا ينقطع</p>
@@ -243,10 +240,9 @@ export default function AtharCard() {
               <p className="text-3xl opacity-70">— {athar.source}</p>
             </div>
 
-            {/* تذييل فاخر مع الكود */}
             <div className="relative z-10 space-y-8">
               <p className="text-2xl opacity-60">الوقف الخيري عن مسلم عوده البويني رحمه الله</p>
-              <div className="flex items-center justify-center gap-8 bg-white/10 backdrop-blur-sm rounded-3xl p-6 border border-white/20">
+              <div className="flex items-center justify-center gap-8 bg-white/10 rounded-3xl p-6 border border-white/20">
                 <div className="w-36 h-36 bg-white rounded-2xl flex items-center justify-center p-2 shadow-xl">
                   <QRCodeSVG value={APP_URL} size={120} level="M" />
                 </div>
