@@ -9,6 +9,7 @@ import PrayerTimes from "@/components/PrayerTimes";
 import Streak from "@/components/Streak";
 import BottomNav from "@/components/BottomNav";
 import Fadfed from "@/components/Fadfed";
+import NameModal from "@/components/NameModal";
 
 export default function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -18,7 +19,9 @@ export default function Home() {
   const [isDark, setIsDark] = useState(false);
   const [isCheckedToday, setIsCheckedToday] = useState(false);
   const [showFadfedInvite, setShowFadfedInvite] = useState(false);
-  const [showFadfed, setShowFadfed] = useState(false); // حالة فتح "فضفض لأثر"
+  const [showFadfed, setShowFadfed] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
+  const [userName, setUserName] = useState<string | null>(null);
 
   useEffect(() => {
     const savedDark = localStorage.getItem("athar-dark-mode") === "true";
@@ -52,6 +55,9 @@ export default function Home() {
     const today = new Date().toDateString();
     const lastCheck = localStorage.getItem("athar-last-check");
     setIsCheckedToday(lastCheck === today);
+    // تحميل الاسم من localStorage
+    const savedName = localStorage.getItem("athar-user-name");
+    if (savedName) setUserName(savedName);
   }, []);
 
   useEffect(() => {
@@ -78,6 +84,22 @@ export default function Home() {
   }, []);
 
   const handleHeartClick = () => {
+    // إذا لم يسجل اسمه بعد، نفتح مودال الاسم أولاً
+    if (!userName) {
+      setShowNameModal(true);
+      return;
+    }
+    // إذا كان لديه اسم، ننتقل مباشرة للدعاء
+    setShowDuaModal(true);
+    setDuaSent(false);
+    setShowFadfedInvite(false);
+  };
+
+  const handleNameSave = (name: string) => {
+    setUserName(name);
+    localStorage.setItem("athar-user-name", name);
+    setShowNameModal(false);
+    // بعد حفظ الاسم، نفتح مودال الدعاء تلقائياً
     setShowDuaModal(true);
     setDuaSent(false);
     setShowFadfedInvite(false);
@@ -103,28 +125,31 @@ export default function Home() {
   let subText = "";
   let greetingEmoji = "";
 
+  // تخصيص التحية حسب الاسم
+  const nameSuffix = userName ? ` يا ${userName}` : " يا صاحب الأثر";
+
   if (hour >= 3 && hour < 6) {
-    greetingText = "أسعد الله فجركم";
+    greetingText = `أسعد الله فجرك${nameSuffix}`;
     duaText = "اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور";
     subText = "وقت مبارك لصلاة الفجر";
     greetingEmoji = "🌙";
   } else if (hour >= 6 && hour < 12) {
-    greetingText = "صباح النور يا صاحب الأثر";
+    greetingText = `صباح النور${nameSuffix}`;
     duaText = "اللهم اجعل صباحنا نوراً وقلوبنا مطمئنة";
     subText = "ابدأ يومك بذكر";
     greetingEmoji = "☀️";
   } else if (hour >= 12 && hour < 17) {
-    greetingText = "حياك الله في هذه الظهيرة";
+    greetingText = `حياك الله${nameSuffix}`;
     duaText = "اللهم ارزقنا البركة في وقتنا وأعمالنا";
     subText = "لا تنس أذكار المساء";
     greetingEmoji = "🌤️";
   } else if (hour >= 17 && hour < 21) {
-    greetingText = "مساء الخير يا صاحب الأثر";
+    greetingText = `مساء الخير${nameSuffix}`;
     duaText = "اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير";
     subText = "أمسِ بذكر الله";
     greetingEmoji = "🌆";
   } else {
-    greetingText = "اللهم لا تخلف لنا وعدك";
+    greetingText = `اللهم لا تخلف لنا وعدك${nameSuffix}`;
     duaText = "اللهم أنزل السكينة في قلوبنا";
     subText = "ليلة هادئة بالنور";
     greetingEmoji = "🌙";
@@ -209,6 +234,13 @@ export default function Home() {
 
       <BottomNav />
 
+      {/* مودال الاسم (يظهر مرة واحدة) */}
+      <NameModal
+        isOpen={showNameModal}
+        onSave={handleNameSave}
+        onClose={() => setShowNameModal(false)}
+      />
+
       {/* مودال القلب: رحلة الدعاء ← فضفض لأثر */}
       {showDuaModal && (
         <div className="fixed inset-0 bg-black/30 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -222,7 +254,6 @@ export default function Home() {
 
             {!showFadfedInvite ? (
               <>
-                {/* الخطوة 1: الدعاء للوقف */}
                 <Heart className="w-10 h-10 text-athar-accent mx-auto" />
                 <h3 className="text-lg font-bold text-athar-text dark:text-gray-200">الدعاء للوقف</h3>
                 <div className="bg-athar-bg dark:bg-gray-800 rounded-2xl p-4 text-sm leading-relaxed text-athar-text dark:text-gray-300">
@@ -248,7 +279,6 @@ export default function Home() {
               </>
             ) : (
               <>
-                {/* الخطوة 2: بطاقة دعوة فضفض لأثر */}
                 <MessageCircleHeart className="w-10 h-10 text-athar-accent mx-auto" />
                 <h3 className="text-lg font-bold text-athar-text dark:text-gray-200">فضفض لأثر</h3>
                 <p className="text-sm text-athar-text dark:text-gray-300 leading-relaxed">
@@ -257,7 +287,7 @@ export default function Home() {
                 <button
                   onClick={() => {
                     handleCloseModal();
-                    setShowFadfed(true); // يفتح مودال "فضفض لأثر" الحقيقي
+                    setShowFadfed(true);
                   }}
                   className="btn-primary w-full flex items-center justify-center gap-2"
                 >
