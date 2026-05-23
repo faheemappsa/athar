@@ -204,51 +204,53 @@ export default function AtharCard() {
         </div>
       )}
 
-      {/* بطاقة التصدير - موضوعة خارج الشاشة لكنها مرئية لـ html2canvas */}
-      <div
-        ref={exportCardRef}
-        className="absolute left-[-9999px] top-0 w-[1080px] h-[1920px] pointer-events-none"
-        style={{ direction: "rtl" }}
-      >
+      {/* بطاقة التصدير المخفية داخل صندوق صغير جداً لا يؤثر على الصفحة */}
+      <div className="fixed top-0 left-0 w-[1px] h-[1px] opacity-0 pointer-events-none overflow-hidden" style={{ direction: "rtl" }}>
         {athar && (
           <div
-            className="w-full h-full flex flex-col items-center justify-between p-20 text-center relative overflow-hidden"
+            ref={exportCardRef}
+            className="w-[1080px] h-[1920px]"
             style={{
               background: "linear-gradient(160deg, #0F2A1C 0%, #1B4332 30%, #2D6A4F 60%, #40916C 100%)",
               fontFamily: "Thmanyah, sans-serif",
               color: "white",
             }}
           >
-            <div className="absolute inset-0 opacity-20 pointer-events-none">
-              <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-athar-accent blur-3xl"></div>
-              <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-athar-secondary blur-3xl"></div>
-            </div>
+            <div className="w-full h-full flex flex-col items-center justify-between p-20 text-center relative overflow-hidden">
+              {/* زخارف خلفية فاخرة */}
+              <div className="absolute inset-0 opacity-20 pointer-events-none">
+                <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-athar-accent blur-3xl"></div>
+                <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-athar-secondary blur-3xl"></div>
+              </div>
 
-            <div className="absolute top-10 left-10 right-10 bottom-10 border border-white/10 rounded-[60px] pointer-events-none"></div>
-            <div className="absolute top-12 left-12 right-12 bottom-12 border border-white/5 rounded-[50px] pointer-events-none"></div>
+              {/* إطار ذهبي شفاف داخلي */}
+              <div className="absolute top-10 left-10 right-10 bottom-10 border border-white/10 rounded-[60px] pointer-events-none"></div>
+              <div className="absolute top-12 left-12 right-12 bottom-12 border border-white/5 rounded-[50px] pointer-events-none"></div>
 
-            <div className="relative z-10 space-y-6">
-              <h1 className="text-7xl font-extrabold tracking-wider">أثر</h1>
-              <p className="text-3xl opacity-80">أثرٌ جارٍ لا ينقطع</p>
-            </div>
+              {/* المحتوى الرئيسي */}
+              <div className="relative z-10 space-y-6">
+                <h1 className="text-7xl font-extrabold tracking-wider">أثر</h1>
+                <p className="text-3xl opacity-80">أثرٌ جارٍ لا ينقطع</p>
+              </div>
 
-            <div className="relative z-10 flex-1 flex flex-col items-center justify-center max-w-2xl space-y-10">
-              <span className="text-4xl bg-white/20 px-10 py-4 rounded-full border border-white/20">
-                {athar.category}
-              </span>
-              <p className="text-5xl leading-relaxed font-medium">{athar.text}</p>
-              <p className="text-3xl opacity-70">— {athar.source}</p>
-            </div>
+              <div className="relative z-10 flex-1 flex flex-col items-center justify-center max-w-2xl space-y-10">
+                <span className="text-4xl bg-white/20 px-10 py-4 rounded-full border border-white/20">
+                  {athar.category}
+                </span>
+                <p className="text-5xl leading-relaxed font-medium">{athar.text}</p>
+                <p className="text-3xl opacity-70">— {athar.source}</p>
+              </div>
 
-            <div className="relative z-10 space-y-8">
-              <p className="text-2xl opacity-60">الوقف الخيري عن مسلم عوده البويني رحمه الله</p>
-              <div className="flex items-center justify-center gap-8 bg-white/10 rounded-3xl p-6 border border-white/20">
-                <div className="w-36 h-36 bg-white rounded-2xl flex items-center justify-center p-2 shadow-xl">
-                  <QRCodeSVG value={APP_URL} size={120} level="M" />
-                </div>
-                <div className="text-right space-y-1">
-                  <p className="text-2xl font-medium">اضغط مطولاً لزيارة التطبيق</p>
-                  <p className="text-lg opacity-60">athar-sandy.vercel.app</p>
+              <div className="relative z-10 space-y-8">
+                <p className="text-2xl opacity-60">الوقف الخيري عن مسلم عوده البويني رحمه الله</p>
+                <div className="flex items-center justify-center gap-8 bg-white/10 rounded-3xl p-6 border border-white/20">
+                  <div className="w-36 h-36 bg-white rounded-2xl flex items-center justify-center p-2 shadow-xl">
+                    <QRCodeSVG value={APP_URL} size={120} level="M" />
+                  </div>
+                  <div className="text-right space-y-1">
+                    <p className="text-2xl font-medium">اضغط مطولاً لزيارة التطبيق</p>
+                    <p className="text-lg opacity-60">athar-sandy.vercel.app</p>
+                  </div>
                 </div>
               </div>
             </div>
