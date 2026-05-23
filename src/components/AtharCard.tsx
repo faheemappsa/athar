@@ -18,7 +18,6 @@ export default function AtharCard() {
   const cardRef = useRef<HTMLDivElement>(null);
   const exportCardRef = useRef<HTMLDivElement>(null);
 
-  // إجبار تحميل خط Thmanyah لضمان جاهزيته لـ html2canvas
   useEffect(() => {
     if (typeof document !== "undefined" && document.fonts) {
       document.fonts.ready.then(() => {
@@ -65,7 +64,6 @@ export default function AtharCard() {
     if (!athar || !exportCardRef.current) return;
     setExporting(true);
     try {
-      // التأكد من تحميل جميع الخطوط قبل الالتقاط
       await document.fonts.ready;
       const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(exportCardRef.current, {
@@ -215,7 +213,7 @@ export default function AtharCard() {
         </div>
       )}
 
-      {/* بطاقة التصدير الفاخرة - صندوق صغير يمنع التمدد */}
+      {/* بطاقة التصدير - صندوق صغير يمنع التمدد */}
       <div className="fixed top-0 left-0 w-[1px] h-[1px] opacity-0 pointer-events-none overflow-hidden" style={{ direction: "rtl" }}>
         {athar && (
           <div
@@ -248,9 +246,9 @@ export default function AtharCard() {
 
             {/* المحتوى */}
             <div className="relative z-10 w-full h-full flex flex-col items-center justify-between p-16 text-center">
-              {/* الرأس */}
-              <div className="space-y-2">
-                <h1 className="text-8xl font-extrabold tracking-[0.2em] text-shadow-xl" style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
+              {/* الرأس - تم إصلاح المسافة */}
+              <div className="space-y-4">
+                <h1 className="text-8xl font-extrabold tracking-[0.2em] leading-none" style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
                   أثر
                 </h1>
                 <p className="text-3xl font-medium opacity-90 tracking-wide">أثرٌ جارٍ لا ينقطع</p>
@@ -264,7 +262,7 @@ export default function AtharCard() {
                 <span className="text-4xl bg-white/20 px-10 py-4 rounded-full border border-white/30 shadow-lg">
                   {athar.category}
                 </span>
-                <p className="text-5xl leading-relaxed font-medium text-shadow-md" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+                <p className="text-5xl leading-relaxed font-medium" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
                   {athar.text}
                 </p>
                 <p className="text-3xl opacity-80 italic">— {athar.source}</p>
