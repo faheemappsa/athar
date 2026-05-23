@@ -9,18 +9,20 @@
 html {
   direction: rtl;
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
   font-family: var(--font-thmanyah);
-  background-color: #F5F5F0;
+  background: linear-gradient(135deg, #F5F5F0 0%, #EDE8DC 40%, #F0EBE3 70%, #F5F5F0 100%);
   color: #1B4332;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 html.dark body {
-  background-color: #111827;
+  background: linear-gradient(135deg, #0F172A 0%, #111827 40%, #1A1F2E 70%, #0F172A 100%);
   color: #E5E7EB;
 }
 
