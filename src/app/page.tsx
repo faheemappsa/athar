@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, useCallback } from "react";
 import { Moon, Sun, Heart, MessageCircle, X, Sparkles, MessageCircleHeart } from "lucide-react";
 import { WHATSAPP_LINK } from "@/lib/constants";
@@ -82,7 +81,6 @@ export default function Home() {
 
     const schedulePrayerNotification = async () => {
       try {
-        // احصل على الصلاة القادمة من localStorage أو API
         const savedTimes = localStorage.getItem("athar-prayer-times");
         if (savedTimes) {
           const times = JSON.parse(savedTimes);
@@ -102,7 +100,7 @@ export default function Home() {
           if (nextPrayer) {
             const [h, m] = nextPrayer.time.split(":").map(Number);
             const prayerTime = new Date();
-            prayerTime.setHours(h, m - 5, 0, 0); // قبل الأذان بـ 5 دقائق
+            prayerTime.setHours(h, m - 5, 0, 0);
             const delay = prayerTime.getTime() - Date.now();
             
             if (delay > 0) {
@@ -124,7 +122,6 @@ export default function Home() {
     };
 
     const scheduleReminderNotification = () => {
-      // تذكير الساعة 9 مساءً إذا لم يثبت بصمته
       if (isCheckedToday) return;
       const now = new Date();
       const reminderTime = new Date();
@@ -256,7 +253,7 @@ export default function Home() {
         </button>
         <div className="text-center">
           <h1 className="text-3xl font-extrabold text-athar-primary dark:text-athar-accent">أثر</h1>
-          <p className="text-xs text-athar-muted dark:text-gray-400">أثرٌ جارٍ لا ينقطع</p>
+          <p className="text-xs text-athar-accent font-medium mt-1">أثرٌ جارٍ لا ينقطع</p>
         </div>
         <button
           onClick={handleHeartClick}
@@ -268,7 +265,7 @@ export default function Home() {
 
       {/* شريط ترحيبي ذكي */}
       <section className="px-4 py-2">
-        <div className="backdrop-blur-sm bg-white/70 dark:bg-gray-800/60 rounded-2xl px-5 py-4 text-center shadow-sm border border-white/50 dark:border-gray-700/50 transition-all duration-500">
+        <div className="backdrop-blur-sm bg-gradient-to-br from-athar-primary/5 via-athar-accent/5 to-athar-bg/80 dark:from-athar-primary/10 dark:via-athar-accent/10 dark:to-gray-800/60 rounded-2xl px-5 py-4 text-center shadow-sm border border-white/50 dark:border-gray-700/50 transition-all duration-500">
           <div className="flex items-center justify-center gap-2 text-athar-text dark:text-gray-200">
             <span className="text-lg">{greetingEmoji}</span>
             <p className="text-sm font-medium">{greetingText}</p>
@@ -289,7 +286,7 @@ export default function Home() {
 
       {/* Waqf Card */}
       <section className="px-4 py-4">
-        <div className="bg-athar-bg/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-2xl p-4 text-center border border-athar-primary/10 dark:border-gray-700">
+        <div className="bg-athar-primary/5 dark:bg-athar-primary/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-athar-primary/10 dark:border-gray-700">
           <p className="text-xs text-athar-muted dark:text-gray-400 leading-relaxed">
             هذا الأثر الجاري صدقة عن{" "}
             <span className="text-athar-primary dark:text-athar-accent font-medium">مسلم عوده البويني</span>{" "}
@@ -297,7 +294,7 @@ export default function Home() {
           </p>
           <button
             onClick={handleSupportClick}
-            className="mt-2 text-sm text-athar-primary dark:text-athar-accent font-medium flex items-center justify-center gap-1 mx-auto hover:underline"
+            className="mt-2 text-sm text-athar-accent font-medium flex items-center justify-center gap-1 mx-auto hover:underline"
           >
             <MessageCircle className="w-4 h-4" />
             تواصل معنا
