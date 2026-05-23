@@ -8,6 +8,7 @@ import AtharCard from "@/components/AtharCard";
 import PrayerTimes from "@/components/PrayerTimes";
 import Streak from "@/components/Streak";
 import BottomNav from "@/components/BottomNav";
+import Fadfed from "@/components/Fadfed";
 
 export default function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -16,7 +17,8 @@ export default function Home() {
   const [duaSent, setDuaSent] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [isCheckedToday, setIsCheckedToday] = useState(false);
-  const [showFadfedInvite, setShowFadfedInvite] = useState(false); // الخطوة 2: بطاقة الدعوة لفضفض
+  const [showFadfedInvite, setShowFadfedInvite] = useState(false);
+  const [showFadfed, setShowFadfed] = useState(false); // حالة فتح "فضفض لأثر"
 
   useEffect(() => {
     const savedDark = localStorage.getItem("athar-dark-mode") === "true";
@@ -83,7 +85,6 @@ export default function Home() {
 
   const handleAmeen = () => {
     setDuaSent(true);
-    // بعد "آمين" ننتقل لبطاقة دعوة "فضفض لأثر" بدلاً من إغلاق المودال
     setShowFadfedInvite(true);
   };
 
@@ -256,8 +257,7 @@ export default function Home() {
                 <button
                   onClick={() => {
                     handleCloseModal();
-                    // هنا سيتم فتح مودال "فضفض لأثر" الحقيقي لاحقاً
-                    alert("بوابة فضفض لأثر قادمة قريباً إن شاء الله");
+                    setShowFadfed(true); // يفتح مودال "فضفض لأثر" الحقيقي
                   }}
                   className="btn-primary w-full flex items-center justify-center gap-2"
                 >
@@ -272,6 +272,9 @@ export default function Home() {
           </div>
         </div>
       )}
+
+      {/* مودال فضفض لأثر الحقيقي */}
+      <Fadfed isOpen={showFadfed} onClose={() => setShowFadfed(false)} />
     </main>
   );
 }
