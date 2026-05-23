@@ -59,7 +59,6 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
   const [showMilestoneModal, setShowMilestoneModal] = useState<Milestone | null>(null);
   const [dailyMessage, setDailyMessage] = useState("");
   
-  // حالة الإشعارات
   const [notificationStatus, setNotificationStatus] = useState<"granted" | "denied" | "unsupported" | null>(null);
   const [isEnablingNotifications, setIsEnablingNotifications] = useState(false);
 
@@ -72,14 +71,12 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
     const msgIndex = new Date().getDate() % dailyMessages.length;
     setDailyMessage(dailyMessages[msgIndex]);
 
-    // التحقق من حالة الإشعارات
     if ("Notification" in window) {
       if (Notification.permission === "granted") {
         setNotificationStatus("granted");
       } else if (Notification.permission === "denied") {
         setNotificationStatus("denied");
       }
-      // إذا كانت "default"، نتركها null لتظهر البطاقة
     } else {
       setNotificationStatus("unsupported");
     }
@@ -122,7 +119,6 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
     }
   }, [checkedToday, streak, onStreakUpdate]);
 
-  // تفعيل الإشعارات
   const handleEnableNotifications = async () => {
     if (!("Notification" in window)) {
       alert("متصفحك لا يدعم الإشعارات");
@@ -134,7 +130,6 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
       const permission = await Notification.requestPermission();
       if (permission === "granted") {
         setNotificationStatus("granted");
-        // TODO: إرسال إشعار ترحيبي فوري
         new Notification("أثر", {
           body: "تم تفعيل الإشعارات بنجاح. سنذكرك بالصلاة وبصمتك اليومية.",
           icon: "/icons/icon-192x192.png",
@@ -151,7 +146,7 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
   return (
     <>
       <section className="px-4 py-4">
-        <div className="relative overflow-hidden backdrop-blur-sm bg-white/70 dark:bg-gray-800/60 rounded-3xl shadow-2xl border border-white/50 dark:border-gray-700/50 p-6 space-y-5 transition-all duration-500 hover:shadow-athar-accent/5">
+        <div className="relative overflow-hidden bg-gradient-to-b from-athar-accent/5 to-athar-primary/5 dark:from-athar-accent/10 dark:to-athar-primary/10 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 dark:border-gray-700/50 p-6 space-y-5 transition-all duration-500">
           <div
             className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-athar-accent to-transparent opacity-70 transition-all duration-500"
             style={{ opacity: 0.4 + progressRatio * 0.6 }}
@@ -186,7 +181,7 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
                     {streak > 0 ? `بصمة أثر — ${streak} يوم` : "بصمة أثر"}
                   </span>
                   {streak > 0 && dailyMessage && (
-                    <p className="text-xs text-athar-muted dark:text-gray-400 mt-0.5">
+                    <p className="text-xs text-athar-muted dark:text-gray-300 mt-0.5">
                       {dailyMessage}
                     </p>
                   )}
@@ -205,7 +200,6 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
               )}
             </div>
 
-            {/* نقاط التقدم */}
             <div className="relative">
               <ProgressDots total={7} filled={streak % 7 || 7} className="mb-1" />
               {streak % 7 === 0 && streak > 0 && (
@@ -215,7 +209,6 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
               )}
             </div>
 
-            {/* بطاقة تفعيل الإشعارات */}
             {notificationStatus !== "granted" && notificationStatus !== "unsupported" && (
               <div className="p-4 bg-athar-accent/5 dark:bg-athar-accent/10 rounded-2xl space-y-3 border border-athar-accent/10">
                 <div className="flex items-center gap-2">
@@ -247,7 +240,6 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
               </div>
             )}
 
-            {/* رسالة المعلَم التالي */}
             {nextMilestone && (
               <div className="space-y-1">
                 <div className="flex justify-between text-xs text-athar-muted dark:text-gray-400">
@@ -266,7 +258,6 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
               </div>
             )}
 
-            {/* زر التثبيت اليومي */}
             <button
               onClick={handleDailyCheck}
               disabled={checkedToday}
