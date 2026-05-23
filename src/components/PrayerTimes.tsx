@@ -205,13 +205,16 @@ export default function PrayerTimes() {
     }
   };
 
-  // تقسيم الصلوات إلى أساسية ومكملة
   const mainPrayers = prayerTimes.filter((p) => !["الشروق", "الضحى"].includes(p.name));
   const supplementaryPrayers = prayerTimes.filter((p) => ["الشروق", "الضحى"].includes(p.name));
 
   return (
     <section className="px-4 py-4">
-      <div className="bg-athar-bg dark:bg-gray-800/80 rounded-2xl shadow-md ring-1 ring-athar-primary/10 dark:ring-gray-700 p-5 space-y-4">
+      <div className="backdrop-blur-sm bg-white/70 dark:bg-gray-800/60 rounded-3xl shadow-2xl border border-white/50 dark:border-gray-700/50 p-5 space-y-4 relative overflow-hidden">
+        {/* تدرج علوي ناعم */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-athar-primary/40 to-transparent"></div>
+
+        {/* Header */}
         <div className="flex items-center justify-between">
           <button
             onClick={requestLocation}
@@ -228,6 +231,7 @@ export default function PrayerTimes() {
           </div>
         </div>
 
+        {/* التاريخ الهجري والأحداث */}
         {hijri && (
           <div className="text-center">
             <p className="text-sm text-athar-primary dark:text-athar-accent font-medium">
@@ -243,6 +247,7 @@ export default function PrayerTimes() {
           </div>
         )}
 
+        {/* رقاقات الصلوات */}
         {loading ? (
           <div className="flex items-center justify-center py-6">
             <Loader2 className="w-6 h-6 text-athar-primary animate-spin" />
@@ -254,7 +259,7 @@ export default function PrayerTimes() {
           </div>
         ) : (
           <div className="space-y-2">
-            {/* السطر الأول: الصلوات الخمس الأساسية */}
+            {/* الصلوات الخمس الأساسية */}
             <div className="flex justify-between gap-0.5">
               {mainPrayers.map((prayer) => (
                 <PrayerChip
@@ -266,9 +271,9 @@ export default function PrayerTimes() {
                 />
               ))}
             </div>
-            {/* السطر الثاني: الشروق والضحى */}
+            {/* الأوقات المكملة */}
             {supplementaryPrayers.length > 0 && (
-              <div className="flex justify-center gap-2">
+              <div className="flex justify-center gap-3">
                 {supplementaryPrayers.map((prayer) => (
                   <PrayerChip
                     key={prayer.name}
@@ -283,8 +288,9 @@ export default function PrayerTimes() {
           </div>
         )}
 
+        {/* العداد الذكي */}
         {nextPrayer && (
-          <div className="p-4 bg-white dark:bg-gray-900/50 rounded-xl text-center shadow-sm">
+          <div className="p-4 bg-athar-bg/80 dark:bg-gray-900/50 rounded-2xl text-center shadow-inner">
             <p className="text-sm text-athar-muted dark:text-gray-400 mb-1">
               {nextPrayer.name === "الضحى"
                 ? isIqamah
@@ -296,7 +302,7 @@ export default function PrayerTimes() {
             </p>
             <div className="flex items-center justify-center gap-2 text-athar-primary dark:text-athar-accent">
               <Clock className="w-5 h-5" />
-              <span className="text-2xl font-bold tabular-nums">{timeRemaining}</span>
+              <span className="text-3xl font-bold tabular-nums tracking-wider">{timeRemaining}</span>
             </div>
             {nextPrayer.name !== "الضحى" && nextPrayer.iqamah && (
               <p className="text-xs text-athar-muted dark:text-gray-500 mt-1">
