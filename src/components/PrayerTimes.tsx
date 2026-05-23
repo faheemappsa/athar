@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { MapPin, Clock, Loader2, AlertCircle } from "lucide-react";
-import { fetchPrayerTimes, getIslamicEvents } from "@/lib/api";
+import { fetchPrayerTimes, fetchCityName, getIslamicEvents } from "@/lib/api";
 import type { PrayerTimesData, HijriDate, IslamicEvent } from "@/lib/api";
 import Badge from "./Badge";
 import PrayerChip from "./PrayerChip";
@@ -18,7 +18,6 @@ export default function PrayerTimes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   
-  // مرجع لحفظ وقت الصلاة القادمة بالدقائق لتجنب استدعاء API كل ثانية
   const nextPrayerTimeRef = useRef<number | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -34,7 +33,6 @@ export default function PrayerTimes() {
       const islamicEvents = getIslamicEvents(data.hijri, new Date());
       setEvents(islamicEvents);
       
-      // حفظ وقت الصلاة القادمة بالدقائق من منتصف الليل للاستخدام المحلي
       const [h, m] = data.nextPrayer.time.split(":").map(Number);
       nextPrayerTimeRef.current = h * 60 + m;
     } else {
@@ -43,14 +41,18 @@ export default function PrayerTimes() {
     setLoading(false);
   }, []);
 
-  // جلب البيانات أول مرة
+  const updateCityName = useCallback(async (lat: number, lng: number) => {
+    const cityName = await fetchCityName(lat, lng);
+    setLocation(cityName);
+  }, []);
+
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const { latitude, longitude } = pos.coords;
           setCoords({ lat: latitude, lng: longitude });
-          setLocation("موقعي الحالي");
+          updateCityName(latitude, longitude);
           loadPrayerTimes(latitude, longitude);
         },
         () => {
@@ -60,9 +62,8 @@ export default function PrayerTimes() {
     } else {
       loadPrayerTimes(21.4225, 39.8262);
     }
-  }, [loadPrayerTimes]);
+  }, [loadPrayerTimes, updateCityName]);
 
-  // عداد حي بالثواني
   useEffect(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     
@@ -74,11 +75,10 @@ export default function PrayerTimes() {
       const currentSeconds = now.getSeconds();
       
       let diffMinutes = nextPrayerTimeRef.current! - currentMinutes;
-      if (diffMinutes <= 0) diffMinutes += 24 * 60; // اليوم التالي
+      if (diffMinutes <= 0) diffMinutes += 24 * 60;
       
       const remainingSeconds = (diffMinutes * 60) - currentSeconds;
       if (remainingSeconds <= 0) {
-        // حان وقت الصلاة، نجيب البيانات من جديد
         if (coords) loadPrayerTimes(coords.lat, coords.lng);
         else loadPrayerTimes(21.4225, 39.8262);
         return;
@@ -98,12 +98,11 @@ export default function PrayerTimes() {
     };
   }, [nextPrayerTimeRef.current, coords, loadPrayerTimes]);
 
-  // تحديث البيانات من API كل 5 دقائق
   useEffect(() => {
     const apiInterval = setInterval(() => {
       if (coords) loadPrayerTimes(coords.lat, coords.lng);
       else loadPrayerTimes(21.4225, 39.8262);
-    }, 300000); // 5 دقائق
+    }, 300000);
 
     return () => clearInterval(apiInterval);
   }, [coords, loadPrayerTimes]);
@@ -114,7 +113,7 @@ export default function PrayerTimes() {
         (pos) => {
           const { latitude, longitude } = pos.coords;
           setCoords({ lat: latitude, lng: longitude });
-          setLocation("موقعي الحالي");
+          updateCityName(latitude, longitude);
           loadPrayerTimes(latitude, longitude);
         },
         () => alert("لم نتمكن من الوصول لموقعك. جاري استخدام مكة المكرمة.")
@@ -169,7 +168,7 @@ export default function PrayerTimes() {
             <span className="text-sm">تعذر جلب مواقيت الصلاة</span>
           </div>
         ) : (
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex justify-between gap-0.5">
             {prayerTimes.map((prayer) => (
               <PrayerChip
                 key={prayer.name}
