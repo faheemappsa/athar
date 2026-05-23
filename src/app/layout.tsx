@@ -2,19 +2,19 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "أثر — كل يوم أثر نور",
+  title: "أثر — أثرٌ جارٍ لا ينقطع",
   description: "وقف خيري عن مسلم عوده البويني رحمه الله. تطبيق يومي إسلامي يقدم أثراً روحانياً مع أدوات يومية.",
   keywords: ["أثر", "Athar", "وقف", "أذكار", "صلاة", "إسلامي", "ثمانية"],
   authors: [{ name: "أثر — Athar" }],
   openGraph: {
-    title: "أثر — كل يوم أثر نور",
+    title: "أثر — أثرٌ جارٍ لا ينقطع",
     description: "وقف خيري عن مسلم عوده البويني رحمه الله",
     type: "website",
     locale: "ar_SA",
   },
   twitter: {
     card: "summary_large_image",
-    title: "أثر — كل يوم أثر نور",
+    title: "أثر — أثرٌ جارٍ لا ينقطع",
     description: "وقف خيري عن مسلم عوده البويني رحمه الله",
   },
   manifest: "/manifest.json",
