@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Share2, Bookmark, RefreshCw, Loader2, Camera, Download } from "lucide-react";
+import { Share2, Bookmark, RefreshCw, Loader2, Camera, Download, Sparkles } from "lucide-react";
 import { fetchDailyAthar } from "@/lib/api";
 import type { AtharItem } from "@/lib/api";
 import Badge from "./Badge";
@@ -20,11 +20,9 @@ export default function AtharCard() {
     const data = await fetchDailyAthar();
     setAthar(data);
     setLoading(false);
-    // reset saved state for new athar
     setSaved(false);
   };
 
-  // تحميل الأثر أول مرة
   useEffect(() => {
     loadAthar();
   }, []);
@@ -39,7 +37,6 @@ export default function AtharCard() {
     setSaved(!saved);
     if (!saved) {
       const savedList = JSON.parse(localStorage.getItem("athar-saved") || "[]");
-      // منع التكرار
       if (!savedList.find((item: AtharItem) => item.text === athar.text)) {
         savedList.push(athar);
         localStorage.setItem("athar-saved", JSON.stringify(savedList));
@@ -49,7 +46,6 @@ export default function AtharCard() {
 
   const handleShare = () => {
     if (!athar) return;
-    // إظهار خيارات المشاركة
     setShowExportOptions(true);
   };
 
@@ -59,7 +55,7 @@ export default function AtharCard() {
     try {
       const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(exportCardRef.current, {
-        backgroundColor: "#1B4332", // athar-primary
+        backgroundColor: "#1B4332",
         scale: 2,
         useCORS: true,
         allowTaint: true,
@@ -76,7 +72,6 @@ export default function AtharCard() {
             text: athar.text,
           });
         } else {
-          // fallback download
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
@@ -110,48 +105,62 @@ export default function AtharCard() {
       <section className="px-4 py-4">
         <div
           ref={cardRef}
-          className="relative overflow-hidden bg-gradient-to-b from-athar-primary/5 to-white dark:from-athar-primary/10 dark:to-gray-900 rounded-3xl shadow-lg ring-1 ring-athar-accent/20 dark:ring-athar-accent/10 p-6 space-y-4 border-t-4 border-athar-accent"
+          className="relative overflow-hidden bg-gradient-to-b from-athar-accent/10 via-white to-white dark:from-athar-accent/20 dark:via-gray-900 dark:to-gray-900 rounded-3xl shadow-2xl p-6 space-y-5 border border-white/50 dark:border-gray-700/50 backdrop-blur-sm"
         >
+          {/* تاج نوراني علوي بدل الحد */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-athar-accent to-transparent opacity-70"></div>
+
           {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 text-athar-primary animate-spin" />
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 text-athar-accent animate-spin" />
             </div>
           ) : athar ? (
             <>
-              {/* Category */}
+              {/* الترويسة: وسام الفئة */}
               <div className="flex items-center justify-between">
-                <Badge label={athar.category} variant="muted" />
-                <span className="text-xs text-athar-muted dark:text-gray-400">أثر اليوم</span>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-athar-accent/20 text-athar-accent">
+                    <Sparkles className="w-4 h-4" />
+                  </span>
+                  <Badge label={athar.category} variant="accent" />
+                </div>
+                <span className="text-xs font-medium text-athar-muted dark:text-gray-400 tracking-wide">أثر اليوم</span>
               </div>
 
-              {/* Athar Text */}
-              <div className="text-center py-4">
-                <p className="text-xl font-medium text-athar-text dark:text-gray-100 leading-relaxed">
+              {/* النص الرئيسي */}
+              <div className="text-center py-6 px-2">
+                <p className="text-2xl font-medium text-athar-text dark:text-gray-100 leading-relaxed">
                   {athar.text}
                 </p>
-                <p className="text-sm text-athar-muted dark:text-gray-400 mt-3">— {athar.source}</p>
+                <p className="text-sm text-athar-muted dark:text-gray-400 mt-4">— {athar.source}</p>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center justify-center gap-3 pt-2">
+              {/* الأزرار السفلية */}
+              <div className="flex items-center justify-center gap-4 pt-2">
                 <button
                   onClick={handleSave}
-                  className={`p-3 rounded-full transition-all ${
-                    saved ? "bg-athar-primary text-white" : "bg-athar-bg dark:bg-gray-700 text-athar-primary dark:text-athar-accent"
+                  className={`p-3 rounded-full transition-all duration-300 ${
+                    saved
+                      ? "bg-athar-primary text-white shadow-lg scale-105"
+                      : "bg-athar-bg dark:bg-gray-700 text-athar-primary dark:text-athar-accent hover:bg-athar-primary/10"
                   }`}
+                  title="احفظ في سجلك"
                 >
                   <Bookmark className="w-5 h-5" />
                 </button>
+
                 <button
                   onClick={handleShare}
-                  className="btn-primary flex items-center gap-2"
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-athar-accent text-white font-medium shadow-lg hover:shadow-xl transition-all active:scale-95 hover:bg-athar-accent/90"
                 >
                   <Share2 className="w-4 h-4" />
                   مشاركة
                 </button>
+
                 <button
                   onClick={handleNewAthar}
-                  className="p-3 rounded-full bg-athar-bg dark:bg-gray-700 text-athar-primary dark:text-athar-accent"
+                  className="p-3 rounded-full bg-athar-bg dark:bg-gray-700 text-athar-primary dark:text-athar-accent hover:bg-athar-primary/10 transition-all"
+                  title="أثر جديد"
                 >
                   <RefreshCw className="w-5 h-5" />
                 </button>
@@ -166,7 +175,7 @@ export default function AtharCard() {
         <div className="fixed inset-0 bg-black/30 dark:bg-black/60 backdrop-blur-sm flex items-end justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-900 rounded-t-3xl p-6 max-w-sm w-full space-y-4 animate-slide-up">
             <h3 className="text-lg font-bold text-athar-text dark:text-gray-200 text-center">مشاركة الأثر</h3>
-            
+
             <button
               onClick={handleExportImage}
               disabled={exporting}
