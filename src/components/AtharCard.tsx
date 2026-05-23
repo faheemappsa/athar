@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, useRef } from "react";
 import { Share2, Bookmark, RefreshCw, Loader2, Camera, Sparkles } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
@@ -134,14 +133,14 @@ export default function AtharCard() {
                   </span>
                   <Badge label={athar.category} variant="accent" />
                 </div>
-                <span className="text-xs font-medium text-athar-muted dark:text-gray-400 tracking-wide">أثر اليوم</span>
+                <span className="text-xs font-medium text-athar-primary dark:text-athar-accent tracking-wide">أثر اليوم</span>
               </div>
 
               <div className="text-center py-6 px-2">
                 <p className="text-2xl font-medium text-athar-text dark:text-gray-100 leading-relaxed">
                   {athar.text}
                 </p>
-                <p className="text-sm text-athar-muted dark:text-gray-400 mt-4">— {athar.source}</p>
+                <p className="text-sm text-athar-accent font-medium dark:text-athar-accent mt-4">— {athar.source}</p>
               </div>
 
               <div className="flex items-center justify-center gap-4 pt-2">
@@ -226,7 +225,6 @@ export default function AtharCard() {
               isolation: "isolate",
             }}
           >
-            {/* شبكة خلفية فاخرة (زخرفة هندسية شفافة) */}
             <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -240,13 +238,10 @@ export default function AtharCard() {
               <rect width="100%" height="100%" fill="url(#dots)" />
             </svg>
 
-            {/* إطار ذهبي فاخر */}
             <div className="absolute top-8 left-8 right-8 bottom-8 border border-white/20 rounded-[50px] pointer-events-none"></div>
             <div className="absolute top-10 left-10 right-10 bottom-10 border border-white/10 rounded-[44px] pointer-events-none"></div>
 
-            {/* المحتوى */}
             <div className="relative z-10 w-full h-full flex flex-col items-center justify-between p-16 text-center">
-              {/* الرأس - تم إصلاح المسافة */}
               <div className="space-y-4">
                 <h1 className="text-8xl font-extrabold tracking-[0.2em] leading-none" style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
                   أثر
@@ -254,10 +249,8 @@ export default function AtharCard() {
                 <p className="text-3xl font-medium opacity-90 tracking-wide">أثرٌ جارٍ لا ينقطع</p>
               </div>
 
-              {/* الخط الفاصل الزخرفي */}
               <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
 
-              {/* الجسم - الآية أو الحديث */}
               <div className="flex-1 flex flex-col items-center justify-center max-w-2xl space-y-10">
                 <span className="text-4xl bg-white/20 px-10 py-4 rounded-full border border-white/30 shadow-lg">
                   {athar.category}
@@ -268,7 +261,6 @@ export default function AtharCard() {
                 <p className="text-3xl opacity-80 italic">— {athar.source}</p>
               </div>
 
-              {/* التذييل - محفوظ بالكامل */}
               <div className="space-y-8">
                 <p className="text-2xl opacity-70">الوقف الخيري عن مسلم عوده البويني رحمه الله</p>
                 <div className="inline-flex items-center gap-6 bg-black/20 backdrop-blur-sm rounded-3xl p-5 border border-white/20">
