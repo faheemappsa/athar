@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Flame, Gift, CheckCircle, Star, Sparkles, BellRing, Bell, Loader2 } from "lucide-react";
+import { Flame, Gift, CheckCircle, Star, Sparkles, BellRing, Bell, BellOff, AlertTriangle, Loader2 } from "lucide-react";
 import { clsx } from "clsx";
 import ProgressDots from "./ProgressDots";
 
@@ -59,7 +59,7 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
   const [showMilestoneModal, setShowMilestoneModal] = useState<Milestone | null>(null);
   const [dailyMessage, setDailyMessage] = useState("");
   
-  const [notificationStatus, setNotificationStatus] = useState<"granted" | "denied" | "unsupported" | null>(null);
+  const [notificationStatus, setNotificationStatus] = useState<"granted" | "denied" | "unsupported" | "default">("default");
   const [isEnablingNotifications, setIsEnablingNotifications] = useState(false);
 
   useEffect(() => {
@@ -71,14 +71,15 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
     const msgIndex = new Date().getDate() % dailyMessages.length;
     setDailyMessage(dailyMessages[msgIndex]);
 
-    if ("Notification" in window) {
-      if (Notification.permission === "granted") {
-        setNotificationStatus("granted");
-      } else if (Notification.permission === "denied") {
-        setNotificationStatus("denied");
-      }
-    } else {
+    // تحديد حالة الإشعارات بدقة
+    if (!("Notification" in window)) {
       setNotificationStatus("unsupported");
+    } else if (Notification.permission === "granted") {
+      setNotificationStatus("granted");
+    } else if (Notification.permission === "denied") {
+      setNotificationStatus("denied");
+    } else {
+      setNotificationStatus("default");
     }
   }, []);
 
@@ -121,7 +122,7 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
 
   const handleEnableNotifications = async () => {
     if (!("Notification" in window)) {
-      alert("متصفحك لا يدعم الإشعارات");
+      setNotificationStatus("unsupported");
       return;
     }
 
@@ -141,6 +142,73 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
       console.error("فشل تفعيل الإشعارات:", e);
     }
     setIsEnablingNotifications(false);
+  };
+
+  // تجهيز محتوى بطاقة الإشعارات حسب الحالة
+  const notificationCardContent = () => {
+    switch (notificationStatus) {
+      case "granted":
+        return (
+          <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-2xl space-y-3 border border-green-200 dark:border-green-800">
+            <div className="flex items-center gap-2">
+              <BellRing className="w-5 h-5 text-green-600 dark:text-green-400" />
+              <span className="text-sm font-medium text-green-800 dark:text-green-200">الإشعارات مفعلة</span>
+            </div>
+            <p className="text-xs text-green-700 dark:text-green-300">ستصلك تنبيهات الصلاة والتذكير اليومي.</p>
+          </div>
+        );
+      case "denied":
+        return (
+          <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-2xl space-y-3 border border-red-200 dark:border-red-800">
+            <div className="flex items-center gap-2">
+              <BellOff className="w-5 h-5 text-red-500" />
+              <span className="text-sm font-medium text-red-800 dark:text-red-200">الإشعارات ممنوعة</span>
+            </div>
+            <p className="text-xs text-red-700 dark:text-red-300">
+              يبدو أنك منعت الإشعارات. يمكنك تفعيلها من إعدادات المتصفح لموقع "أثر".
+            </p>
+          </div>
+        );
+      case "unsupported":
+        return (
+          <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-2xl space-y-3 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-gray-500" />
+              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">الإشعارات غير مدعومة</span>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">متصفحك الحالي لا يدعم الإشعارات.</p>
+          </div>
+        );
+      default:
+        return (
+          <div className="p-4 bg-athar-accent/5 dark:bg-athar-accent/10 rounded-2xl space-y-3 border border-athar-accent/10">
+            <div className="flex items-center gap-2">
+              <BellRing className="w-5 h-5 text-athar-accent" />
+              <span className="text-sm font-medium text-athar-text dark:text-gray-200">تفعيل الإشعارات</span>
+            </div>
+            <p className="text-xs text-athar-muted dark:text-gray-400">
+              نبهك للصلاة القادمة، ونذكرك بتثبيت بصمتك اليومية
+            </p>
+            <button
+              onClick={handleEnableNotifications}
+              disabled={isEnablingNotifications}
+              className="w-full py-2.5 rounded-xl bg-athar-accent text-white text-sm font-medium flex items-center justify-center gap-2 hover:bg-athar-accent/90 transition-all active:scale-95 disabled:opacity-50"
+            >
+              {isEnablingNotifications ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  جارٍ التفعيل...
+                </>
+              ) : (
+                <>
+                  <Bell className="w-4 h-4" />
+                  فعّل الإشعارات
+                </>
+              )}
+            </button>
+          </div>
+        );
+    }
   };
 
   return (
@@ -209,36 +277,8 @@ export default function Streak({ streak, onStreakUpdate }: StreakProps) {
               )}
             </div>
 
-            {notificationStatus !== "granted" && notificationStatus !== "unsupported" && (
-              <div className="p-4 bg-athar-accent/5 dark:bg-athar-accent/10 rounded-2xl space-y-3 border border-athar-accent/10">
-                <div className="flex items-center gap-2">
-                  <BellRing className="w-5 h-5 text-athar-accent" />
-                  <span className="text-sm font-medium text-athar-text dark:text-gray-200">
-                    تفعيل الإشعارات
-                  </span>
-                </div>
-                <p className="text-xs text-athar-muted dark:text-gray-400">
-                  نبهك للصلاة القادمة، ونذكرك بتثبيت بصمتك اليومية
-                </p>
-                <button
-                  onClick={handleEnableNotifications}
-                  disabled={isEnablingNotifications}
-                  className="w-full py-2.5 rounded-xl bg-athar-accent text-white text-sm font-medium flex items-center justify-center gap-2 hover:bg-athar-accent/90 transition-all active:scale-95 disabled:opacity-50"
-                >
-                  {isEnablingNotifications ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      جارٍ التفعيل...
-                    </>
-                  ) : (
-                    <>
-                      <Bell className="w-4 h-4" />
-                      فعّل الإشعارات
-                    </>
-                  )}
-                </button>
-              </div>
-            )}
+            {/* بطاقة الإشعارات تظهر دائماً بالمحتوى المناسب */}
+            {notificationCardContent()}
 
             {nextMilestone && (
               <div className="space-y-1">
