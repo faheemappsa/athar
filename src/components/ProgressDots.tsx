@@ -16,7 +16,7 @@ export default function ProgressDots({ total, filled, className }: ProgressDotsP
           key={i}
           className={clsx(
             "h-2 flex-1 rounded-full transition-colors duration-300",
-            i < filled ? "bg-athar-primary" : "bg-gray-200"
+            i < filled ? "bg-athar-accent" : "bg-gray-200 dark:bg-gray-600"
           )}
         />
       ))}
