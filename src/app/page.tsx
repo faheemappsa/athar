@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Moon, Heart, MessageCircle } from "lucide-react";
 import { WHATSAPP_LINK } from "@/lib/constants";
 import { trackSupportClick, trackAtharView } from "@/lib/analytics";
@@ -13,17 +13,20 @@ export default function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [streak, setStreak] = useState(0);
 
+  // تحديث الوقت الحالي كل ثانية
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
 
+  // تحميل الـ streak من localStorage عند أول تحميل
   useEffect(() => {
     const saved = localStorage.getItem("athar-streak");
     if (saved) setStreak(parseInt(saved));
     trackAtharView("daily", "home");
   }, []);
 
+  // تسجيل Service Worker
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
@@ -42,6 +45,16 @@ export default function Home() {
     window.open(WHATSAPP_LINK, "_blank");
   };
 
+  // تحديث الـ streak عند تثبيت اليوم
+  const handleStreakUpdate = useCallback((newStreak: number) => {
+    setStreak(newStreak);
+  }, []);
+
+  // التوقيت الحالي لشريط الدعاء (صباح / مساء)
+  const hour = currentTime.getHours();
+  const isMorning = hour >= 5 && hour < 12;
+  const isEvening = hour >= 17 || hour < 5;
+
   return (
     <main className="min-h-screen pb-28">
       {/* Header */}
@@ -50,19 +63,35 @@ export default function Home() {
           <Moon className="w-5 h-5 text-athar-primary" />
         </button>
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-athar-primary">أثر</h1>
-          <p className="text-xs text-athar-muted">كل يوم أثر نور</p>
+          <h1 className="text-3xl font-extrabold text-athar-primary">أثر</h1>
+          <p className="text-xs text-athar-muted">أثرٌ جارٍ لا ينقطع</p>
         </div>
         <button className="p-2 rounded-full bg-white/80 shadow-sm">
           <Heart className="w-5 h-5 text-athar-primary" />
         </button>
       </header>
 
-      {/* Dua Strip */}
+      {/* Dua Strip - ديناميكي حسب الوقت */}
       <section className="px-4 py-2">
         <div className="bg-athar-primary/5 rounded-2xl px-4 py-3 text-center">
-          <p className="text-sm font-medium text-athar-text">اللهم لا تُخْلِفْ لنا وعدك</p>
-          <p className="text-xs text-athar-muted mt-0.5">اللهم بك أصبحنا وبك أمسينا</p>
+          {isMorning && (
+            <p className="text-sm font-medium text-athar-text">
+              اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور
+            </p>
+          )}
+          {isEvening && (
+            <p className="text-sm font-medium text-athar-text">
+              اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير
+            </p>
+          )}
+          {!isMorning && !isEvening && (
+            <p className="text-sm font-medium text-athar-text">
+              اللهم لا تُخْلِفْ لنا وعدك
+            </p>
+          )}
+          <p className="text-xs text-athar-muted mt-0.5">
+            {isMorning ? "اللهم اجعل صباحنا نوراً" : isEvening ? "اللهم اجعل مساءنا سكينة" : "اللهم ارزقنا البركة في وقتنا"}
+          </p>
         </div>
       </section>
 
@@ -72,8 +101,8 @@ export default function Home() {
       {/* Prayer Times */}
       <PrayerTimes />
 
-      {/* Streak */}
-      <Streak streak={streak} />
+      {/* بصمة أثر */}
+      <Streak streak={streak} onStreakUpdate={handleStreakUpdate} />
 
       {/* Waqf Card */}
       <section className="px-4 py-4">
