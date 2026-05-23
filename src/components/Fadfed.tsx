@@ -5,6 +5,7 @@ import {
   Heart, HeartCrack, HeartOff, Frown, CloudRain, Coins, Sword, Home, ShieldQuestion,
   ChevronRight, Share2, RefreshCw, X, BookOpen, ScrollText, Library, Hand
 } from "lucide-react";
+import { fadfedContent } from "@/lib/fadfed-content";
 
 type Step = "emotions" | "sub-emotions" | "content-type" | "result";
 
@@ -39,15 +40,6 @@ const contentTypes = [
   { id: "dua", label: "دعاء", icon: <Hand className="w-6 h-6" /> },
 ];
 
-const mockContent: Record<string, { title: string; body: string; parts?: string[] }> = {
-  "sadness-general-ayah": { title: "آية عن الحزن", body: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ" },
-  "sadness-general-hadith": { title: "حديث عن الحزن", body: "ما يصيب المسلم من نصب ولا وصب ولا هم ولا حزن... إلا كفر الله به من خطاياه" },
-  "sadness-general-story": { title: "قصة عن الحزن", body: "حين اشتد الحزن برسول الله صلى الله عليه وسلم في عام الحزن... كان الله معه.", parts: ["حين اشتد الحزن برسول الله صلى الله عليه وسلم في عام الحزن...", "...فأنزل الله عليه سورة الضحى مواساةً له."] },
-  "heartbreak-betrayal-ayah": { title: "آية عن الخيانة", body: "وَأُفَوِّضُ أَمْرِي إِلَى اللَّهِ ۚ إِنَّ اللَّهَ بَصِيرٌ بِالْعِبَادِ" },
-  "heartbreak-betrayal-dua": { title: "دعاء للمجروح", body: "اللهم اجبر كسر قلبي، وارحمني بقدرتك، وانتقم لي ممن ظلمني" },
-  "default": { title: "مواساة", body: "استعن بالله ولا تعجز، واعلم أن مع العسر يسراً." },
-};
-
 interface FadfedProps {
   isOpen: boolean;
   onClose: () => void;
@@ -75,7 +67,10 @@ export default function Fadfed({ isOpen, onClose }: FadfedProps) {
     ? `${selectedEmotion}-${selectedSubEmotion}-${selectedContentType}`
     : null;
 
-  const currentContent = mockContent[contentKey || ""] || mockContent["default"];
+  const currentContent = fadfedContent[contentKey || ""] || {
+    title: "مواساة",
+    body: "استعن بالله ولا تعجز، واعلم أن مع العسر يسراً.",
+  };
   const isStory = selectedContentType === "story" && currentContent.parts;
 
   const handleShare = () => {
