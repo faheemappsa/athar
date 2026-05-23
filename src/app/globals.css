@@ -19,9 +19,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html.dark body {
+  background-color: #111827;
+  color: #E5E7EB;
+}
+
 @layer base {
   * {
     @apply border-gray-200;
+  }
+  html.dark * {
+    @apply border-gray-700;
   }
 }
 
@@ -29,15 +37,24 @@ body {
   .athar-card {
     @apply bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] ring-1 ring-white/80 p-6;
   }
+  html.dark .athar-card {
+    @apply bg-gray-800 ring-gray-700;
+  }
   
   .btn-primary {
     @apply bg-athar-primary text-white px-6 py-3 rounded-xl font-medium 
            transition-all duration-200 hover:bg-athar-secondary active:scale-95;
   }
+  html.dark .btn-primary {
+    @apply bg-athar-accent text-black hover:bg-yellow-600;
+  }
   
   .btn-secondary {
     @apply bg-athar-bg text-athar-text px-6 py-3 rounded-xl font-medium 
            transition-all duration-200 hover:bg-[#E8E8E0] active:scale-95;
+  }
+  html.dark .btn-secondary {
+    @apply bg-gray-700 text-gray-200 hover:bg-gray-600;
   }
 }
 
