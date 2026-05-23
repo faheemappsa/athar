@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Moon, Sun, Heart, MessageCircle, X } from "lucide-react";
+import { Moon, Sun, Heart, MessageCircle, X, Sparkles } from "lucide-react";
 import { WHATSAPP_LINK } from "@/lib/constants";
 import { trackSupportClick, trackAtharView } from "@/lib/analytics";
 import AtharCard from "@/components/AtharCard";
@@ -15,8 +15,8 @@ export default function Home() {
   const [showDuaModal, setShowDuaModal] = useState(false);
   const [duaSent, setDuaSent] = useState(false);
   const [isDark, setIsDark] = useState(false);
+  const [isCheckedToday, setIsCheckedToday] = useState(false);
 
-  // تحميل التفضيل الليلي من localStorage
   useEffect(() => {
     const savedDark = localStorage.getItem("athar-dark-mode") === "true";
     setIsDark(savedDark);
@@ -27,7 +27,6 @@ export default function Home() {
     }
   }, []);
 
-  // تطبيق الصنف dark على الـ html
   useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add("dark");
@@ -38,20 +37,21 @@ export default function Home() {
     }
   }, [isDark]);
 
-  // تحديث الوقت الحالي كل ثانية
   useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    const timer = setInterval(() => setCurrentTime(new Date()), 60000); // دقيقة واحدة كافية لتحديث الشريط
     return () => clearInterval(timer);
   }, []);
 
-  // تحميل الـ streak من localStorage عند أول تحميل
   useEffect(() => {
     const saved = localStorage.getItem("athar-streak");
     if (saved) setStreak(parseInt(saved));
     trackAtharView("daily", "home");
+    // التحقق من تثبيت اليوم
+    const today = new Date().toDateString();
+    const lastCheck = localStorage.getItem("athar-last-check");
+    setIsCheckedToday(lastCheck === today);
   }, []);
 
-  // تسجيل Service Worker
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
@@ -70,9 +70,9 @@ export default function Home() {
     window.open(WHATSAPP_LINK, "_blank");
   };
 
-  // تحديث الـ streak عند تثبيت اليوم
   const handleStreakUpdate = useCallback((newStreak: number) => {
     setStreak(newStreak);
+    setIsCheckedToday(true); // بمجرد التثبيت نخفي التذكير
   }, []);
 
   const handleHeartClick = () => {
@@ -89,10 +89,47 @@ export default function Home() {
     setIsDark((prev) => !prev);
   };
 
-  // التوقيت الحالي لشريط الدعاء (صباح / مساء)
   const hour = currentTime.getHours();
-  const isMorning = hour >= 5 && hour < 12;
-  const isEvening = hour >= 17 || hour < 5;
+  let greetingText = "";
+  let duaText = "";
+  let subText = "";
+  let greetingEmoji = "";
+
+  // منطق الترحيب والدعاء حسب 5 فترات
+  if (hour >= 3 && hour < 6) {
+    greetingText = "أسعد الله فجركم";
+    duaText = "اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور";
+    subText = "وقت مبارك لصلاة الفجر";
+    greetingEmoji = "🌙";
+  } else if (hour >= 6 && hour < 12) {
+    greetingText = "صباح النور يا صاحب الأثر";
+    duaText = "اللهم اجعل صباحنا نوراً وقلوبنا مطمئنة";
+    subText = "ابدأ يومك بذكر";
+    greetingEmoji = "☀️";
+  } else if (hour >= 12 && hour < 17) {
+    greetingText = "حياك الله في هذه الظهيرة";
+    duaText = "اللهم ارزقنا البركة في وقتنا وأعمالنا";
+    subText = "لا تنس أذكار المساء";
+    greetingEmoji = "🌤️";
+  } else if (hour >= 17 && hour < 21) {
+    greetingText = "مساء الخير يا صاحب الأثر";
+    duaText = "اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير";
+    subText = "أمسِ بذكر الله";
+    greetingEmoji = "🌆";
+  } else {
+    greetingText = "اللهم لا تخلف لنا وعدك";
+    duaText = "اللهم أنزل السكينة في قلوبنا";
+    subText = "ليلة هادئة بالنور";
+    greetingEmoji = "🌙";
+  }
+
+  // رسالة التذكير إذا لم يثبت اليوم
+  const reminderBanner = !isCheckedToday ? (
+    <div className="mt-2 flex items-center justify-center gap-1 text-xs text-athar-accent animate-pulse">
+      <Sparkles className="w-3 h-3" />
+      <span>بادر بتثبيت بصمتك اليوم</span>
+    </div>
+  ) : null;
 
   return (
     <main className="min-h-screen pb-28">
@@ -120,27 +157,20 @@ export default function Home() {
         </button>
       </header>
 
-      {/* Dua Strip - ديناميكي حسب الوقت */}
+      {/* شريط ترحيبي ذكي */}
       <section className="px-4 py-2">
-        <div className="bg-athar-primary/5 dark:bg-gray-800/50 rounded-2xl px-4 py-3 text-center">
-          {isMorning && (
-            <p className="text-sm font-medium text-athar-text dark:text-gray-200">
-              اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور
-            </p>
-          )}
-          {isEvening && (
-            <p className="text-sm font-medium text-athar-text dark:text-gray-200">
-              اللهم بك أمسينا وبك أصبحنا وبك نحيا وبك نموت وإليك المصير
-            </p>
-          )}
-          {!isMorning && !isEvening && (
-            <p className="text-sm font-medium text-athar-text dark:text-gray-200">
-              اللهم لا تُخْلِفْ لنا وعدك
-            </p>
-          )}
-          <p className="text-xs text-athar-muted dark:text-gray-400 mt-0.5">
-            {isMorning ? "اللهم اجعل صباحنا نوراً" : isEvening ? "اللهم اجعل مساءنا سكينة" : "اللهم ارزقنا البركة في وقتنا"}
+        <div className="backdrop-blur-sm bg-white/70 dark:bg-gray-800/60 rounded-2xl px-5 py-4 text-center shadow-sm border border-white/50 dark:border-gray-700/50 transition-all duration-500">
+          <div className="flex items-center justify-center gap-2 text-athar-text dark:text-gray-200">
+            <span className="text-lg">{greetingEmoji}</span>
+            <p className="text-sm font-medium">{greetingText}</p>
+          </div>
+          <p className="text-xs text-athar-muted dark:text-gray-400 mt-1.5 leading-relaxed">
+            {duaText}
           </p>
+          <p className="text-xs text-athar-muted/70 dark:text-gray-500 mt-0.5">
+            {subText}
+          </p>
+          {reminderBanner}
         </div>
       </section>
 
@@ -171,14 +201,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Bottom Navigation */}
       <BottomNav />
 
-      {/* مودال الدعاء للوقف والمسلمين */}
+      {/* مودال الدعاء */}
       {showDuaModal && (
         <div className="fixed inset-0 bg-black/30 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 max-w-sm w-full text-center space-y-5 shadow-2xl animate-scale-up relative">
-            {/* زر الإغلاق */}
             <button
               onClick={() => setShowDuaModal(false)}
               className="absolute top-4 left-4 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -187,9 +215,7 @@ export default function Home() {
             </button>
 
             <Heart className="w-10 h-10 text-athar-accent mx-auto" />
-            
             <h3 className="text-lg font-bold text-athar-text dark:text-gray-200">الدعاء للوقف</h3>
-            
             <div className="bg-athar-bg dark:bg-gray-800 rounded-2xl p-4 text-sm leading-relaxed text-athar-text dark:text-gray-300">
               اللهم اغفر لمسلم عوده البويني وارحمه، واغفر لموتى المسلمين أجمعين، واجعل هذا الأثر جارياً لهم إلى يوم الدين، واجعل أعمالهم نوراً في قبورهم، واجمعنا بهم في جنات النعيم.
             </div>
@@ -207,7 +233,6 @@ export default function Home() {
                 آمين 🤲 جزاك الله خيراً
               </div>
             )}
-
             <p className="text-xs text-athar-muted dark:text-gray-500">
               شارك في الأجر بنشر التطبيق أو الدعاء
             </p>
