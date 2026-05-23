@@ -1,10 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Share2, Bookmark, RefreshCw, Loader2, Camera, Download, Sparkles } from "lucide-react";
+import { Share2, Bookmark, RefreshCw, Loader2, Camera, Sparkles } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { fetchDailyAthar } from "@/lib/api";
 import type { AtharItem } from "@/lib/api";
 import Badge from "./Badge";
+
+const APP_URL = "https://athar-sandy.vercel.app";
 
 export default function AtharCard() {
   const [athar, setAthar] = useState<AtharItem | null>(null);
@@ -55,7 +58,7 @@ export default function AtharCard() {
     try {
       const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(exportCardRef.current, {
-        backgroundColor: "#1B4332",
+        backgroundColor: null,
         scale: 2,
         useCORS: true,
         allowTaint: true,
@@ -64,7 +67,7 @@ export default function AtharCard() {
         canvas.toBlob((b) => resolve(b), "image/png", 1.0);
       });
       if (blob) {
-        const file = new File([blob], `athar-${Date.now()}.png`, { type: "image/png" });
+        const file = new File([blob], `اثر-${Date.now()}.png`, { type: "image/png" });
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({
             files: [file],
@@ -75,7 +78,7 @@ export default function AtharCard() {
           const url = URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-          a.download = `athar-${Date.now()}.png`;
+          a.download = `اثر-${Date.now()}.png`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
@@ -95,7 +98,7 @@ export default function AtharCard() {
       navigator.share({
         title: "أثر — أثرٌ جارٍ لا ينقطع",
         text: `${athar.text}\n— ${athar.source}`,
-        url: window.location.href,
+        url: APP_URL,
       });
     }
   };
@@ -107,7 +110,6 @@ export default function AtharCard() {
           ref={cardRef}
           className="relative overflow-hidden bg-gradient-to-b from-athar-accent/10 via-white to-white dark:from-athar-accent/20 dark:via-gray-900 dark:to-gray-900 rounded-3xl shadow-2xl p-6 space-y-5 border border-white/50 dark:border-gray-700/50 backdrop-blur-sm"
         >
-          {/* تاج نوراني علوي بدل الحد */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-athar-accent to-transparent opacity-70"></div>
 
           {loading ? (
@@ -116,7 +118,6 @@ export default function AtharCard() {
             </div>
           ) : athar ? (
             <>
-              {/* الترويسة: وسام الفئة */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-athar-accent/20 text-athar-accent">
@@ -127,7 +128,6 @@ export default function AtharCard() {
                 <span className="text-xs font-medium text-athar-muted dark:text-gray-400 tracking-wide">أثر اليوم</span>
               </div>
 
-              {/* النص الرئيسي */}
               <div className="text-center py-6 px-2">
                 <p className="text-2xl font-medium text-athar-text dark:text-gray-100 leading-relaxed">
                   {athar.text}
@@ -135,7 +135,6 @@ export default function AtharCard() {
                 <p className="text-sm text-athar-muted dark:text-gray-400 mt-4">— {athar.source}</p>
               </div>
 
-              {/* الأزرار السفلية */}
               <div className="flex items-center justify-center gap-4 pt-2">
                 <button
                   onClick={handleSave}
@@ -170,12 +169,10 @@ export default function AtharCard() {
         </div>
       </section>
 
-      {/* مودال خيارات التصدير */}
       {showExportOptions && (
         <div className="fixed inset-0 bg-black/30 dark:bg-black/60 backdrop-blur-sm flex items-end justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-900 rounded-t-3xl p-6 max-w-sm w-full space-y-4 animate-slide-up">
             <h3 className="text-lg font-bold text-athar-text dark:text-gray-200 text-center">مشاركة الأثر</h3>
-
             <button
               onClick={handleExportImage}
               disabled={exporting}
@@ -187,7 +184,6 @@ export default function AtharCard() {
                 <p className="text-xs text-athar-muted dark:text-gray-400">صورة جميلة لمشاركة أثرك في أي مكان</p>
               </div>
             </button>
-
             <button
               onClick={handleDirectShare}
               className="w-full flex items-center gap-3 p-4 rounded-xl bg-athar-primary/10 hover:bg-athar-primary/20 transition-colors"
@@ -198,7 +194,6 @@ export default function AtharCard() {
                 <p className="text-xs text-athar-muted dark:text-gray-400">نسخ النص ومشاركته مباشرة</p>
               </div>
             </button>
-
             <button
               onClick={() => setShowExportOptions(false)}
               className="w-full py-2 text-sm text-athar-muted dark:text-gray-400 hover:text-athar-text dark:hover:text-gray-200 transition-colors"
@@ -209,7 +204,7 @@ export default function AtharCard() {
         </div>
       )}
 
-      {/* بطاقة التصدير المخفية للـ html2canvas */}
+      {/* بطاقة التصدير المخفية - تصميم فائق الفخامة مع كود QR */}
       <div
         ref={exportCardRef}
         className="fixed top-0 left-0 w-[1080px] h-[1920px] z-[-9999] opacity-0 pointer-events-none"
@@ -217,39 +212,48 @@ export default function AtharCard() {
       >
         {athar && (
           <div
-            className="w-full h-full flex flex-col items-center justify-between p-16 text-center"
+            className="w-full h-full flex flex-col items-center justify-between p-20 text-center relative overflow-hidden"
             style={{
-              background: "linear-gradient(135deg, #1B4332, #2D6A4F, #40916C)",
+              background: "linear-gradient(160deg, #0F2A1C 0%, #1B4332 30%, #2D6A4F 60%, #40916C 100%)",
               fontFamily: "Thmanyah, sans-serif",
               color: "white",
             }}
           >
-            {/* Header */}
-            <div className="space-y-4">
-              <h1 className="text-6xl font-extrabold">أثر</h1>
+            {/* زخارف خلفية فاخرة */}
+            <div className="absolute inset-0 opacity-20 pointer-events-none">
+              <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-athar-accent blur-3xl"></div>
+              <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-athar-secondary blur-3xl"></div>
+            </div>
+
+            {/* إطار ذهبي شفاف داخلي */}
+            <div className="absolute top-10 left-10 right-10 bottom-10 border border-white/10 rounded-[60px] pointer-events-none"></div>
+            <div className="absolute top-12 left-12 right-12 bottom-12 border border-white/5 rounded-[50px] pointer-events-none"></div>
+
+            {/* المحتوى الرئيسي */}
+            <div className="relative z-10 space-y-6">
+              <h1 className="text-7xl font-extrabold tracking-wider">أثر</h1>
               <p className="text-3xl opacity-80">أثرٌ جارٍ لا ينقطع</p>
             </div>
 
-            {/* Athar Text */}
-            <div className="flex-1 flex flex-col items-center justify-center space-y-8 max-w-2xl">
-              <span className="text-4xl bg-white/20 px-8 py-3 rounded-full">
+            <div className="relative z-10 flex-1 flex flex-col items-center justify-center max-w-2xl space-y-10">
+              <span className="text-4xl bg-white/20 px-10 py-4 rounded-full border border-white/20">
                 {athar.category}
               </span>
-              <p className="text-5xl leading-relaxed font-medium">
-                {athar.text}
-              </p>
+              <p className="text-5xl leading-relaxed font-medium">{athar.text}</p>
               <p className="text-3xl opacity-70">— {athar.source}</p>
             </div>
 
-            {/* Footer */}
-            <div className="space-y-6">
+            {/* تذييل فاخر مع الكود */}
+            <div className="relative z-10 space-y-8">
               <p className="text-2xl opacity-60">الوقف الخيري عن مسلم عوده البويني رحمه الله</p>
-              <div className="flex items-center justify-center gap-4">
-                <div className="w-32 h-32 bg-white rounded-2xl flex items-center justify-center">
-                  {/* QR Code placeholder - يمكن إضافة مكتبة qrcode.react لاحقاً */}
-                  <span className="text-athar-primary text-sm font-bold">QR</span>
+              <div className="flex items-center justify-center gap-8 bg-white/10 backdrop-blur-sm rounded-3xl p-6 border border-white/20">
+                <div className="w-36 h-36 bg-white rounded-2xl flex items-center justify-center p-2 shadow-xl">
+                  <QRCodeSVG value={APP_URL} size={120} level="M" />
                 </div>
-                <p className="text-xl">امسح لزيارة التطبيق</p>
+                <div className="text-right space-y-1">
+                  <p className="text-2xl font-medium">اضغط مطولاً لزيارة التطبيق</p>
+                  <p className="text-lg opacity-60">athar-sandy.vercel.app</p>
+                </div>
               </div>
             </div>
           </div>
