@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Moon, Sun, Heart, MessageCircle, X, Sparkles } from "lucide-react";
+import { Moon, Sun, Heart, MessageCircle, X, Sparkles, MessageCircleHeart } from "lucide-react";
 import { WHATSAPP_LINK } from "@/lib/constants";
 import { trackSupportClick, trackAtharView } from "@/lib/analytics";
 import AtharCard from "@/components/AtharCard";
@@ -16,6 +16,7 @@ export default function Home() {
   const [duaSent, setDuaSent] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [isCheckedToday, setIsCheckedToday] = useState(false);
+  const [showFadfedInvite, setShowFadfedInvite] = useState(false); // الخطوة 2: بطاقة الدعوة لفضفض
 
   useEffect(() => {
     const savedDark = localStorage.getItem("athar-dark-mode") === "true";
@@ -38,7 +39,7 @@ export default function Home() {
   }, [isDark]);
 
   useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 60000); // دقيقة واحدة كافية لتحديث الشريط
+    const timer = setInterval(() => setCurrentTime(new Date()), 60000);
     return () => clearInterval(timer);
   }, []);
 
@@ -46,7 +47,6 @@ export default function Home() {
     const saved = localStorage.getItem("athar-streak");
     if (saved) setStreak(parseInt(saved));
     trackAtharView("daily", "home");
-    // التحقق من تثبيت اليوم
     const today = new Date().toDateString();
     const lastCheck = localStorage.getItem("athar-last-check");
     setIsCheckedToday(lastCheck === today);
@@ -72,17 +72,24 @@ export default function Home() {
 
   const handleStreakUpdate = useCallback((newStreak: number) => {
     setStreak(newStreak);
-    setIsCheckedToday(true); // بمجرد التثبيت نخفي التذكير
+    setIsCheckedToday(true);
   }, []);
 
   const handleHeartClick = () => {
     setShowDuaModal(true);
     setDuaSent(false);
+    setShowFadfedInvite(false);
   };
 
   const handleAmeen = () => {
     setDuaSent(true);
-    setTimeout(() => setShowDuaModal(false), 1500);
+    // بعد "آمين" ننتقل لبطاقة دعوة "فضفض لأثر" بدلاً من إغلاق المودال
+    setShowFadfedInvite(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowDuaModal(false);
+    setShowFadfedInvite(false);
   };
 
   const toggleDarkMode = () => {
@@ -95,7 +102,6 @@ export default function Home() {
   let subText = "";
   let greetingEmoji = "";
 
-  // منطق الترحيب والدعاء حسب 5 فترات
   if (hour >= 3 && hour < 6) {
     greetingText = "أسعد الله فجركم";
     duaText = "اللهم بك أصبحنا وبك أمسينا وبك نحيا وبك نموت وإليك النشور";
@@ -123,7 +129,6 @@ export default function Home() {
     greetingEmoji = "🌙";
   }
 
-  // رسالة التذكير إذا لم يثبت اليوم
   const reminderBanner = !isCheckedToday ? (
     <div className="mt-2 flex items-center justify-center gap-1 text-xs text-athar-accent animate-pulse">
       <Sparkles className="w-3 h-3" />
@@ -203,39 +208,67 @@ export default function Home() {
 
       <BottomNav />
 
-      {/* مودال الدعاء */}
+      {/* مودال القلب: رحلة الدعاء ← فضفض لأثر */}
       {showDuaModal && (
         <div className="fixed inset-0 bg-black/30 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 max-w-sm w-full text-center space-y-5 shadow-2xl animate-scale-up relative">
             <button
-              onClick={() => setShowDuaModal(false)}
+              onClick={handleCloseModal}
               className="absolute top-4 left-4 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
             >
               <X className="w-5 h-5 text-gray-400" />
             </button>
 
-            <Heart className="w-10 h-10 text-athar-accent mx-auto" />
-            <h3 className="text-lg font-bold text-athar-text dark:text-gray-200">الدعاء للوقف</h3>
-            <div className="bg-athar-bg dark:bg-gray-800 rounded-2xl p-4 text-sm leading-relaxed text-athar-text dark:text-gray-300">
-              اللهم اغفر لمسلم عوده البويني وارحمه، واغفر لموتى المسلمين أجمعين، واجعل هذا الأثر جارياً لهم إلى يوم الدين، واجعل أعمالهم نوراً في قبورهم، واجمعنا بهم في جنات النعيم.
-            </div>
+            {!showFadfedInvite ? (
+              <>
+                {/* الخطوة 1: الدعاء للوقف */}
+                <Heart className="w-10 h-10 text-athar-accent mx-auto" />
+                <h3 className="text-lg font-bold text-athar-text dark:text-gray-200">الدعاء للوقف</h3>
+                <div className="bg-athar-bg dark:bg-gray-800 rounded-2xl p-4 text-sm leading-relaxed text-athar-text dark:text-gray-300">
+                  اللهم اغفر لمسلم عوده البويني وارحمه، واغفر لموتى المسلمين أجمعين، واجعل هذا الأثر جارياً لهم إلى يوم الدين، واجعل أعمالهم نوراً في قبورهم، واجمعنا بهم في جنات النعيم.
+                </div>
 
-            {!duaSent ? (
-              <button
-                onClick={handleAmeen}
-                className="btn-primary w-full flex items-center justify-center gap-2"
-              >
-                <span>آمين</span>
-                <span className="text-lg">🤲</span>
-              </button>
+                {!duaSent ? (
+                  <button
+                    onClick={handleAmeen}
+                    className="btn-primary w-full flex items-center justify-center gap-2"
+                  >
+                    <span>آمين</span>
+                    <span className="text-lg">🤲</span>
+                  </button>
+                ) : (
+                  <div className="bg-athar-primary/10 dark:bg-athar-primary/20 text-athar-primary dark:text-athar-accent rounded-xl py-3 px-4 text-sm font-medium">
+                    آمين 🤲 جزاك الله خيراً
+                  </div>
+                )}
+                <p className="text-xs text-athar-muted dark:text-gray-500">
+                  شارك في الأجر بنشر التطبيق أو الدعاء
+                </p>
+              </>
             ) : (
-              <div className="bg-athar-primary/10 dark:bg-athar-primary/20 text-athar-primary dark:text-athar-accent rounded-xl py-3 px-4 text-sm font-medium">
-                آمين 🤲 جزاك الله خيراً
-              </div>
+              <>
+                {/* الخطوة 2: بطاقة دعوة فضفض لأثر */}
+                <MessageCircleHeart className="w-10 h-10 text-athar-accent mx-auto" />
+                <h3 className="text-lg font-bold text-athar-text dark:text-gray-200">فضفض لأثر</h3>
+                <p className="text-sm text-athar-text dark:text-gray-300 leading-relaxed">
+                  هل تشعر بضيق، حزن، أو فرح؟ فضفض لأثر يسمعك، ويختار لك آية أو حديثاً أو قصة تلامس قلبك.
+                </p>
+                <button
+                  onClick={() => {
+                    handleCloseModal();
+                    // هنا سيتم فتح مودال "فضفض لأثر" الحقيقي لاحقاً
+                    alert("بوابة فضفض لأثر قادمة قريباً إن شاء الله");
+                  }}
+                  className="btn-primary w-full flex items-center justify-center gap-2"
+                >
+                  <MessageCircleHeart className="w-5 h-5" />
+                  <span>ادخل فضفض لأثر</span>
+                </button>
+                <p className="text-xs text-athar-muted dark:text-gray-500">
+                  مكانك الآمن للفضفضة والمواساة
+                </p>
+              </>
             )}
-            <p className="text-xs text-athar-muted dark:text-gray-500">
-              شارك في الأجر بنشر التطبيق أو الدعاء
-            </p>
           </div>
         </div>
       )}
