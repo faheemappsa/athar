@@ -18,6 +18,15 @@ export default function AtharCard() {
   const cardRef = useRef<HTMLDivElement>(null);
   const exportCardRef = useRef<HTMLDivElement>(null);
 
+  // إجبار تحميل خط Thmanyah لضمان جاهزيته لـ html2canvas
+  useEffect(() => {
+    if (typeof document !== "undefined" && document.fonts) {
+      document.fonts.ready.then(() => {
+        console.log("Fonts ready");
+      });
+    }
+  }, []);
+
   const loadAthar = async () => {
     setLoading(true);
     const data = await fetchDailyAthar();
@@ -56,6 +65,8 @@ export default function AtharCard() {
     if (!athar || !exportCardRef.current) return;
     setExporting(true);
     try {
+      // التأكد من تحميل جميع الخطوط قبل الالتقاط
+      await document.fonts.ready;
       const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(exportCardRef.current, {
         backgroundColor: null,
@@ -204,52 +215,71 @@ export default function AtharCard() {
         </div>
       )}
 
-      {/* بطاقة التصدير المخفية داخل صندوق صغير جداً لا يؤثر على الصفحة */}
+      {/* بطاقة التصدير الفاخرة - صندوق صغير يمنع التمدد */}
       <div className="fixed top-0 left-0 w-[1px] h-[1px] opacity-0 pointer-events-none overflow-hidden" style={{ direction: "rtl" }}>
         {athar && (
           <div
             ref={exportCardRef}
-            className="w-[1080px] h-[1920px]"
+            className="w-[1080px] h-[1920px] relative overflow-hidden"
             style={{
-              background: "linear-gradient(160deg, #0F2A1C 0%, #1B4332 30%, #2D6A4F 60%, #40916C 100%)",
+              background: "linear-gradient(135deg, #0F2A1C 0%, #1B4332 40%, #2D6A4F 70%, #D4A373 100%)",
               fontFamily: "Thmanyah, sans-serif",
               color: "white",
+              isolation: "isolate",
             }}
           >
-            <div className="w-full h-full flex flex-col items-center justify-between p-20 text-center relative overflow-hidden">
-              {/* زخارف خلفية فاخرة */}
-              <div className="absolute inset-0 opacity-20 pointer-events-none">
-                <div className="absolute top-[-10%] right-[-10%] w-[600px] h-[600px] rounded-full bg-athar-accent blur-3xl"></div>
-                <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-athar-secondary blur-3xl"></div>
+            {/* شبكة خلفية فاخرة (زخرفة هندسية شفافة) */}
+            <svg className="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="1"/>
+                </pattern>
+                <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <circle cx="2" cy="2" r="1" fill="white" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#grid)" />
+              <rect width="100%" height="100%" fill="url(#dots)" />
+            </svg>
+
+            {/* إطار ذهبي فاخر */}
+            <div className="absolute top-8 left-8 right-8 bottom-8 border border-white/20 rounded-[50px] pointer-events-none"></div>
+            <div className="absolute top-10 left-10 right-10 bottom-10 border border-white/10 rounded-[44px] pointer-events-none"></div>
+
+            {/* المحتوى */}
+            <div className="relative z-10 w-full h-full flex flex-col items-center justify-between p-16 text-center">
+              {/* الرأس */}
+              <div className="space-y-2">
+                <h1 className="text-8xl font-extrabold tracking-[0.2em] text-shadow-xl" style={{ textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
+                  أثر
+                </h1>
+                <p className="text-3xl font-medium opacity-90 tracking-wide">أثرٌ جارٍ لا ينقطع</p>
               </div>
 
-              {/* إطار ذهبي شفاف داخلي */}
-              <div className="absolute top-10 left-10 right-10 bottom-10 border border-white/10 rounded-[60px] pointer-events-none"></div>
-              <div className="absolute top-12 left-12 right-12 bottom-12 border border-white/5 rounded-[50px] pointer-events-none"></div>
+              {/* الخط الفاصل الزخرفي */}
+              <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
 
-              {/* المحتوى الرئيسي */}
-              <div className="relative z-10 space-y-6">
-                <h1 className="text-7xl font-extrabold tracking-wider">أثر</h1>
-                <p className="text-3xl opacity-80">أثرٌ جارٍ لا ينقطع</p>
-              </div>
-
-              <div className="relative z-10 flex-1 flex flex-col items-center justify-center max-w-2xl space-y-10">
-                <span className="text-4xl bg-white/20 px-10 py-4 rounded-full border border-white/20">
+              {/* الجسم - الآية أو الحديث */}
+              <div className="flex-1 flex flex-col items-center justify-center max-w-2xl space-y-10">
+                <span className="text-4xl bg-white/20 px-10 py-4 rounded-full border border-white/30 shadow-lg">
                   {athar.category}
                 </span>
-                <p className="text-5xl leading-relaxed font-medium">{athar.text}</p>
-                <p className="text-3xl opacity-70">— {athar.source}</p>
+                <p className="text-5xl leading-relaxed font-medium text-shadow-md" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.3)" }}>
+                  {athar.text}
+                </p>
+                <p className="text-3xl opacity-80 italic">— {athar.source}</p>
               </div>
 
-              <div className="relative z-10 space-y-8">
-                <p className="text-2xl opacity-60">الوقف الخيري عن مسلم عوده البويني رحمه الله</p>
-                <div className="flex items-center justify-center gap-8 bg-white/10 rounded-3xl p-6 border border-white/20">
-                  <div className="w-36 h-36 bg-white rounded-2xl flex items-center justify-center p-2 shadow-xl">
-                    <QRCodeSVG value={APP_URL} size={120} level="M" />
+              {/* التذييل - محفوظ بالكامل */}
+              <div className="space-y-8">
+                <p className="text-2xl opacity-70">الوقف الخيري عن مسلم عوده البويني رحمه الله</p>
+                <div className="inline-flex items-center gap-6 bg-black/20 backdrop-blur-sm rounded-3xl p-5 border border-white/20">
+                  <div className="w-32 h-32 bg-white rounded-2xl flex items-center justify-center p-2 shadow-xl">
+                    <QRCodeSVG value={APP_URL} size={110} level="M" />
                   </div>
                   <div className="text-right space-y-1">
                     <p className="text-2xl font-medium">اضغط مطولاً لزيارة التطبيق</p>
-                    <p className="text-lg opacity-60">athar-sandy.vercel.app</p>
+                    <p className="text-lg opacity-60">{APP_URL.replace("https://", "")}</p>
                   </div>
                 </div>
               </div>
