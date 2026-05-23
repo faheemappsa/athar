@@ -1,3 +1,5 @@
+
+```typescript
 "use client";
 
 import { clsx } from "clsx";
@@ -29,15 +31,15 @@ export default function PrayerChip({ name, time, icon, isActive = false, onClick
       className={clsx(
         "flex-shrink-0 flex flex-col items-center gap-1 p-3 rounded-xl min-w-[70px] transition-all duration-200 active:scale-95",
         isActive
-          ? "bg-athar-primary text-white shadow-md"
-          : "bg-athar-bg text-athar-text hover:bg-athar-primary/10"
+          ? "bg-athar-primary text-white shadow-md dark:shadow-athar-primary/20"
+          : "bg-white dark:bg-gray-700 text-athar-text dark:text-gray-200 ring-1 ring-athar-primary/10 dark:ring-gray-600 shadow-sm hover:shadow-md"
       )}
     >
       <span className="text-lg">{icon}</span>
       <span className="text-xs font-medium">{name}</span>
       <span className="text-sm font-bold">
         {display}
-        <span className="text-xs ml-0.5 opacity-70">{period}</span>
+        <span className={clsx("text-xs ml-0.5", isActive ? "opacity-80" : "opacity-50")}>{period}</span>
       </span>
     </button>
   );
