@@ -15,6 +15,7 @@ export async function GET() {
           background: '#123C2A',
           color: 'white',
           fontSize: 80,
+          fontFamily: 'Arial',
         }}
       >
         ATHAR TEST
