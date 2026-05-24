@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Moon, Sun, Heart, MessageCircle, X, Sparkles, MessageCircleHeart } from "lucide-react";
 import { WHATSAPP_LINK } from "@/lib/constants";
 import { trackSupportClick, trackAtharView } from "@/lib/analytics";
@@ -223,7 +223,7 @@ export default function Home() {
   }
 
   const reminderBanner = !isCheckedToday ? (
-    <div className="mt-2 flex items-center justify-center gap-1 text-xs text-athar-accent animate-pulse">
+    <div className="mt-2 flex items-center justify-center gap-1 text-xs text-athar-accent-500 animate-pulse">
       <Sparkles className="w-3 h-3" />
       <span>بادر بتثبيت بصمتك اليوم</span>
     </div>
@@ -238,34 +238,34 @@ export default function Home() {
           className="p-2 rounded-full bg-white/80 dark:bg-gray-800/80 shadow-sm transition-all hover:bg-gray-100 dark:hover:bg-gray-700"
         >
           {isDark ? (
-            <Sun className="w-5 h-5 text-athar-accent" />
+            <Sun className="w-5 h-5 text-athar-accent-400" />
           ) : (
-            <Moon className="w-5 h-5 text-athar-primary" />
+            <Moon className="w-5 h-5 text-athar-primary-500" />
           )}
         </button>
         <div className="text-center">
-          <h1 className="text-3xl font-extrabold text-athar-primary dark:text-athar-accent">أثر</h1>
-          <p className="text-xs text-athar-accent font-medium mt-1">أثرٌ جارٍ لا ينقطع</p>
+          <h1 className="text-3xl font-extrabold text-athar-primary-600 dark:text-athar-accent-400">أثر</h1>
+          <p className="text-xs text-athar-accent-500 font-medium mt-1">أثرٌ جارٍ لا ينقطع</p>
         </div>
         <button
           onClick={handleHeartClick}
           className="p-2 rounded-full bg-white/80 dark:bg-gray-800/80 shadow-sm transition-all hover:bg-rose-50 dark:hover:bg-rose-900/30 active:scale-95"
         >
-          <Heart className="w-5 h-5 text-athar-primary dark:text-athar-accent" />
+          <Heart className="w-5 h-5 text-athar-primary-500 dark:text-athar-accent-400" />
         </button>
       </header>
 
       {/* شريط ترحيبي ذكي */}
       <section className="px-4 py-2">
-        <div className="backdrop-blur-sm bg-gradient-to-br from-athar-primary/5 via-athar-accent/5 to-athar-bg/80 dark:from-athar-primary/10 dark:via-athar-accent/10 dark:to-gray-800/60 rounded-2xl px-5 py-4 text-center shadow-sm border border-white/50 dark:border-gray-700/50 transition-all duration-500">
-          <div className="flex items-center justify-center gap-2 text-athar-text dark:text-gray-200">
+        <div className="backdrop-blur-sm bg-gradient-to-br from-athar-primary-200 via-athar-accent-200 to-athar-bg-100 dark:from-athar-primary-800 dark:via-athar-accent-800/30 dark:to-gray-800/60 rounded-2xl px-5 py-4 text-center shadow-sm border border-athar-primary-300/30 dark:border-gray-700/50 transition-all duration-500">
+          <div className="flex items-center justify-center gap-2 text-athar-primary-700 dark:text-gray-200">
             <span className="text-lg">{greetingEmoji}</span>
             <p className="text-sm font-medium">{greetingText}</p>
           </div>
-          <p className="text-xs text-athar-muted dark:text-gray-400 mt-1.5 leading-relaxed">
+          <p className="text-xs text-athar-primary-500 dark:text-gray-300 mt-1.5 leading-relaxed">
             {duaText}
           </p>
-          <p className="text-xs text-athar-muted/70 dark:text-gray-500 mt-0.5">
+          <p className="text-xs text-athar-primary-400 dark:text-gray-500 mt-0.5">
             {subText}
           </p>
           {reminderBanner}
@@ -278,15 +278,15 @@ export default function Home() {
 
       {/* Waqf Card */}
       <section className="px-4 py-4">
-        <div className="bg-athar-primary/5 dark:bg-athar-primary/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-athar-primary/10 dark:border-gray-700">
-          <p className="text-xs text-athar-muted dark:text-gray-400 leading-relaxed">
+        <div className="bg-athar-primary-200/50 dark:bg-athar-primary-800/30 backdrop-blur-sm rounded-2xl p-4 text-center border border-athar-primary-300/30 dark:border-gray-700">
+          <p className="text-xs text-athar-primary-600 dark:text-gray-300 leading-relaxed">
             هذا الأثر الجاري صدقة عن{" "}
-            <span className="text-athar-primary dark:text-athar-accent font-medium">مسلم عوده البويني</span>{" "}
+            <span className="text-athar-primary-700 dark:text-athar-accent-400 font-medium">مسلم عوده البويني</span>{" "}
             رحمه الله
           </p>
           <button
             onClick={handleSupportClick}
-            className="mt-2 text-sm text-athar-accent font-medium flex items-center justify-center gap-1 mx-auto hover:underline"
+            className="mt-2 text-sm text-athar-accent-600 font-medium flex items-center justify-center gap-1 mx-auto hover:underline"
           >
             <MessageCircle className="w-4 h-4" />
             تواصل معنا
@@ -314,9 +314,9 @@ export default function Home() {
 
             {!showFadfedInvite ? (
               <>
-                <Heart className="w-10 h-10 text-athar-accent mx-auto" />
+                <Heart className="w-10 h-10 text-athar-accent-500 mx-auto" />
                 <h3 className="text-lg font-bold text-athar-text dark:text-gray-200">الدعاء للوقف</h3>
-                <div className="bg-athar-bg dark:bg-gray-800 rounded-2xl p-4 text-sm leading-relaxed text-athar-text dark:text-gray-300">
+                <div className="bg-athar-bg-100 dark:bg-gray-800 rounded-2xl p-4 text-sm leading-relaxed text-athar-text dark:text-gray-300">
                   اللهم اغفر لمسلم عوده البويني وارحمه، واغفر لموتى المسلمين أجمعين، واجعل هذا الأثر جارياً لهم إلى يوم الدين، واجعل أعمالهم نوراً في قبورهم، واجمعنا بهم في جنات النعيم.
                 </div>
 
@@ -329,17 +329,17 @@ export default function Home() {
                     <span className="text-lg">🤲</span>
                   </button>
                 ) : (
-                  <div className="bg-athar-primary/10 dark:bg-athar-primary/20 text-athar-primary dark:text-athar-accent rounded-xl py-3 px-4 text-sm font-medium">
+                  <div className="bg-athar-primary-100 dark:bg-athar-primary-800/20 text-athar-primary-600 dark:text-athar-accent-400 rounded-xl py-3 px-4 text-sm font-medium">
                     آمين 🤲 جزاك الله خيراً
                   </div>
                 )}
-                <p className="text-xs text-athar-muted dark:text-gray-500">
+                <p className="text-xs text-athar-primary-400 dark:text-gray-500">
                   شارك في الأجر بنشر التطبيق أو الدعاء
                 </p>
               </>
             ) : (
               <>
-                <MessageCircleHeart className="w-10 h-10 text-athar-accent mx-auto" />
+                <MessageCircleHeart className="w-10 h-10 text-athar-accent-500 mx-auto" />
                 <h3 className="text-lg font-bold text-athar-text dark:text-gray-200">فضفض لأثر</h3>
                 <p className="text-sm text-athar-text dark:text-gray-300 leading-relaxed">
                   هل تشعر بضيق، حزن، أو فرح؟ فضفض لأثر يسمعك، ويختار لك آية أو حديثاً أو قصة تلامس قلبك.
@@ -354,7 +354,7 @@ export default function Home() {
                   <MessageCircleHeart className="w-5 h-5" />
                   <span>ادخل فضفض لأثر</span>
                 </button>
-                <p className="text-xs text-athar-muted dark:text-gray-500">
+                <p className="text-xs text-athar-primary-400 dark:text-gray-500">
                   مكانك الآمن للفضفضة والمواساة
                 </p>
               </>
