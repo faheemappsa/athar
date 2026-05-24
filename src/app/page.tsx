@@ -5,14 +5,13 @@ import { WHATSAPP_LINK } from "@/lib/constants";
 import { trackSupportClick, trackAtharView } from "@/lib/analytics";
 import AtharCard from "@/components/AtharCard";
 import PrayerTimes from "@/components/PrayerTimes";
-import Streak from "@/components/Streak";
+import TreeCard from "@/components/TreeCard";
 import BottomNav from "@/components/BottomNav";
 import Fadfed from "@/components/Fadfed";
 import NameModal from "@/components/NameModal";
 
 export default function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [streak, setStreak] = useState(0);
   const [showDuaModal, setShowDuaModal] = useState(false);
   const [duaSent, setDuaSent] = useState(false);
   const [isDark, setIsDark] = useState(false);
@@ -49,8 +48,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const saved = localStorage.getItem("athar-streak");
-    if (saved) setStreak(parseInt(saved));
     trackAtharView("daily", "home");
     const today = new Date().toDateString();
     const lastCheck = localStorage.getItem("athar-last-check");
@@ -155,11 +152,6 @@ export default function Home() {
     trackSupportClick();
     window.open(WHATSAPP_LINK, "_blank");
   };
-
-  const handleStreakUpdate = useCallback((newStreak: number) => {
-    setStreak(newStreak);
-    setIsCheckedToday(true);
-  }, []);
 
   const handleHeartClick = () => {
     if (!userName) {
@@ -282,7 +274,7 @@ export default function Home() {
 
       <AtharCard />
       <PrayerTimes />
-      <Streak streak={streak} onStreakUpdate={handleStreakUpdate} />
+      <TreeCard userName={userName} />
 
       {/* Waqf Card */}
       <section className="px-4 py-4">
