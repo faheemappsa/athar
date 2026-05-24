@@ -23,7 +23,6 @@ export default function AtharCard() {
   const [exporting, setExporting] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState(themes[0]);
   const cardRef = useRef<HTMLDivElement>(null);
-  const exportCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof document !== "undefined" && document.fonts) {
@@ -61,33 +60,30 @@ export default function AtharCard() {
   };
 
   const handleExportImage = async () => {
-    if (!athar || !exportCardRef.current) return;
+    if (!athar) return;
     setExporting(true);
     try {
-      await document.fonts.ready;
-      const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(exportCardRef.current, {
-        backgroundColor: null,
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
+      const params = new URLSearchParams({
+        text: athar.text,
+        source: athar.source,
+        theme: selectedTheme.id,
       });
-      const blob = await new Promise<Blob | null>((resolve) => {
-        canvas.toBlob((b) => resolve(b), "image/png", 1.0);
-      });
-      if (blob) {
-        const file = new File([blob], `اثر-${Date.now()}.png`, { type: "image/png" });
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], title: "أثر", text: athar.text });
-        } else {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url; a.download = `اثر-${Date.now()}.png`;
-          document.body.appendChild(a); a.click();
-          document.body.removeChild(a); URL.revokeObjectURL(url);
-        }
+      const response = await fetch(`/api/og?${params.toString()}`);
+      const blob = await response.blob();
+
+      const file = new File([blob], `اثر-${Date.now()}.png`, { type: "image/png" });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: "أثر", text: athar.text });
+      } else {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = `اثر-${Date.now()}.png`;
+        document.body.appendChild(a); a.click();
+        document.body.removeChild(a); URL.revokeObjectURL(url);
       }
-    } catch (e) { console.error("Error exporting image:", e); }
+    } catch (e) {
+      console.error("Error exporting image:", e);
+    }
     setExporting(false);
     setShowExportOptions(false);
   };
@@ -174,56 +170,6 @@ export default function AtharCard() {
           </div>
         </div>
       )}
-
-      {/* بطاقة التصدير الجديدة (ثيمات، بدون QR كبير، رابط صغير) */}
-      <div className="fixed top-0 left-0 w-[1px] h-[1px] opacity-0 pointer-events-none overflow-hidden" style={{ direction: "rtl" }}>
-        {athar && (
-          <div
-            ref={exportCardRef}
-            className="w-[1080px] h-[1920px] relative overflow-hidden"
-            style={{
-              background: selectedTheme.bg,
-              fontFamily: "Thmanyah, sans-serif",
-              color: selectedTheme.textColor,
-              isolation: "isolate",
-            }}
-          >
-            {/* زخرفة خفيفة جداً */}
-            <svg className="absolute inset-0 w-full h-full opacity-5" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse">
-                  <circle cx="2" cy="2" r="1.5" fill={selectedTheme.textColor === "white" ? "white" : "#1B4332"} />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#dots)" />
-            </svg>
-
-            {/* منطقة الأمان العليا (200px) */}
-            <div className="h-[200px]" />
-
-            {/* المحتوى الرئيسي */}
-            <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-16 text-center" style={{ minHeight: "1520px" }}>
-              {/* أيقونة أثر صغيرة */}
-              <div className="mb-12 opacity-60">
-                <Sparkles className="w-16 h-16" />
-              </div>
-
-              {/* النص الرئيسي (البطل) */}
-              <p className="text-6xl leading-relaxed font-medium max-w-2xl" style={{ textShadow: selectedTheme.textColor === "white" ? "0 4px 30px rgba(0,0,0,0.5)" : "none" }}>
-                {athar.text}
-              </p>
-
-              {/* المصدر */}
-              <p className="text-3xl opacity-70 mt-8 italic">— {athar.source}</p>
-            </div>
-
-            {/* منطقة الأمان السفلى (200px) */}
-            <div className="h-[200px] flex items-end justify-center pb-12">
-              <p className="text-2xl opacity-40 tracking-widest">athar.app</p>
-            </div>
-          </div>
-        )}
-      </div>
     </>
   );
 }
