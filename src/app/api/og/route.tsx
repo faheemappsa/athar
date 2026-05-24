@@ -12,16 +12,16 @@ export async function GET(request: NextRequest) {
 
   const themes: Record<string, { bg: string; textColor: string }> = {
     emerald: {
-      bg: 'linear-gradient(160deg, #0F2A1C 0%, #1B4332 40%, #2D6A4F 100%)',
-      textColor: 'white',
+      bg: 'linear-gradient(160deg, #0F2A1C 0%, #1B4332 45%, #2D6A4F 100%)',
+      textColor: '#FFFFFF',
     },
     dawn: {
-      bg: 'linear-gradient(160deg, #D4A373 0%, #B8875A 40%, #2D6A4F 100%)',
-      textColor: 'white',
+      bg: 'linear-gradient(160deg, #D4A373 0%, #B8875A 45%, #2D6A4F 100%)',
+      textColor: '#FFFFFF',
     },
     midnight: {
       bg: 'linear-gradient(160deg, #0A0F0C 0%, #1A1F2E 60%, #111827 100%)',
-      textColor: 'white',
+      textColor: '#FFFFFF',
     },
     sand: {
       bg: 'linear-gradient(160deg, #F5F5F0 0%, #EDE8DC 60%, #D4A373 100%)',
@@ -39,96 +39,60 @@ export async function GET(request: NextRequest) {
     (
       <div
         style={{
+          width: '100%',
+          height: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          width: '100%',
-          height: '100%',
           background: selectedTheme.bg,
           color: selectedTheme.textColor,
           fontFamily: 'Thmanyah',
           direction: 'rtl',
-          padding: '200px 80px',
-          position: 'relative',
+          textAlign: 'center',
+          padding: '180px 90px',
         }}
       >
-        <svg
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            opacity: 0.05,
-          }}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <pattern
-              id="dots"
-              width="30"
-              height="30"
-              patternUnits="userSpaceOnUse"
-            >
-              <circle
-                cx="2"
-                cy="2"
-                r="1.5"
-                fill={selectedTheme.textColor}
-              />
-            </pattern>
-          </defs>
-
-          <rect width="100%" height="100%" fill="url(#dots)" />
-        </svg>
-
         <div
           style={{
-            opacity: 0.6,
-            marginBottom: '48px',
-            fontSize: '64px',
+            fontSize: 46,
+            opacity: 0.72,
+            marginBottom: 70,
           }}
         >
-          ✨
+          أثر
         </div>
 
         <div
           style={{
-            fontSize: '64px',
-            lineHeight: 1.8,
+            fontSize: 70,
+            lineHeight: 1.7,
             fontWeight: 500,
-            textAlign: 'center',
-            maxWidth: '900px',
-            textShadow:
-              selectedTheme.textColor === 'white'
-                ? '0 4px 30px rgba(0,0,0,0.5)'
-                : 'none',
+            maxWidth: 900,
           }}
         >
           {text}
         </div>
 
-        {source && (
+        {source ? (
           <div
             style={{
-              fontSize: '36px',
-              opacity: 0.7,
-              marginTop: '32px',
-              fontStyle: 'italic',
+              fontSize: 34,
+              opacity: 0.72,
+              marginTop: 44,
             }}
           >
             — {source}
           </div>
-        )}
+        ) : null}
 
         <div
           style={{
             position: 'absolute',
-            bottom: '80px',
-            fontSize: '24px',
-            opacity: 0.4,
-            letterSpacing: '0.1em',
+            bottom: 80,
+            fontSize: 24,
+            opacity: 0.45,
+            letterSpacing: 1.5,
           }}
         >
           athar.app
