@@ -14,7 +14,7 @@ html {
 
 body {
   font-family: var(--font-thmanyah);
-  background: linear-gradient(135deg, #F5F5F0 0%, #EDE8DC 40%, #F0EBE3 70%, #F5F5F0 100%);
+  background: linear-gradient(160deg, #EDE8DC 0%, #F5F5F0 30%, #F0EBE3 60%, #F5F5F0 100%);
   color: #1B4332;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -22,7 +22,7 @@ body {
 }
 
 html.dark body {
-  background: linear-gradient(135deg, #0F172A 0%, #111827 40%, #1A1F2E 70%, #0F172A 100%);
+  background: linear-gradient(160deg, #0A0F0C 0%, #111827 30%, #1A1F2E 60%, #0F172A 100%);
   color: #E5E7EB;
 }
 
@@ -44,16 +44,16 @@ html.dark body {
   }
   
   .btn-primary {
-    @apply bg-athar-primary text-white px-6 py-3 rounded-xl font-medium 
-           transition-all duration-200 hover:bg-athar-secondary active:scale-95;
+    @apply bg-athar-primary-500 text-white px-6 py-3 rounded-xl font-medium 
+           transition-all duration-200 hover:bg-athar-primary-600 active:scale-95;
   }
   html.dark .btn-primary {
-    @apply bg-athar-accent text-black hover:bg-yellow-600;
+    @apply bg-athar-accent-400 text-athar-primary-900 hover:bg-athar-accent-500;
   }
   
   .btn-secondary {
-    @apply bg-athar-bg text-athar-text px-6 py-3 rounded-xl font-medium 
-           transition-all duration-200 hover:bg-[#E8E8E0] active:scale-95;
+    @apply bg-athar-bg-200 text-athar-text px-6 py-3 rounded-xl font-medium 
+           transition-all duration-200 hover:bg-athar-bg-300 active:scale-95;
   }
   html.dark .btn-secondary {
     @apply bg-gray-700 text-gray-200 hover:bg-gray-600;
