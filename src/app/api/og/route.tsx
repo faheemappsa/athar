@@ -3,9 +3,6 @@ import { NextRequest } from 'next/server';
 
 export const runtime = 'edge';
 
-const fontUrl =
-  'https://raw.githubusercontent.com/google/fonts/main/ofl/amiri/Amiri-Regular.ttf';
-
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
@@ -21,7 +18,6 @@ export async function GET(request: NextRequest) {
   };
 
   const t = themes[theme] || themes.emerald;
-  const fontData = await fetch(fontUrl).then((res) => res.arrayBuffer());
 
   return new ImageResponse(
     (
@@ -35,11 +31,11 @@ export async function GET(request: NextRequest) {
           justifyContent: 'center',
           background: t.bg,
           color: t.text,
-          fontFamily: 'Amiri',
           direction: 'rtl',
           textAlign: 'center',
           padding: '170px 90px',
           position: 'relative',
+          fontFamily: 'serif',
         }}
       >
         <div style={{ position: 'absolute', top: 90, fontSize: 58, color: t.sub }}>
@@ -51,7 +47,6 @@ export async function GET(request: NextRequest) {
             fontSize: 74,
             lineHeight: 1.75,
             maxWidth: 900,
-            textShadow: theme === 'sand' ? 'none' : '0 8px 35px rgba(0,0,0,0.35)',
           }}
         >
           {text}
@@ -69,7 +64,6 @@ export async function GET(request: NextRequest) {
             bottom: 80,
             fontSize: 28,
             color: t.sub,
-            opacity: 0.9,
           }}
         >
           وقف خيري لمسلم عوده البويني رحمه الله
@@ -79,7 +73,6 @@ export async function GET(request: NextRequest) {
     {
       width: 1080,
       height: 1920,
-      fonts: [{ name: 'Amiri', data: fontData, style: 'normal', weight: 400 }],
     }
   );
 }
