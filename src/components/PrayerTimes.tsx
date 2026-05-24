@@ -210,22 +210,22 @@ export default function PrayerTimes() {
 
   return (
     <section className="px-4 py-4">
-      <div className="backdrop-blur-sm bg-white/70 dark:bg-gray-800/60 rounded-3xl shadow-2xl border border-white/50 dark:border-gray-700/50 p-5 space-y-4 relative overflow-hidden">
-        {/* تدرج علوي ناعم */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-athar-primary/40 to-transparent"></div>
+      <div className="relative overflow-hidden bg-gradient-to-b from-athar-bg-100 via-athar-bg-50 to-athar-card dark:from-athar-primary-800 dark:via-gray-800 dark:to-gray-900 rounded-3xl shadow-lg border border-athar-primary-100/30 dark:border-athar-primary-700/30 p-5 space-y-4 backdrop-blur-sm">
+        {/* تاج علوي */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-athar-primary-200 to-transparent opacity-80"></div>
 
         {/* Header */}
         <div className="flex items-center justify-between">
           <button
             onClick={requestLocation}
-            className="flex items-center gap-1 text-sm text-athar-primary dark:text-athar-accent hover:underline transition-colors"
+            className="flex items-center gap-1 text-sm text-athar-primary-400 dark:text-athar-accent-300 hover:underline transition-colors"
           >
             <MapPin className="w-4 h-4" />
             {location}
           </button>
           <div className="flex items-center gap-2">
             {hijri && (
-              <span className="text-xs text-athar-muted dark:text-gray-400">{hijri.weekday}</span>
+              <span className="text-xs text-athar-text-muted dark:text-gray-400">{hijri.weekday}</span>
             )}
             <span className="text-sm font-medium text-athar-text dark:text-gray-200">مواقيت الصلاة</span>
           </div>
@@ -234,7 +234,7 @@ export default function PrayerTimes() {
         {/* التاريخ الهجري والأحداث */}
         {hijri && (
           <div className="text-center">
-            <p className="text-sm text-athar-primary dark:text-athar-accent font-medium">
+            <p className="text-sm text-athar-primary-400 dark:text-athar-accent-300 font-medium">
               {hijri.day} {hijri.month} {hijri.year} هـ
             </p>
             {events.length > 0 && (
@@ -250,7 +250,7 @@ export default function PrayerTimes() {
         {/* رقاقات الصلوات */}
         {loading ? (
           <div className="flex items-center justify-center py-6">
-            <Loader2 className="w-6 h-6 text-athar-primary animate-spin" />
+            <Loader2 className="w-6 h-6 text-athar-primary-400 animate-spin" />
           </div>
         ) : error ? (
           <div className="flex items-center justify-center gap-2 py-6 text-red-500">
@@ -290,8 +290,8 @@ export default function PrayerTimes() {
 
         {/* العداد الذكي */}
         {nextPrayer && (
-          <div className="p-4 bg-athar-bg/80 dark:bg-gray-900/50 rounded-2xl text-center shadow-inner">
-            <p className="text-sm text-athar-muted dark:text-gray-400 mb-1">
+          <div className="p-4 bg-athar-primary-50/80 dark:bg-athar-primary-900/30 rounded-2xl text-center shadow-inner border border-athar-primary-100/20 dark:border-athar-primary-700/20">
+            <p className="text-sm text-athar-text-muted dark:text-gray-400 mb-1">
               {nextPrayer.name === "الضحى"
                 ? isIqamah
                   ? "وقت الضحى ممتد"
@@ -300,12 +300,12 @@ export default function PrayerTimes() {
                 ? `الإقامة: ${nextPrayer.name}`
                 : `الصلاة القادمة: ${nextPrayer.name}`}
             </p>
-            <div className="flex items-center justify-center gap-2 text-athar-primary dark:text-athar-accent">
+            <div className="flex items-center justify-center gap-2 text-athar-primary-400 dark:text-athar-accent-300">
               <Clock className="w-5 h-5" />
               <span className="text-3xl font-bold tabular-nums tracking-wider">{timeRemaining}</span>
             </div>
             {nextPrayer.name !== "الضحى" && nextPrayer.iqamah && (
-              <p className="text-xs text-athar-muted dark:text-gray-500 mt-1">
+              <p className="text-xs text-athar-text-muted dark:text-gray-500 mt-1">
                 وقت الإقامة: {formatTime12(nextPrayer.iqamah)}
               </p>
             )}
