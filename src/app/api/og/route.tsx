@@ -3,6 +3,9 @@ import { NextRequest } from 'next/server';
 
 export const runtime = 'edge';
 
+const fontUrl =
+  'https://raw.githubusercontent.com/google/fonts/main/ofl/amiri/Amiri-Regular.ttf';
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
@@ -10,30 +13,15 @@ export async function GET(request: NextRequest) {
   const source = searchParams.get('source') || '';
   const theme = searchParams.get('theme') || 'emerald';
 
-  const themes: Record<string, { bg: string; textColor: string }> = {
-    emerald: {
-      bg: 'linear-gradient(160deg, #0F2A1C 0%, #1B4332 45%, #2D6A4F 100%)',
-      textColor: '#FFFFFF',
-    },
-    dawn: {
-      bg: 'linear-gradient(160deg, #D4A373 0%, #B8875A 45%, #2D6A4F 100%)',
-      textColor: '#FFFFFF',
-    },
-    midnight: {
-      bg: 'linear-gradient(160deg, #0A0F0C 0%, #1A1F2E 60%, #111827 100%)',
-      textColor: '#FFFFFF',
-    },
-    sand: {
-      bg: 'linear-gradient(160deg, #F5F5F0 0%, #EDE8DC 60%, #D4A373 100%)',
-      textColor: '#1B4332',
-    },
+  const themes: Record<string, { bg: string; text: string; sub: string }> = {
+    emerald: { bg: '#123C2A', text: '#FFFFFF', sub: '#D8C49A' },
+    dawn: { bg: '#B8875A', text: '#FFFFFF', sub: '#F6E7D0' },
+    midnight: { bg: '#0A0F0C', text: '#FFFFFF', sub: '#A8C7B0' },
+    sand: { bg: '#F5F1E8', text: '#123C2A', sub: '#B8875A' },
   };
 
-  const selectedTheme = themes[theme] || themes.emerald;
-
-  const fontData = await fetch(
-    new URL('/fonts/thmanyahsans-Medium.otf', request.url)
-  ).then((res) => res.arrayBuffer());
+  const t = themes[theme] || themes.emerald;
+  const fontData = await fetch(fontUrl).then((res) => res.arrayBuffer());
 
   return new ImageResponse(
     (
@@ -45,46 +33,32 @@ export async function GET(request: NextRequest) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: selectedTheme.bg,
-          color: selectedTheme.textColor,
-          fontFamily: 'Thmanyah',
+          background: t.bg,
+          color: t.text,
+          fontFamily: 'Amiri',
           direction: 'rtl',
           textAlign: 'center',
-          padding: '180px 90px',
+          padding: '170px 90px',
           position: 'relative',
         }}
       >
-        <div
-          style={{
-            fontSize: 54,
-            opacity: 0.75,
-            marginBottom: 80,
-            fontWeight: 500,
-          }}
-        >
-          أثر
+        <div style={{ position: 'absolute', top: 90, fontSize: 58, color: t.sub }}>
+          أثَر
         </div>
 
         <div
           style={{
-            fontSize: 72,
-            lineHeight: 1.7,
-            fontWeight: 500,
+            fontSize: 74,
+            lineHeight: 1.75,
             maxWidth: 900,
+            textShadow: theme === 'sand' ? 'none' : '0 8px 35px rgba(0,0,0,0.35)',
           }}
         >
           {text}
         </div>
 
         {source ? (
-          <div
-            style={{
-              fontSize: 34,
-              opacity: 0.72,
-              marginTop: 44,
-              fontWeight: 500,
-            }}
-          >
+          <div style={{ fontSize: 34, color: t.sub, marginTop: 45 }}>
             — {source}
           </div>
         ) : null}
@@ -93,27 +67,19 @@ export async function GET(request: NextRequest) {
           style={{
             position: 'absolute',
             bottom: 80,
-            fontSize: 24,
-            opacity: 0.45,
-            letterSpacing: 1.5,
-            fontWeight: 500,
+            fontSize: 28,
+            color: t.sub,
+            opacity: 0.9,
           }}
         >
-          athar.app
+          وقف خيري لمسلم عوده البويني رحمه الله
         </div>
       </div>
     ),
     {
       width: 1080,
       height: 1920,
-      fonts: [
-        {
-          name: 'Thmanyah',
-          data: fontData,
-          style: 'normal',
-          weight: 500,
-        },
-      ],
+      fonts: [{ name: 'Amiri', data: fontData, style: 'normal', weight: 400 }],
     }
   );
 }
