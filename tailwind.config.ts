@@ -27,6 +27,23 @@ const config: Config = {
         "26": "6.5rem",
         "30": "7.5rem",
       },
+      borderRadius: {
+        "xs": "0.375rem",
+        "sm": "0.5rem",
+        "md": "0.75rem",
+        "lg": "1rem",
+        "xl": "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "2rem",
+      },
+      boxShadow: {
+        "xs": "0 1px 2px 0 rgba(0, 0, 0, 0.03)",
+        "sm": "0 2px 4px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.03)",
+        "md": "0 4px 8px -2px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.04)",
+        "lg": "0 8px 16px -4px rgba(0, 0, 0, 0.06), 0 4px 8px -4px rgba(0, 0, 0, 0.04)",
+        "xl": "0 12px 24px -8px rgba(0, 0, 0, 0.08), 0 4px 12px -4px rgba(0, 0, 0, 0.04)",
+        "2xl": "0 20px 40px -12px rgba(0, 0, 0, 0.12), 0 4px 16px -4px rgba(0, 0, 0, 0.06)",
+      },
       colors: {
         athar: {
           primary: "#2D6A4F",
