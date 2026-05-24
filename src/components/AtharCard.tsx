@@ -116,10 +116,10 @@ export default function AtharCard() {
       <section className="px-4 py-4">
         <div
           ref={cardRef}
-          className="relative overflow-hidden bg-gradient-to-b from-athar-accent-100 via-athar-card to-athar-bg-50 dark:from-athar-primary-800 dark:via-gray-900 dark:to-gray-900 rounded-3xl shadow-2xl p-6 space-y-5 border border-athar-accent-200/30 dark:border-athar-primary-700/30 backdrop-blur-sm"
+          className="relative overflow-hidden bg-gradient-to-b from-athar-accent-200 via-athar-card to-athar-primary-50 dark:from-athar-primary-800 dark:via-gray-900 dark:to-gray-900 rounded-3xl shadow-xl shadow-athar-accent-500/5 p-6 space-y-5 border border-athar-accent-300/40 dark:border-athar-primary-700/30 backdrop-blur-sm"
         >
           {/* تاج نوراني علوي */}
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-athar-accent-300 to-transparent opacity-80"></div>
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-athar-accent-400 to-transparent opacity-80"></div>
 
           {loading ? (
             <div className="flex items-center justify-center py-12">
@@ -130,20 +130,20 @@ export default function AtharCard() {
               {/* الترويسة: وسام الفئة */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-athar-accent-100 text-athar-accent-500">
+                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-athar-accent-200 text-athar-accent-600">
                     <Sparkles className="w-4 h-4" />
                   </span>
                   <Badge label={athar.category} variant="accent" />
                 </div>
-                <span className="text-xs font-medium text-athar-primary-300 dark:text-athar-accent-300 tracking-wide">أثر اليوم</span>
+                <span className="text-xs font-medium text-athar-primary-500 dark:text-athar-accent-400 tracking-wide">أثر اليوم</span>
               </div>
 
               {/* النص الرئيسي (البطل) */}
               <div className="text-center py-8 px-2">
-                <p className="text-2xl font-medium text-athar-text dark:text-gray-100 leading-relaxed">
+                <p className="text-2xl font-medium text-athar-primary-700 dark:text-gray-100 leading-relaxed">
                   {athar.text}
                 </p>
-                <p className="text-sm text-athar-accent-500 font-medium dark:text-athar-accent-300 mt-4">— {athar.source}</p>
+                <p className="text-sm text-athar-accent-600 font-medium dark:text-athar-accent-400 mt-4">— {athar.source}</p>
               </div>
 
               {/* الأزرار السفلية */}
@@ -152,8 +152,8 @@ export default function AtharCard() {
                   onClick={handleSave}
                   className={`p-3 rounded-full transition-all duration-300 ${
                     saved
-                      ? "bg-athar-primary text-white shadow-lg scale-105"
-                      : "bg-athar-bg-200 dark:bg-gray-700 text-athar-primary dark:text-athar-accent hover:bg-athar-primary-50"
+                      ? "bg-athar-primary-600 text-white shadow-lg scale-105"
+                      : "bg-athar-bg-200 dark:bg-gray-700 text-athar-primary-600 dark:text-athar-accent-400 hover:bg-athar-primary-100"
                   }`}
                   title="احفظ في سجلك"
                 >
@@ -162,7 +162,7 @@ export default function AtharCard() {
 
                 <button
                   onClick={handleShare}
-                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-athar-accent-400 text-white font-medium shadow-lg hover:shadow-xl transition-all active:scale-95 hover:bg-athar-accent-500"
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl bg-athar-accent-500 text-white font-medium shadow-lg hover:shadow-xl transition-all active:scale-95 hover:bg-athar-accent-600"
                 >
                   <Share2 className="w-4 h-4" />
                   مشاركة
@@ -170,7 +170,7 @@ export default function AtharCard() {
 
                 <button
                   onClick={handleNewAthar}
-                  className="p-3 rounded-full bg-athar-bg-200 dark:bg-gray-700 text-athar-primary dark:text-athar-accent hover:bg-athar-primary-50 transition-all"
+                  className="p-3 rounded-full bg-athar-bg-200 dark:bg-gray-700 text-athar-primary-600 dark:text-athar-accent-400 hover:bg-athar-primary-100 transition-all"
                   title="أثر جديد"
                 >
                   <RefreshCw className="w-5 h-5" />
