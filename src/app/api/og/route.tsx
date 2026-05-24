@@ -31,37 +31,63 @@ export async function GET(request: NextRequest) {
 
   const selectedTheme = themes[theme] || themes.emerald;
 
-  const fontUrl = new URL(
-    '../../../fonts/thmanyahsans-Medium.woff2',
-    import.meta.url
-  );
-
-  const fontData = await fetch(fontUrl).then((res) => res.arrayBuffer());
+  const fontData = await fetch(
+    new URL('/fonts/thmanyahsans-Medium.woff2', request.url)
+  ).then((res) => res.arrayBuffer());
 
   return new ImageResponse(
     (
       <div
         style={{
-          width: '100%',
-          height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'center',
           alignItems: 'center',
+          justifyContent: 'center',
+          width: '100%',
+          height: '100%',
           background: selectedTheme.bg,
           color: selectedTheme.textColor,
           fontFamily: 'Thmanyah',
           direction: 'rtl',
-          padding: '120px',
-          textAlign: 'center',
+          padding: '200px 80px',
           position: 'relative',
         }}
       >
+        <svg
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            opacity: 0.05,
+          }}
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <pattern
+              id="dots"
+              width="30"
+              height="30"
+              patternUnits="userSpaceOnUse"
+            >
+              <circle
+                cx="2"
+                cy="2"
+                r="1.5"
+                fill={selectedTheme.textColor}
+              />
+            </pattern>
+          </defs>
+
+          <rect width="100%" height="100%" fill="url(#dots)" />
+        </svg>
+
         <div
           style={{
-            opacity: 0.5,
-            fontSize: 64,
-            marginBottom: 40,
+            opacity: 0.6,
+            marginBottom: '48px',
+            fontSize: '64px',
           }}
         >
           ✨
@@ -69,10 +95,15 @@ export async function GET(request: NextRequest) {
 
         <div
           style={{
-            fontSize: 64,
+            fontSize: '64px',
             lineHeight: 1.8,
-            maxWidth: 900,
             fontWeight: 500,
+            textAlign: 'center',
+            maxWidth: '900px',
+            textShadow:
+              selectedTheme.textColor === 'white'
+                ? '0 4px 30px rgba(0,0,0,0.5)'
+                : 'none',
           }}
         >
           {text}
@@ -81,9 +112,10 @@ export async function GET(request: NextRequest) {
         {source && (
           <div
             style={{
-              marginTop: 32,
-              fontSize: 36,
+              fontSize: '36px',
               opacity: 0.7,
+              marginTop: '32px',
+              fontStyle: 'italic',
             }}
           >
             — {source}
@@ -93,9 +125,10 @@ export async function GET(request: NextRequest) {
         <div
           style={{
             position: 'absolute',
-            bottom: 60,
-            fontSize: 24,
+            bottom: '80px',
+            fontSize: '24px',
             opacity: 0.4,
+            letterSpacing: '0.1em',
           }}
         >
           athar.app
@@ -109,8 +142,8 @@ export async function GET(request: NextRequest) {
         {
           name: 'Thmanyah',
           data: fontData,
-          weight: 500,
           style: 'normal',
+          weight: 500,
         },
       ],
     }
