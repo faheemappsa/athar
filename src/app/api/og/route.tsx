@@ -1,72 +1,127 @@
-import { ImageResponse } from '@vercel/og';
-import { NextRequest } from 'next/server';
+import { ImageResponse } from "@vercel/og";
+import { NextRequest } from "next/server";
 
-export const runtime = 'edge';
+export const runtime = "edge";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
+  const text = searchParams.get("text") || "اللهم إني أسألك العفو والعافية";
+  const source = searchParams.get("source") || "حديث صحيح";
+  const theme = searchParams.get("theme") || "dawn";
+  const mood = searchParams.get("mood") || "general";
+  const appLink = "https://athar-sandy.vercel.app";
 
-  const text = searchParams.get('text') || 'أثر';
-  const source = searchParams.get('source') || '';
-  const theme = searchParams.get('theme') || 'emerald';
-
-  const themes: Record<string, { bg: string; text: string; sub: string }> = {
-    emerald: { bg: '#123C2A', text: '#FFFFFF', sub: '#D8C49A' },
-    dawn: { bg: '#B8875A', text: '#FFFFFF', sub: '#F6E7D0' },
-    midnight: { bg: '#0A0F0C', text: '#FFFFFF', sub: '#A8C7B0' },
-    sand: { bg: '#F5F1E8', text: '#123C2A', sub: '#B8875A' },
+  const themes: Record<string, { bg: string; text: string; sub: string; accent: string }> = {
+    emerald: { bg: "#0F2A1C", text: "#FFFFFF", sub: "#D4A373", accent: "#2D6A4F" },
+    dawn: { bg: "#D4A373", text: "#1B4332", sub: "#FEFAE0", accent: "#B8875A" },
+    midnight: { bg: "#0A0F0C", text: "#E5E7EB", sub: "#D4A373", accent: "#2D6A4F" },
+    sand: { bg: "#F5F5F0", text: "#1B4332", sub: "#D4A373", accent: "#B8875A" },
   };
+  const active = themes[theme] || themes.dawn;
 
-  const t = themes[theme] || themes.emerald;
+  const moodIcon = () => {
+    switch (mood) {
+      case "happy": return "😊";
+      case "sad": return "🤲";
+      case "grateful": return "🙏";
+      default: return "🌿";
+    }
+  };
 
   return new ImageResponse(
     (
       <div
         style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: t.bg,
-          color: t.text,
-          direction: 'rtl',
-          textAlign: 'center',
-          padding: '170px 90px',
-          position: 'relative',
-          fontFamily: 'serif',
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          background: active.bg,
+          color: active.text,
+          direction: "rtl",
+          textAlign: "center",
+          padding: "80px 60px",
+          position: "relative",
+          fontFamily: "system-ui, 'Segoe UI', 'Cairo', sans-serif",
         }}
       >
-        <div style={{ position: 'absolute', top: 90, fontSize: 58, color: t.sub }}>
-          أثَر
-        </div>
-
+        {/* أيقونة المزاج في الأعلى */}
         <div
           style={{
-            fontSize: 74,
-            lineHeight: 1.75,
-            maxWidth: 900,
+            position: "absolute",
+            top: 60,
+            right: 60,
+            fontSize: 52,
+          }}
+        >
+          {moodIcon()}
+        </div>
+
+        {/* شعار التطبيق */}
+        <div
+          style={{
+            position: "absolute",
+            top: 60,
+            left: 60,
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
+          <span style={{ fontSize: 40 }}>🌱</span>
+          <span style={{ fontSize: 32, fontWeight: "bold", color: active.sub }}>أثر</span>
+        </div>
+
+        {/* النص الأساسي */}
+        <div
+          style={{
+            fontSize: 52,
+            fontWeight: 500,
+            lineHeight: 1.5,
+            maxWidth: "85%",
+            marginBottom: 40,
           }}
         >
           {text}
         </div>
 
-        {source ? (
-          <div style={{ fontSize: 34, color: t.sub, marginTop: 45 }}>
+        {/* المصدر */}
+        {source && (
+          <div
+            style={{
+              fontSize: 32,
+              color: active.sub,
+              marginBottom: 60,
+            }}
+          >
             — {source}
           </div>
-        ) : null}
+        )}
 
+        {/* رابط التحميل (أهم عنصر للانتشار) */}
         <div
           style={{
-            position: 'absolute',
-            bottom: 80,
-            fontSize: 28,
-            color: t.sub,
+            position: "absolute",
+            bottom: 50,
+            left: 0,
+            right: 0,
+            textAlign: "center",
+            fontSize: 26,
+            color: active.sub,
+            backgroundColor: "rgba(0,0,0,0.1)",
+            padding: "16px",
+            margin: "0 50px",
+            borderRadius: 60,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 12,
           }}
         >
-          وقف خيري لمسلم عوده البويني رحمه الله
+          <span>📲</span>
+          <span>تطبيق أثر — حمل التطبيق الآن</span>
         </div>
       </div>
     ),
