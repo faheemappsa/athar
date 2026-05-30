@@ -49,10 +49,16 @@ html.dark body {
            transition-all duration-200 hover:bg-athar-primary-600 active:scale-95;
   }
   
-  /* الزر الثانوي (أخضر) */
+  /* الزر الثانوي (أخضر نعناعي) */
   .btn-secondary {
     @apply bg-athar-secondary-400 text-white px-6 py-3 rounded-xl font-medium 
            transition-all duration-200 hover:bg-athar-secondary-500 active:scale-95;
+  }
+
+  /* زر التمييز (Dark Teal - لمستي الاحترافية) */
+  .btn-accent {
+    @apply bg-athar-accent-500 text-white px-6 py-3 rounded-xl font-medium 
+           transition-all duration-200 hover:bg-athar-accent-600 active:scale-95;
   }
 
   /* زر محايد (شفاف بحدود) */
