@@ -18,7 +18,8 @@
     "lucide-react": "^0.378.0",
     "clsx": "^2.1.1",
     "tailwind-merge": "^2.3.0",
-    "sharp": "^0.33.5"
+    "sharp": "^0.33.5",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "typescript": "^5.4.5",
