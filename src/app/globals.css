@@ -14,15 +14,15 @@ html {
 
 body {
   font-family: var(--font-thmanyah);
-  background: linear-gradient(160deg, #EDE8DC 0%, #F5F5F0 30%, #F0EBE3 60%, #F5F5F0 100%);
-  color: #1B4332;
+  background: radial-gradient(circle at 10% 20%, #FCF7F0, #F4E9DD);
+  color: #2A241E;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
 html.dark body {
-  background: linear-gradient(160deg, #0A0F0C 0%, #111827 30%, #1A1F2E 60%, #0F172A 100%);
+  background: radial-gradient(circle at 10% 20%, #1E1B18, #151210);
   color: #E5E7EB;
 }
 
