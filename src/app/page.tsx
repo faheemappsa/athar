@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Moon, Sun, Heart, MessageCircle, X, Sparkles, MessageCircleHeart, Calendar, BookOpen, MoonStar, Bed } from "lucide-react";
+import { Moon, Sun, Heart, MessageCircle, X, MessageCircleHeart } from "lucide-react";
 import { WHATSAPP_LINK } from "@/lib/constants";
 import { trackSupportClick, trackAtharView } from "@/lib/analytics";
 import AtharCard from "@/components/AtharCard";
@@ -9,6 +9,39 @@ import TreeCard from "@/components/TreeCard";
 import BottomNav from "@/components/BottomNav";
 import Fadfed from "@/components/Fadfed";
 import NameModal from "@/components/NameModal";
+
+// دالة لجلب التاريخ الهجري من API الأذان
+async function fetchHijriDate() {
+  try {
+    const response = await fetch("https://api.aladhan.com/v1/gToH?date=" + new Date().toISOString().split("T")[0]);
+    const data = await response.json();
+    if (data.code === 200) {
+      return {
+        day: data.data.hijri.day,
+        month: data.data.hijri.month.ar,
+        year: data.data.hijri.year,
+        monthNumber: data.data.hijri.month.number,
+      };
+    }
+  } catch (e) {
+    console.error("فشل جلب التاريخ الهجري:", e);
+  }
+  return null;
+}
+
+// دالة لجلب أوقات الصلاة بناءً على المدينة (مكة مبدئياً)
+async function fetchPrayerTimes(city = "Makkah", country = "SA") {
+  try {
+    const response = await fetch(`https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=2`);
+    const data = await response.json();
+    if (data.code === 200) {
+      return data.data.timings;
+    }
+  } catch (e) {
+    console.error("فشل جلب أوقات الصلاة:", e);
+  }
+  return null;
+}
 
 export default function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -20,8 +53,16 @@ export default function Home() {
   const [showFadfed, setShowFadfed] = useState(false);
   const [showNameModal, setShowNameModal] = useState(false);
   const [userName, setUserName] = useState<string | null>(null);
+  const [hijri, setHijri] = useState<{ day: string; month: string; year: string; monthNumber: number } | null>(null);
+  const [prayerTimes, setPrayerTimes] = useState<any>(null);
 
-  // ==================== الأذونات والإشعارات ====================
+  // جلب البيانات عند تحميل الصفحة
+  useEffect(() => {
+    fetchHijriDate().then(setHijri);
+    fetchPrayerTimes().then(setPrayerTimes);
+  }, []);
+
+  // الأذونات والإشعارات والوضع الليلي... (نفس الكود السابق مع الحفاظ على الوظائف)
   useEffect(() => {
     const savedDark = localStorage.getItem("athar-dark-mode") === "true";
     setIsDark(savedDark);
@@ -69,7 +110,7 @@ export default function Home() {
     }
   }, []);
 
-  // جدولة الإشعارات
+  // جدولة الإشعارات (نفس الكود السابق)
   useEffect(() => {
     if (!("Notification" in window) || Notification.permission !== "granted") return;
 
@@ -163,17 +204,14 @@ export default function Home() {
     setShowFadfedInvite(false);
   };
 
-  // تسجيل البصمة مباشرة (بدون انتظار "آمين")
   const handleRecordAttendance = () => {
     if (!userName) {
       setShowNameModal(true);
       return;
     }
-    // تسجيل البصمة فوراً
     const today = new Date().toDateString();
     localStorage.setItem("athar-last-check", today);
     setIsCheckedToday(true);
-    // فتح نافذة الدعاء تلقائياً (اختياري)
     setShowDuaModal(true);
     setDuaSent(false);
     setShowFadfedInvite(false);
@@ -183,7 +221,6 @@ export default function Home() {
     setUserName(name);
     localStorage.setItem("athar-user-name", name);
     setShowNameModal(false);
-    // بعد إدخال الاسم، نسجل البصمة ونفتح الدعاء
     const today = new Date().toDateString();
     localStorage.setItem("athar-last-check", today);
     setIsCheckedToday(true);
@@ -206,112 +243,101 @@ export default function Home() {
     setIsDark((prev) => !prev);
   };
 
-  // ==================== شريط الترحيب الذكي والمتفاعل (بلهجة سعودية بيضاء) ====================
-  const hour = currentTime.getHours();
-  const day = currentTime.getDate();
-  const isFriday = currentTime.getDay() === 5;
-  const isWhiteDays = (day >= 13 && day <= 15);
+  // ==================== شريط الترحيب الديناميكي النقي (بدون أزرار) ====================
+  const now = currentTime;
+  const hour = now.getHours();
+  const day = now.getDate();
+  const isFriday = now.getDay() === 5;
+  const isWhiteDays = hijri ? (hijri.day >= "13" && hijri.day <= "15") : (day >= 13 && day <= 15);
   
   const nameRef = userName ? userName : "الحبيب";
 
-  // تحديد التحية والدعاء والنص التحفيذي ورمز الإيموجي والأيقونة والزر
   let greetingText = "";
   let duaText = "";
   let subText = "";
   let greetingEmoji = "";
   let specialTag = "";
-  let actionIcon = null;
-  let actionText = "";
-  let actionHandler = () => {};
 
-  // المنطق المتقدم حسب الوقت والسياق
-  if (hour >= 3 && hour < 5) {
-    // وقت السحر والتهجد
-    greetingText = `🌙 هلا بك يا ${nameRef}، ربنا ينزل للسماء الدنيا`;
-    duaText = "اللهم اغفر لنا وأجعل لنا دعوة مستجابة";
-    subText = "ثلث الليل الآخر، وقت النزول الإلهي";
-    greetingEmoji = "🌙✨";
-    actionIcon = <MoonStar className="w-5 h-5" />;
-    actionText = "🌙 قم تهجد وصلّي الوتر";
-    actionHandler = () => window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank"); // مؤقت
-  } else if (hour >= 5 && hour < 6) {
-    // قرب الفجر
-    greetingText = `⭐ قرب الفجر يا ${nameRef}`;
-    duaText = "اللهم بارك لنا فيما بقي من ليلنا";
-    subText = "باقي على الفجر كم دقيقة؟ جهز وضوئك";
-    greetingEmoji = "⭐🕯️";
-    actionIcon = <Bed className="w-5 h-5" />;
-    actionText = "🕌 توضأ واستعد للفجر";
-    actionHandler = () => window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
-  } else if (hour >= 6 && hour < 12) {
-    // الصباح
-    greetingText = `☀️ صباح النور يا ${nameRef}`;
-    duaText = "اللهم بارك لنا في يومنا";
-    subText = "ابدأ يومك بذكر الله";
-    greetingEmoji = "☀️🌸";
-    if (!isCheckedToday) {
-      actionIcon = <Heart className="w-5 h-5" />;
-      actionText = "🤲 سجل حضورك اليوم";
-      actionHandler = handleRecordAttendance;
-    } else {
-      actionIcon = <BookOpen className="w-5 h-5" />;
-      actionText = "📖 اقرأ وردك اليوم";
-      actionHandler = () => window.location.href = "/adhkar";
-    }
-  } else if (hour >= 12 && hour < 17) {
-    // الظهيرة
-    greetingText = `🌤️ هلا بك يا ${nameRef}`;
-    duaText = "اللهم لا تكلنا إلى أنفسنا";
-    subText = "ما نسيت أذكار الظهر؟";
-    greetingEmoji = "🌿💚";
-    if (!isCheckedToday) {
-      actionIcon = <Heart className="w-5 h-5" />;
-      actionText = "🤲 سجل حضورك اليوم";
-      actionHandler = handleRecordAttendance;
-    } else {
-      actionIcon = <BookOpen className="w-5 h-5" />;
-      actionText = "📖 اقرأ وردك الآن";
-      actionHandler = () => window.location.href = "/adhkar";
-    }
-  } else if (hour >= 17 && hour < 20) {
-    // المساء
-    greetingText = `🌆 مساء النور يا ${nameRef}`;
-    duaText = "اللهم أسعد مساءنا";
-    subText = "حان وقت أذكار المساء والفضفضة";
-    greetingEmoji = "🌙📖";
-    if (!isCheckedToday) {
-      actionIcon = <Heart className="w-5 h-5" />;
-      actionText = "🤲 سجل حضورك اليوم";
-      actionHandler = handleRecordAttendance;
-    } else {
-      actionIcon = <MessageCircleHeart className="w-5 h-5" />;
-      actionText = "💬 فضفض لأثر";
-      actionHandler = () => setShowFadfed(true);
-    }
+  // استخدام أوقات الصلاة من API إن وجدت، وإلا استخدام الساعة
+  let currentPrayer = "";
+  if (prayerTimes) {
+    const nowMinutes = hour * 60 + now.getMinutes();
+    const fajr = prayerTimes.Fajr.split(":").map(Number);
+    const dhuhr = prayerTimes.Dhuhr.split(":").map(Number);
+    const asr = prayerTimes.Asr.split(":").map(Number);
+    const maghrib = prayerTimes.Maghrib.split(":").map(Number);
+    const isha = prayerTimes.Isha.split(":").map(Number);
+    const fajrMinutes = fajr[0] * 60 + fajr[1];
+    const dhuhrMinutes = dhuhr[0] * 60 + dhuhr[1];
+    const asrMinutes = asr[0] * 60 + asr[1];
+    const maghribMinutes = maghrib[0] * 60 + maghrib[1];
+    const ishaMinutes = isha[0] * 60 + isha[1];
+    
+    if (nowMinutes < fajrMinutes) currentPrayer = "قبل الفجر";
+    else if (nowMinutes < dhuhrMinutes) currentPrayer = "بعد الفجر";
+    else if (nowMinutes < asrMinutes) currentPrayer = "الظهر";
+    else if (nowMinutes < maghribMinutes) currentPrayer = "العصر";
+    else if (nowMinutes < ishaMinutes) currentPrayer = "المغرب";
+    else currentPrayer = "العشاء";
   } else {
-    // الليل المتأخر
-    greetingText = `🌙 هدوء الليل يا ${nameRef}`;
-    duaText = "اللهم إني أسألك خير هذا الليل";
-    subText = "جهز نفسك لليلة هانئة";
-    greetingEmoji = "⭐🕯️";
-    if (!isCheckedToday) {
-      actionIcon = <Heart className="w-5 h-5" />;
-      actionText = "🤲 سجل حضورك اليوم";
-      actionHandler = handleRecordAttendance;
-    } else {
-      actionIcon = <Bed className="w-5 h-5" />;
-      actionText = "🌙 نم على ذكر الله";
-      actionHandler = () => window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
-    }
+    // Fallback على الساعة
+    if (hour >= 3 && hour < 6) currentPrayer = "قبل الفجر";
+    else if (hour >= 6 && hour < 12) currentPrayer = "الصباح";
+    else if (hour >= 12 && hour < 15) currentPrayer = "الظهر";
+    else if (hour >= 15 && hour < 18) currentPrayer = "العصر";
+    else if (hour >= 18 && hour < 20) currentPrayer = "المغرب";
+    else if (hour >= 20 && hour < 23) currentPrayer = "العشاء";
+    else currentPrayer = "الليل";
   }
 
-  // إضافة لمسات خاصة للمناسبات
+  // بناء النصوص حسب الوقت الحقيقي
+  if (currentPrayer === "قبل الفجر") {
+    greetingText = `⭐ هلا بك يا ${nameRef}، باقي على الفجر ساعة`;
+    duaText = "اللهم بارك لنا في سحرنا واغفر لنا";
+    subText = "وقت السحر، الدعاء مستجاب";
+    greetingEmoji = "🌙✨";
+  } else if (currentPrayer === "بعد الفجر") {
+    greetingText = `☀️ صباح النور يا ${nameRef}`;
+    duaText = "اللهم اجعل يومنا مليئاً بالبركات";
+    subText = "اذكر الله بعد الفجر، فهو وقت نور";
+    greetingEmoji = "☀️🌸";
+  } else if (currentPrayer === "الظهر") {
+    greetingText = `🌤️ هلا بك يا ${nameRef}`;
+    duaText = "اللهم لا تكلنا إلى أنفسنا طرفة عين";
+    subText = "حان وقت الظهر، لا تنس أذكار الظهر";
+    greetingEmoji = "🌿💚";
+  } else if (currentPrayer === "العصر") {
+    greetingText = `🍂 عصرك مبارك يا ${nameRef}`;
+    duaText = "اللهم احفظ لنا أثرنا وأيامنا";
+    subText = "وقت العصر، يتضاعف فيه الأجر";
+    greetingEmoji = "📖🍃";
+  } else if (currentPrayer === "المغرب") {
+    greetingText = `🌆 مساء الخير يا ${nameRef}`;
+    duaText = "اللهم أسعد مساءنا بالمغفرة";
+    subText = "بعد المغرب، أذكار المساء";
+    greetingEmoji = "🌙📖";
+  } else if (currentPrayer === "العشاء") {
+    greetingText = `🌙 هدوء الليل يا ${nameRef}`;
+    duaText = "اللهم إني أسألك خير هذا الليل";
+    subText = "تهجد قبل النوم، فالدعاء لا يرد";
+    greetingEmoji = "⭐🕯️";
+  } else {
+    greetingText = `🌙 ليلك سعيد يا ${nameRef}`;
+    duaText = "اللهم احفظنا بنورك";
+    subText = "نم على ذكر الله";
+    greetingEmoji = "🌙✨";
+  }
+
+  // لمسات خاصة بالمناسبات
   if (isFriday) {
     specialTag = "⭐️ يوم الجمعة المبارك ⭐️";
     duaText = "اللهم اجعل جمعتنا خير جمع";
-  } else if (isWhiteDays) {
-    specialTag = "🌕 الأيام البيض 🌕";
-    duaText = "اللهم اجعل أعمالنا خالصة لوجهك";
+  } else if (isWhiteDays && hijri) {
+    specialTag = `🌕 الأيام البيض (${hijri.day} ${hijri.month}) 🌕`;
+    duaText = "اللهم اجعل أعمالنا فيها خالصة لوجهك";
+  } else if (hijri && hijri.month === "رمضان") {
+    specialTag = `🌙 شهر رمضان المبارك 🌙`;
+    duaText = "اللهم بلغنا رمضان واغفر لنا";
   }
 
   return (
@@ -338,7 +364,7 @@ export default function Home() {
         </button>
       </header>
 
-      {/* شريط الترحيب الذكي التفاعلي */}
+      {/* شريط الترحيب النقي (بدون أزرار) */}
       <section className="px-5 mt-2">
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 shadow-sm border border-athar-bg-200 dark:border-gray-700 transition-all">
           {specialTag && (
@@ -350,16 +376,6 @@ export default function Home() {
           </div>
           <p className="text-sm text-athar-text dark:text-gray-300 text-center mt-2 leading-relaxed">{duaText}</p>
           <p className="text-xs text-athar-text-muted dark:text-gray-500 text-center mt-1">{subText}</p>
-          
-          {/* زر الأكشن الديناميكي */}
-          <button
-            onClick={actionHandler}
-            className="mt-4 w-full bg-athar-accent-500 hover:bg-athar-accent-600 text-white font-medium py-3 px-4 rounded-xl transition-all active:scale-95 touch-manipulation flex items-center justify-center gap-2"
-            style={{ touchAction: "manipulation" }}
-          >
-            {actionIcon}
-            <span>{actionText}</span>
-          </button>
         </div>
       </section>
 
@@ -372,7 +388,7 @@ export default function Home() {
       {/* شجرة الأثر */}
       <div className="px-5 mt-6"><TreeCard userName={userName} /></div>
 
-      {/* بطاقة الصدقة الجارية - تم توحيد لونها */}
+      {/* بطاقة الصدقة الجارية */}
       <section className="px-5 mt-6">
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 text-center border border-athar-bg-200 dark:border-gray-700 shadow-sm">
           <p className="text-sm text-athar-text dark:text-gray-300 leading-relaxed">
@@ -394,7 +410,7 @@ export default function Home() {
 
       <NameModal isOpen={showNameModal} onSave={handleNameSave} onClose={() => setShowNameModal(false)} />
 
-      {/* Modal الدعاء */}
+      {/* Modal الدعاء (نفس الكود السابق) */}
       {showDuaModal && (
         <div className="fixed inset-0 bg-black/30 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 max-w-sm w-full text-center space-y-5 shadow-2xl animate-scale-up relative">
