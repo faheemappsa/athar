@@ -14,9 +14,7 @@ function formatTime12(time: string): string {
   return `${hour12}:${String(m).padStart(2, "0")} ${period}`;
 }
 
-// ============================================================
-// أذكار ما بعد الصلاة (مكتبة داخلية)
-// ============================================================
+// أذكار ما بعد الصلاة
 const postPrayerAdhkar: Record<string, string[]> = {
   الفجر: [
     "أستغفر الله (3 مرات)",
@@ -57,7 +55,6 @@ export default function PrayerTimes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  // حالات جديدة للأزرار التفاعلية
   const [recordedPrayers, setRecordedPrayers] = useState<Set<string>>(new Set());
   const [showAdhkarModal, setShowAdhkarModal] = useState(false);
   const [selectedPrayerAdhkar, setSelectedPrayerAdhkar] = useState<string[]>([]);
@@ -68,7 +65,6 @@ export default function PrayerTimes() {
   const duhaEndRef = useRef<number | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // تحميل الأذكار المحفوظة من localStorage عند بدء التشغيل
   useEffect(() => {
     const saved = localStorage.getItem("athar-recorded-prayers");
     if (saved) {
@@ -76,30 +72,24 @@ export default function PrayerTimes() {
     }
   }, []);
 
-  // دالة لتسجيل الصلاة وزيادة شجرة الأثر
   const recordPrayer = (prayerName: string) => {
     if (recordedPrayers.has(prayerName)) {
-      // تم التسجيل مسبقاً
       alert(`سبق أن سجلت صلاة ${prayerName} اليوم`);
       return;
     }
 
-    // تحديث الحالة المحلية
     const newSet = new Set(recordedPrayers);
     newSet.add(prayerName);
     setRecordedPrayers(newSet);
     localStorage.setItem("athar-recorded-prayers", JSON.stringify(Array.from(newSet)));
 
-    // زيادة شجرة الأثر (التكامل مع TreeCard)
     const currentTreeCount = localStorage.getItem("athar-tree-completed");
     const newCount = currentTreeCount ? parseInt(currentTreeCount) + 1 : 1;
     localStorage.setItem("athar-tree-completed", newCount.toString());
 
-    // إظهار رسالة نجاح
     alert(`✨ سُجلت صلاة ${prayerName} وأضيفت ورقة جديدة لشجرتك!`);
   };
 
-  // فتح نافذة الأذكار
   const openAdhkar = (prayerName: string) => {
     const adhkar = postPrayerAdhkar[prayerName] || postPrayerAdhkar["الظهر"];
     setSelectedPrayerAdhkar(adhkar);
@@ -333,18 +323,17 @@ export default function PrayerTimes() {
           ) : (
             <div className="space-y-4">
               {/* الصلوات الخمس الأساسية مع أزرار تفاعلية */}
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {mainPrayers.map((prayer) => {
                   const isRecorded = recordedPrayers.has(prayer.name);
                   return (
-                    <div key={prayer.name} className="flex items-center justify-between gap-2">
+                    <div key={prayer.name} className="flex items-center justify-between gap-4">
                       <PrayerChip
                         name={prayer.name}
                         time={prayer.time}
-                        icon={prayer.icon}
                         isActive={nextPrayer?.name === prayer.name}
                       />
-                      <div className="flex gap-2">
+                      <div className="flex gap-3">
                         <button
                           onClick={() => recordPrayer(prayer.name)}
                           className={`p-2 rounded-full transition-all active:scale-95 touch-manipulation ${
@@ -355,7 +344,7 @@ export default function PrayerTimes() {
                           style={{ minWidth: "40px", minHeight: "40px" }}
                           title={isRecorded ? "سُجلت سابقاً" : "سجل صلاتي"}
                         >
-                          {isRecorded ? <CheckCircle className="w-5 h-5" /> : <CheckCircle className="w-5 h-5 opacity-60" />}
+                          <CheckCircle className={`w-5 h-5 ${isRecorded ? "" : "opacity-60"}`} />
                         </button>
                         <button
                           onClick={() => openAdhkar(prayer.name)}
@@ -373,13 +362,12 @@ export default function PrayerTimes() {
 
               {/* الأوقات المكملة */}
               {supplementaryPrayers.length > 0 && (
-                <div className="flex justify-center gap-3">
+                <div className="flex justify-center gap-4 pt-2">
                   {supplementaryPrayers.map((prayer) => (
                     <PrayerChip
                       key={prayer.name}
                       name={prayer.name}
                       time={prayer.time}
-                      icon={prayer.icon}
                       isActive={nextPrayer?.name === prayer.name}
                     />
                   ))}
@@ -390,7 +378,7 @@ export default function PrayerTimes() {
 
           {/* العداد الذكي */}
           {nextPrayer && (
-            <div className="p-4 bg-athar-primary-200/60 dark:bg-athar-primary-900/30 rounded-2xl text-center shadow-inner border border-athar-primary-300/30 dark:border-athar-primary-700/20">
+            <div className="mt-4 p-4 bg-athar-primary-200/60 dark:bg-athar-primary-900/30 rounded-2xl text-center shadow-inner border border-athar-primary-300/30 dark:border-athar-primary-700/20">
               <p className="text-sm text-athar-primary-600 dark:text-gray-400 mb-1">
                 {nextPrayer.name === "الضحى"
                   ? isIqamah
@@ -414,7 +402,7 @@ export default function PrayerTimes() {
         </div>
       </section>
 
-      {/* مودال عرض أذكار ما بعد الصلاة */}
+      {/* مودال عرض الأذكار */}
       {showAdhkarModal && (
         <div className="fixed inset-0 bg-black/30 dark:bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-900 rounded-3xl p-6 max-w-sm w-full text-center space-y-4 shadow-2xl animate-scale-up relative">
