@@ -24,7 +24,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-  themeColor: "#22665C", // Dark Teal - الهوية الجديدة
+  themeColor: "#22665C",
   colorScheme: "light",
 };
 
@@ -37,7 +37,6 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <head>
         <link rel="stylesheet" href="/fonts/Thmanyah.css" />
-        {/* Apple Touch Icons بأحجام مختلفة لدعم جميع أجهزة iOS */}
         <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
         <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-120x120.png" />
@@ -45,7 +44,6 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="أثر" />
-        {/* تحسينات إضافية */}
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="theme-color" content="#22665C" />
       </head>
