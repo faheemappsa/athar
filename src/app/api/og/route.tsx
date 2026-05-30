@@ -4,89 +4,96 @@ import { NextRequest } from "next/server";
 export const runtime = "edge";
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const text = searchParams.get("text") || "اللهم إني أسألك العفو والعافية";
-  const source = searchParams.get("source") || "حديث صحيح";
-  const theme = searchParams.get("theme") || "dawn";
-  const mood = searchParams.get("mood") || "general";
+  try {
+    const { searchParams } = new URL(request.url);
+    const text = searchParams.get("text") || "اللهم ارحم مسلم عوده البويني واغفر له";
+    const source = searchParams.get("source") || "دعاء";
+    const type = searchParams.get("type") || "dua";
+    const mood = searchParams.get("mood") || "general";
 
-  const themes: Record<string, { bg: string; textColor: string; subColor: string }> = {
-    emerald: { bg: "#0F2A1C", textColor: "#FFFFFF", subColor: "#D4A373" },
-    dawn: { bg: "#D4A373", textColor: "#1B4332", subColor: "#FEFAE0" },
-    midnight: { bg: "#0A0F0C", textColor: "#E5E7EB", subColor: "#D4A373" },
-    sand: { bg: "#F5F5F0", textColor: "#1B4332", subColor: "#D4A373" },
-  };
-  const active = themes[theme] || themes.dawn;
+    // خلفية حسب نوع المحتوى (بدون ثيمات معقدة)
+    const getBackground = () => {
+      if (type === "quran") return "linear-gradient(135deg, #0F2A1C 0%, #1B4332 100%)";
+      if (type === "hadith") return "linear-gradient(135deg, #4A2A1A 0%, #7A4A2A 100%)";
+      return "linear-gradient(135deg, #1A3A5C 0%, #2A5A8C 100%)";
+    };
 
-  const moodIcon = () => {
-    switch (mood) {
-      case "happy": return "😊";
-      case "sad": return "🤲";
-      case "grateful": return "🙏";
-      default: return "🌿";
-    }
-  };
+    // أيقونة بسيطة للمزاج (اختيارية)
+    const moodEmoji = {
+      happy: "🤲",
+      sad: "🌱",
+      grateful: "🙏",
+      general: "🌿",
+    }[mood] || "🌿";
 
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          background: active.bg,
-          color: active.textColor,
-          direction: "rtl",
-          textAlign: "center",
-          padding: "80px 60px",
-          position: "relative",
-          fontFamily: "system-ui, 'Segoe UI', 'Cairo', sans-serif",
-        }}
-      >
-        <div style={{ position: "absolute", top: 60, right: 60, fontSize: 64 }}>{moodIcon()}</div>
-        <div style={{ position: "absolute", top: 60, left: 60, display: "flex", alignItems: "center", gap: 12 }}>
-          <span style={{ fontSize: 48 }}>🌱</span>
-          <span style={{ fontSize: 36, fontWeight: "bold", color: active.subColor }}>أثر</span>
-        </div>
-        <div style={{ fontSize: 56, fontWeight: 500, lineHeight: 1.5, maxWidth: "90%", marginBottom: 40 }}>
-          {text}
-        </div>
-        {source && (
-          <div style={{ fontSize: 34, color: active.subColor, marginBottom: 70 }}>— {source}</div>
-        )}
+    // قص النص الطويل
+    const displayText = text.length > 280 ? text.substring(0, 277) + "..." : text;
+
+    return new ImageResponse(
+      (
         <div
           style={{
-            position: "absolute",
-            bottom: 50,
-            left: 0,
-            right: 0,
-            textAlign: "center",
-            fontSize: 28,
-            color: active.subColor,
-            backgroundColor: "rgba(0,0,0,0.08)",
-            padding: "16px",
-            margin: "0 50px",
-            borderRadius: 80,
+            width: 1080,
+            height: 1920,
+            background: getBackground(),
             display: "flex",
+            flexDirection: "column",
             alignItems: "center",
-            justifyContent: "center",
-            gap: 12,
+            justifyContent: "space-between",
+            padding: "80px",
+            fontFamily: "system-ui, 'Segoe UI', 'Cairo', sans-serif",
+            direction: "rtl",
+            textAlign: "center",
+            position: "relative",
           }}
         >
-          <span>📲</span>
-          <span style={{ fontWeight: 500 }}>تطبيق أثر — حمل التطبيق الآن</span>
+          {/* أيقونة المزاج (اختيارية، صغيرة في الأعلى) */}
+          <div style={{ position: "absolute", top: 60, right: 60, fontSize: 48, opacity: 0.6 }}>
+            {moodEmoji}
+          </div>
+
+          {/* المنطقة العلوية: هوية أثر */}
+          <div style={{ width: "100%", marginTop: 40 }}>
+            <p style={{ fontSize: 36, color: "rgba(255,255,255,0.7)", marginBottom: 40, letterSpacing: 2 }}>
+              أثر
+            </p>
+            <div style={{ width: 60, height: 2, background: "rgba(255,255,255,0.3)", margin: "0 auto" }} />
+          </div>
+
+          {/* المنطقة الوسطى: الرسالة الرئيسية */}
+          <div style={{ width: "100%", marginTop: -40 }}>
+            <p
+              style={{
+                fontSize: 56,
+                fontWeight: "bold",
+                color: "white",
+                lineHeight: 1.5,
+                marginBottom: 40,
+                textShadow: "0 2px 15px rgba(0,0,0,0.3)",
+              }}
+            >
+              {displayText}
+            </p>
+            <p style={{ fontSize: 32, color: "rgba(255,255,255,0.85)", fontWeight: "normal" }}>
+              — {source}
+            </p>
+          </div>
+
+          {/* المنطقة السفلية: توقيع ورابط خفي */}
+          <div style={{ width: "100%", marginBottom: 40 }}>
+            <div style={{ width: 40, height: 1, background: "rgba(255,255,255,0.2)", margin: "0 auto 40px auto" }} />
+            <p style={{ fontSize: 28, color: "rgba(255,255,255,0.6)" }}>أثر — صدقة جارية ودعاء لا ينقطع</p>
+            <p style={{ fontSize: 22, color: "rgba(255,255,255,0.4)", marginTop: 16 }}>athar-app.com</p>
+          </div>
         </div>
-        <div style={{ position: "absolute", bottom: 20, fontSize: 18, color: active.subColor, opacity: 0.6 }}>
-          وقف خيري لمسلم عوده البويني رحمه الله
-        </div>
-      </div>
-    ),
-    {
-      width: 1080,
-      height: 1920,
-    }
-  );
+      ),
+      {
+        width: 1080,
+        height: 1920,
+      }
+    );
+  } catch (error) {
+    console.error("Error generating image:", error);
+    return new Response("فشل إنشاء الصورة", { status: 500 });
+  }
 }
