@@ -3,68 +3,77 @@
 @tailwind utilities;
 
 :root {
-  --font-thmanyah: 'Thmanyah', sans-serif;
+–font-thmanyah: ‘Thmanyah’, sans-serif;
 }
 
 html {
-  direction: rtl;
-  scroll-behavior: smooth;
-  overflow-x: hidden;
+direction: rtl;
+scroll-behavior: smooth;
+overflow-x: hidden;
 }
 
 body {
-  font-family: var(--font-thmanyah);
-  background-color: #F9F3E8;  /* خلفية Pi Linen الصلبة (بدون تدرج) */
-  color: #5C4B3A;             /* Bakers Brown */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+font-family: var(–font-thmanyah);
+background-color: #F9F3E8;
+color: #5C4B3A;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+overflow-x: hidden;
 }
 
 html.dark body {
-  background-color: #1E1B18;  /* داكن دافئ */
-  color: #E5E7EB;
+background-color: #1E1B18;
+color: #E5E7EB;
 }
 
 @layer base {
-  * {
+
+* {
     @apply border-gray-200;
-  }
-  html.dark * {
-    @apply border-gray-700;
-  }
+    }
+
+html.dark * {
+@apply border-gray-700;
+}
 }
 
 @layer components {
-  .athar-card {
-    @apply bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] ring-1 ring-white/80 p-6;
-  }
-  html.dark .athar-card {
-    @apply bg-gray-800 ring-gray-700;
-  }
-  
-  /* الزر الأساسي (برتقالي) */
-  .btn-primary {
-    @apply bg-athar-primary-500 text-athar-text px-6 py-3 rounded-xl font-medium 
-           transition-all duration-200 hover:bg-athar-primary-600 active:scale-95;
-  }
-  /* الزر الثانوي (أخضر) */
-  .btn-secondary {
-    @apply bg-athar-secondary-400 text-white px-6 py-3 rounded-xl font-medium 
-           transition-all duration-200 hover:bg-athar-secondary-500 active:scale-95;
-  }
-  /* زر ثالث (محايد) */
-  .btn-outline {
-    @apply border border-athar-primary-500 text-athar-primary-500 bg-transparent px-6 py-3 rounded-xl font-medium 
-           transition-all duration-200 hover:bg-athar-primary-50 active:scale-95;
-  }
+.athar-card {
+@apply bg-white/90 rounded-3xl p-6 ring-1 ring-white/70 backdrop-blur-sm;
+box-shadow: 0 10px 30px rgba(92, 75, 58, 0.08);
+}
+
+html.dark .athar-card {
+@apply bg-gray-800/90 ring-gray-700;
+}
+
+.btn-primary {
+@apply bg-athar-primary-500 text-athar-text px-6 py-3 rounded-full font-medium transition-all duration-200 hover:bg-athar-primary-600 active:scale-95;
+}
+
+.btn-secondary {
+@apply bg-athar-secondary-400 text-white px-6 py-3 rounded-full font-medium transition-all duration-200 hover:bg-athar-secondary-500 active:scale-95;
+}
+
+.btn-outline {
+@apply border border-athar-primary-500 text-athar-primary-500 bg-transparent px-6 py-3 rounded-full font-medium transition-all duration-200 hover:bg-athar-primary-50 active:scale-95;
+}
+
+.athar-heading {
+@apply text-athar-text text-3xl font-bold leading-tight;
+}
+
+.athar-muted {
+@apply text-athar-text-muted;
+}
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-  .safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 0.5rem);
-  }
+.text-balance {
+text-wrap: balance;
+}
+
+.safe-area-bottom {
+padding-bottom: env(safe-area-inset-bottom, 0.5rem);
+}
 }
