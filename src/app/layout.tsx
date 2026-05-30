@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import NotificationManager from "@/components/NotificationManager";
 
 export const metadata: Metadata = {
   title: "أثر — أثرٌ جارٍ لا ينقطع",
@@ -49,6 +50,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-athar-bg antialiased">
         {children}
+        <NotificationManager />
       </body>
     </html>
   );
