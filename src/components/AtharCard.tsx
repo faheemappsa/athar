@@ -10,7 +10,6 @@ const APP_URL = "https://athar-sandy.vercel.app";
 // 1. نظام مصادر المحتوى المتعددة (APIs + احتياطي داخلي)
 // ============================================================
 
-// واجهة للمحتوى
 interface ContentItem {
   text: string;
   source: string;
@@ -27,20 +26,16 @@ const fallbackContents: ContentItem[] = [
   { text: "وَأَنْ لَيْسَ لِلْإِنْسَانِ إِلَّا مَا سَعَىٰ", source: "سورة النجم: 39", category: "آية", type: "quran" },
 ];
 
-// جلب حديث عشوائي من API مجاني (صحيح البخاري ومسلم)
+// جلب حديث عشوائي من API عربي فقط (Aladhan)
 async function fetchRandomHadith(): Promise<ContentItem | null> {
   try {
-    // استخدام API مجاني وموثوق (Hadith API - cdn)
-    const response = await fetch("https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions/eng-bukhari.min.json");
+    const response = await fetch("https://api.aladhan.com/v1/randomHadith");
     const data = await response.json();
-    // الحصول على حديث عشوائي من القائمة
-    const hadiths = data.hadiths || [];
-    if (hadiths.length > 0) {
-      const random = Math.floor(Math.random() * hadiths.length);
-      const hadith = hadiths[random];
+    if (data.code === 200 && data.data) {
+      const hadith = data.data;
       return {
-        text: hadith.text,
-        source: `صحيح البخاري - ${hadith.reference}`,
+        text: hadith.hadith,
+        source: `${hadith.book} - ${hadith.reference}`,
         category: "حديث نبوي",
         type: "hadith",
       };
@@ -51,16 +46,15 @@ async function fetchRandomHadith(): Promise<ContentItem | null> {
   return null;
 }
 
-// جلب آية عشوائية من API مجاني
+// جلب آية عشوائية من API نظيف (quranapi)
 async function fetchRandomAyah(): Promise<ContentItem | null> {
   try {
-    const response = await fetch("https://api.alquran.cloud/v1/ayah/random");
+    const response = await fetch("https://quranapi.pages.dev/api/random");
     const data = await response.json();
-    if (data.code === 200) {
-      const ayah = data.data;
+    if (data && data.text && data.surah) {
       return {
-        text: ayah.text,
-        source: `سورة ${ayah.surah.name} - الآية ${ayah.numberInSurah}`,
+        text: data.text,
+        source: `سورة ${data.surah.name} - الآية ${data.ayah}`,
         category: "آية قرآنية",
         type: "quran",
       };
@@ -73,13 +67,10 @@ async function fetchRandomAyah(): Promise<ContentItem | null> {
 
 // الحصول على محتوى عشوائي مع منع التكرار (سجل زمني)
 const getRandomContent = async (): Promise<ContentItem> => {
-  // استرجاع سجل المحتويات السابقة من localStorage
   const historyKey = "athar-content-history";
   const history: string[] = JSON.parse(localStorage.getItem(historyKey) || "[]");
   
   let newContent: ContentItem | null = null;
-  
-  // محاولة جلب حديث أو آية من APIs
   const randomType = Math.random() < 0.5 ? "hadith" : "quran";
   if (randomType === "hadith") {
     newContent = await fetchRandomHadith();
@@ -87,53 +78,42 @@ const getRandomContent = async (): Promise<ContentItem> => {
     newContent = await fetchRandomAyah();
   }
   
-  // إذا فشل الـ API، استخدم المحتوى الاحتياطي
   if (!newContent) {
     const availableFallbacks = fallbackContents.filter(c => !history.includes(c.text));
-    if (availableFallbacks.length === 0) {
-      newContent = fallbackContents[Math.floor(Math.random() * fallbackContents.length)];
-    } else {
-      newContent = availableFallbacks[Math.floor(Math.random() * availableFallbacks.length)];
-    }
+    newContent = availableFallbacks.length > 0 
+      ? availableFallbacks[Math.floor(Math.random() * availableFallbacks.length)]
+      : fallbackContents[Math.floor(Math.random() * fallbackContents.length)];
   }
   
-  // تجنب التكرار: إذا كان النص موجوداً في السجل، حاول مجدداً (مرة واحدة فقط)
   if (history.includes(newContent.text)) {
-    // محاولة ثانية
     const secondAttempt = randomType === "hadith" ? await fetchRandomHadith() : await fetchRandomAyah();
     if (secondAttempt && !history.includes(secondAttempt.text)) {
       newContent = secondAttempt;
     } else {
-      // استخدام احتياطي غير مكرر
       const freshFallback = fallbackContents.find(c => !history.includes(c.text));
       if (freshFallback) newContent = freshFallback;
     }
   }
   
-  // تحديث السجل (حفظ آخر 7 محتويات)
   const newHistory = [newContent.text, ...history].slice(0, 7);
   localStorage.setItem(historyKey, JSON.stringify(newHistory));
-  
   return newContent;
 };
 
 // ============================================================
-// 2. نظام الخلفية الديناميكية حسب الوقت الحقيقي
+// 2. نظام الخلفية الديناميكية حسب الوقت الحقيقي (تم تفتيح الليل)
 // ============================================================
 const getDynamicBackground = (): string => {
   const hour = new Date().getHours();
   if (hour >= 5 && hour < 11) {
-    // صباح: ذهبي فاتح
     return "bg-gradient-to-br from-amber-50 via-amber-100/30 to-white dark:from-amber-950/30 dark:via-amber-900/20 dark:to-gray-900";
   } else if (hour >= 11 && hour < 16) {
-    // ظهر: أخضر ناعم
     return "bg-gradient-to-br from-emerald-50 via-teal-50/30 to-white dark:from-emerald-950/30 dark:via-teal-900/20 dark:to-gray-900";
   } else if (hour >= 16 && hour < 20) {
-    // عصر/مساء: أزرق هادئ
     return "bg-gradient-to-br from-sky-50 via-blue-50/30 to-white dark:from-sky-950/30 dark:via-blue-900/20 dark:to-gray-900";
   } else {
-    // ليل: داكن مع لمسات
-    return "bg-gradient-to-br from-indigo-950 via-purple-950/30 to-gray-900 dark:from-indigo-950 dark:via-purple-950/50 dark:to-gray-950";
+    // ليل: تدرج رمادي فاتح (بدلاً من الداكن جداً)
+    return "bg-gradient-to-br from-gray-800 via-gray-900/50 to-gray-950 dark:from-gray-800 dark:via-gray-900/50 dark:to-gray-950";
   }
 };
 
@@ -148,10 +128,8 @@ export default function AtharCard() {
   const [exporting, setExporting] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   
-  // خلفية ديناميكية
   const [bgClass, setBgClass] = useState(getDynamicBackground());
   
-  // تحديث الخلفية كل ساعة
   useEffect(() => {
     const updateBg = () => setBgClass(getDynamicBackground());
     updateBg();
@@ -159,7 +137,6 @@ export default function AtharCard() {
     return () => clearInterval(interval);
   }, []);
   
-  // تحميل المحتوى الجديد (ديناميكي من APIs أو الاحتياطي)
   const loadAthar = async () => {
     setLoading(true);
     const content = await getRandomContent();
@@ -190,13 +167,12 @@ export default function AtharCard() {
     if (!athar) return;
     setExporting(true);
     try {
-      // استخدام خدمة OG المؤقتة (سيتم إنشاء API route لاحقًا)
       const params = new URLSearchParams({
         text: athar.text,
         source: athar.source,
-        theme: "dynamic",
+        type: athar.type,
       });
-      const response = await fetch(`/api/og?${params.toString()}`);
+      const response = await fetch(`/api/share-image?${params.toString()}`);
       if (!response.ok) throw new Error("فشل إنشاء الصورة");
       const blob = await response.blob();
       const file = new File([blob], `اثر-${Date.now()}.png`, { type: "image/png" });
@@ -237,7 +213,6 @@ export default function AtharCard() {
   
   return (
     <>
-      {/* البطاقة الرئيسية بخلفية ديناميكية وأزرار محسنة لللمس */}
       <section className="px-4 py-4">
         <div
           ref={cardRef}
@@ -266,7 +241,6 @@ export default function AtharCard() {
                 <p className="text-sm text-athar-accent-600 font-medium dark:text-athar-accent-400 mt-4">— {athar.source}</p>
               </div>
               
-              {/* أزرار بحجم مناسب للإبهام (44px) */}
               <div className="flex items-center justify-center gap-6 pt-2">
                 <button
                   onClick={handleSave}
@@ -304,7 +278,6 @@ export default function AtharCard() {
         </div>
       </section>
       
-      {/* مودال خيارات المشاركة */}
       {showExportOptions && (
         <div className="fixed inset-0 bg-black/30 dark:bg-black/60 backdrop-blur-sm flex items-end justify-center z-50 p-4">
           <div className="bg-white dark:bg-gray-900 rounded-t-3xl p-6 max-w-sm w-full space-y-4 animate-slide-up">
