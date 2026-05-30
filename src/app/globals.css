@@ -14,15 +14,15 @@ html {
 
 body {
   font-family: var(--font-thmanyah);
-  background-color: #F9F3E8;  /* خلفية Pi Linen الصلبة (بدون تدرج) */
-  color: #5C4B3A;             /* Bakers Brown */
+  background-color: #F9F3E8;  /* خلفية Pi الصلبة */
+  color: #5C4B3A;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
 html.dark body {
-  background-color: #1E1B18;  /* داكن دافئ */
+  background-color: #1E1B18;
   color: #E5E7EB;
 }
 
@@ -39,24 +39,17 @@ html.dark body {
   .athar-card {
     @apply bg-white rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] ring-1 ring-white/80 p-6;
   }
-  html.dark .athar-card {
-    @apply bg-gray-800 ring-gray-700;
-  }
   
-  /* الزر الأساسي (برتقالي) */
+  /* الزر الأساسي - برتقالي مثل Pi */
   .btn-primary {
     @apply bg-athar-primary-500 text-athar-text px-6 py-3 rounded-xl font-medium 
            transition-all duration-200 hover:bg-athar-primary-600 active:scale-95;
   }
-  /* الزر الثانوي (أخضر) */
+  
+  /* الزر الثانوي - أخضر مثل Pi */
   .btn-secondary {
     @apply bg-athar-secondary-400 text-white px-6 py-3 rounded-xl font-medium 
            transition-all duration-200 hover:bg-athar-secondary-500 active:scale-95;
-  }
-  /* زر ثالث (محايد) */
-  .btn-outline {
-    @apply border border-athar-primary-500 text-athar-primary-500 bg-transparent px-6 py-3 rounded-xl font-medium 
-           transition-all duration-200 hover:bg-athar-primary-50 active:scale-95;
   }
 }
 
