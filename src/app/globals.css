@@ -14,15 +14,15 @@ html {
 
 body {
   font-family: var(--font-thmanyah);
-  background: radial-gradient(circle at 10% 20%, #FCF7F0, #F4E9DD);
-  color: #2A241E;
+  background-color: #F9F3E8;  /* خلفية Pi Linen الصلبة (بدون تدرج) */
+  color: #5C4B3A;             /* Bakers Brown */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
 html.dark body {
-  background: radial-gradient(circle at 10% 20%, #1E1B18, #151210);
+  background-color: #1E1B18;  /* داكن دافئ */
   color: #E5E7EB;
 }
 
@@ -43,20 +43,20 @@ html.dark body {
     @apply bg-gray-800 ring-gray-700;
   }
   
+  /* الزر الأساسي (برتقالي) */
   .btn-primary {
-    @apply bg-athar-primary-500 text-white px-6 py-3 rounded-xl font-medium 
+    @apply bg-athar-primary-500 text-athar-text px-6 py-3 rounded-xl font-medium 
            transition-all duration-200 hover:bg-athar-primary-600 active:scale-95;
   }
-  html.dark .btn-primary {
-    @apply bg-athar-accent-400 text-athar-primary-900 hover:bg-athar-accent-500;
-  }
-  
+  /* الزر الثانوي (أخضر) */
   .btn-secondary {
-    @apply bg-athar-bg-200 text-athar-text px-6 py-3 rounded-xl font-medium 
-           transition-all duration-200 hover:bg-athar-bg-300 active:scale-95;
+    @apply bg-athar-secondary-400 text-white px-6 py-3 rounded-xl font-medium 
+           transition-all duration-200 hover:bg-athar-secondary-500 active:scale-95;
   }
-  html.dark .btn-secondary {
-    @apply bg-gray-700 text-gray-200 hover:bg-gray-600;
+  /* زر ثالث (محايد) */
+  .btn-outline {
+    @apply border border-athar-primary-500 text-athar-primary-500 bg-transparent px-6 py-3 rounded-xl font-medium 
+           transition-all duration-200 hover:bg-athar-primary-50 active:scale-95;
   }
 }
 
