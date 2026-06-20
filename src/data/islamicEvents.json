@@ -1,1 +1,44 @@
-{}
+[
+  {
+    "name": "الأيام البيض",
+    "description": "صيام ثلاثة أيام من كل شهر",
+    "hijriDays": [13, 14, 15],
+    "everyMonth": true
+  },
+  {
+    "name": "يوم عرفة",
+    "description": "صيام يوم عرفة يكفر سنتين",
+    "hijriDay": 9,
+    "hijriMonth": 12
+  },
+  {
+    "name": "عاشوراء",
+    "description": "صيام يوم عاشوراء يكفر سنة",
+    "hijriDay": 10,
+    "hijriMonth": 1
+  },
+  {
+    "name": "ليلة القدر",
+    "description": "في العشر الأواخر من رمضان",
+    "hijriDays": [21, 23, 25, 27, 29],
+    "hijriMonth": 9
+  },
+  {
+    "name": "أول رمضان",
+    "description": "بداية شهر الصيام والقيام",
+    "hijriDay": 1,
+    "hijriMonth": 9
+  },
+  {
+    "name": "عيد الفطر",
+    "description": "أول أيام عيد الفطر المبارك",
+    "hijriDay": 1,
+    "hijriMonth": 10
+  },
+  {
+    "name": "عيد الأضحى",
+    "description": "أول أيام عيد الأضحى المبارك",
+    "hijriDay": 10,
+    "hijriMonth": 12
+  }
+]
