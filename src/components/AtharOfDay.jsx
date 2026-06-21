@@ -1,17 +1,40 @@
-const ATHAR = [
-  'اللهم أعنّي على ذكرك وشكرك وحسن عبادتك.',
-  'من لزم الاستغفار جعل الله له من كل هم فرجًا.',
-  'طمأنينة القلب تبدأ بخطوة صادقة نحو الله.',
-];
+import { useState } from 'react';
+import useSmartAthar from '../hooks/useSmartAthar';
 
-export default function AtharOfDay() {
-  const todayIndex = new Date().getDate() % ATHAR.length;
+export default function AtharOfDay({ prayers }) {
+  const { athar, period, refreshAthar, sourceLabel, isFallback } = useSmartAthar(prayers);
+  const [isChanging, setIsChanging] = useState(false);
+
+  const handleRefresh = () => {
+    setIsChanging(true);
+    refreshAthar();
+    window.setTimeout(() => setIsChanging(false), 220);
+  };
 
   return (
-    <article className="glass-card athar-card">
-      <div className="card-label">أثر اليوم</div>
-      <blockquote>{ATHAR[todayIndex]}</blockquote>
-      <p>اجعلها نية يومك، وشاركها مع من تحب لتبقى أثرًا طيبًا.</p>
+    <article className={`glass-card athar-card ${isChanging ? 'athar-fade' : ''}`} data-period={period}>
+      <div className="athar-card-topline">
+        <div>
+          <div className="card-label">{athar.title || 'أثر اليوم'}</div>
+          <span className="athar-period-hint">{sourceLabel}</span>
+        </div>
+        {athar.type ? <span className="athar-type-label">{athar.type}</span> : null}
+      </div>
+
+      <blockquote className="athar-text">{athar.text}</blockquote>
+
+      {athar.source || athar.benefit ? (
+        <div className="athar-source">
+          {athar.source ? <span>{athar.source}</span> : null}
+          {athar.benefit ? <p>{athar.benefit}</p> : null}
+        </div>
+      ) : null}
+
+      <button type="button" className="athar-refresh" onClick={handleRefresh}>
+        أثر جديد
+      </button>
+
+      {isFallback ? <p className="hint">نعرض تذكيرًا عامًا حتى تتوفر محتويات أكثر.</p> : null}
     </article>
   );
 }
