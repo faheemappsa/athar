@@ -45,6 +45,7 @@ export default function PrayerTimes() {
 
   return (
     <article id="prayer-times" className="glass-card prayer-card">
+      <div className="prayer-orbit" aria-hidden="true"><span /><span /><span /></div>
       <div className="card-header">
         <div>
           <div className="card-label">مواقيت الصلاة</div>
@@ -69,7 +70,7 @@ export default function PrayerTimes() {
 
       <ul className="prayer-list">
         {prayers.map((prayer) => (
-          <li key={prayer.key} className={prayer.key === highlightedPrayer?.key ? 'is-next' : ''}>
+          <li key={prayer.key} className={prayer.key === highlightedPrayer?.key ? 'is-next' : ''} tabIndex="0">
             <span><i aria-hidden="true" />{prayer.name}</span>
             <time>{prayer.displayTime}</time>
           </li>
