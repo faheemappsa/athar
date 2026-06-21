@@ -1318,3 +1318,652 @@ body {
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/* ---------- QURAN PLACEHOLDERS ---------- */
+.quran-tracker-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.quran-tracker-content {
+  display: grid;
+  gap: 8px;
+}
+
+.quran-tracker-label {
+  color: var(--gold);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+
+.quran-tracker-card h2,
+.quran-reader-card h2 {
+  margin: 0;
+  color: #fff;
+  font-family: 'Noto Naskh Arabic', serif;
+  font-weight: 300;
+}
+
+.quran-open-button,
+.quran-close-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #f5e7b2, var(--gold) 50%, #b8860b);
+  color: #0a0c14;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+}
+
+.quran-open-button:hover,
+.quran-close-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(212, 175, 55, 0.18);
+}
+
+.quran-reader-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(3, 3, 5, 0.72);
+  backdrop-filter: blur(18px);
+}
+
+.quran-reader-card {
+  width: min(520px, 100%);
+}
+
+.quran-reader-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 560px) {
+  .quran-tracker-card,
+  .quran-reader-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+.quran-reader-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.quran-page-indicator {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.quran-view-shell {
+  display: grid;
+  place-items: center;
+  min-height: min(72vh, 760px);
+  overflow: auto;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.quran-view-shell open-quran-view {
+  width: min(100%, 620px);
+}
+
+.quran-open-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 560px) {
+  .quran-reader-toolbar {
+    flex-direction: column;
+  }
+
+  .quran-reader-toolbar .quran-open-button {
+    width: 100%;
+  }
+}
+
+/* ======================================================
+   ATHAR WEB APP REFRESH — coral sunrise / charcoal night
+   Inspired by the reference light + dark mobile identity.
+   ====================================================== */
+:root {
+  --coral: #ff6265;
+  --coral-strong: #ff4f55;
+  --coral-soft: #ff8a8c;
+  --ink: #242424;
+  --paper: #fffdf9;
+  --muted-ink: rgba(36, 36, 36, 0.58);
+  --app-bg: #202020;
+  --app-bg-soft: #282828;
+  --app-card: rgba(32, 32, 32, 0.82);
+  --app-text: #f8f4ef;
+  --app-muted: rgba(248, 244, 239, 0.58);
+  --app-border: rgba(255, 255, 255, 0.1);
+  --app-shadow: 0 26px 70px rgba(0, 0, 0, 0.34);
+  --app-raised-shadow: 0 34px 90px rgba(0, 0, 0, 0.42);
+  --app-radius-xl: 36px;
+  --app-radius-lg: 26px;
+  --app-radius-md: 18px;
+  --app-safe-bottom: max(18px, env(safe-area-inset-bottom));
+  --gold: var(--coral);
+  --gold-soft: #ffd1d1;
+  --gold-glass: rgba(255, 98, 101, 0.18);
+  --gold-glow: rgba(255, 98, 101, 0.32);
+  --emerald: #64d8bd;
+  --bg-deep: var(--app-bg);
+  --bg-card: var(--app-card);
+  --border-glass: var(--app-border);
+  --shadow-soft: var(--app-shadow);
+  --shadow-glow: 0 24px 64px rgba(255, 98, 101, 0.08);
+  --radius-card: var(--app-radius-lg);
+}
+
+.home-shell[data-theme='light'] {
+  --app-bg: #fff7f0;
+  --app-bg-soft: #ffffff;
+  --app-card: rgba(255, 255, 255, 0.8);
+  --app-text: #242424;
+  --app-muted: rgba(36, 36, 36, 0.62);
+  --app-border: rgba(36, 36, 36, 0.08);
+  --app-shadow: 0 24px 60px rgba(91, 54, 50, 0.12);
+  --app-raised-shadow: 0 32px 88px rgba(91, 54, 50, 0.16);
+  --gold-soft: #8d3f42;
+  --bg-deep: var(--app-bg);
+  --bg-card: var(--app-card);
+  --border-glass: var(--app-border);
+  --shadow-soft: var(--app-shadow);
+  color: var(--app-text);
+}
+
+body {
+  background: var(--app-bg);
+  color: var(--app-text);
+}
+
+.home-shell {
+  min-height: 100svh;
+  padding: 18px clamp(14px, 3vw, 28px) calc(96px + var(--app-safe-bottom));
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255, 98, 101, 0.34), transparent 18rem),
+    linear-gradient(180deg, rgba(255, 98, 101, 0.08), transparent 34vh);
+}
+
+.home-shell[data-theme='light'] {
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 98, 101, 0.36), transparent 18rem),
+    linear-gradient(180deg, rgba(255, 98, 101, 0.14), rgba(255, 247, 240, 0) 36vh),
+    #fff7f0;
+}
+
+.home-shell::before {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 98, 101, 0.52), rgba(255, 98, 101, 0.2) 12%, transparent 22%),
+    linear-gradient(90deg, transparent 0 34%, rgba(255, 255, 255, 0.1) 42% 58%, transparent 66% 100%);
+  filter: blur(8px);
+  opacity: 0.62;
+}
+
+.home-shell[data-theme='light']::before {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255, 98, 101, 0.48), rgba(255, 98, 101, 0.16) 12%, transparent 22%),
+    linear-gradient(90deg, transparent 0 34%, rgba(255, 255, 255, 0.82) 42% 58%, transparent 66% 100%);
+  opacity: 0.88;
+}
+
+.content-stack {
+  max-width: 720px;
+  gap: 18px;
+  padding-top: 18px;
+}
+
+.app-topbar {
+  position: sticky;
+  top: 14px;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: min(920px, 100%);
+  margin: 0 auto;
+  padding: 10px 12px;
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--app-card) 88%, transparent);
+  backdrop-filter: blur(22px) saturate(1.25);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow: var(--app-shadow);
+}
+
+.app-brand,
+.topbar-actions,
+.topbar-actions a,
+.theme-toggle,
+.bottom-dock a,
+.bottom-dock button {
+  display: inline-flex;
+  align-items: center;
+}
+
+.app-brand,
+.topbar-actions a,
+.bottom-dock a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-brand {
+  gap: 10px;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 2px solid var(--coral);
+  border-radius: 12px;
+  color: var(--coral);
+  font-family: 'Noto Naskh Arabic', serif;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 10px 28px rgba(255, 98, 101, 0.18), inset 0 0 0 2px rgba(255, 255, 255, 0.08);
+}
+
+.app-brand strong,
+.app-brand small {
+  display: block;
+  line-height: 1.1;
+}
+
+.app-brand strong {
+  font-size: 0.98rem;
+  color: var(--app-text);
+}
+
+.app-brand small {
+  margin-top: 3px;
+  color: var(--app-muted);
+  font-size: 0.68rem;
+}
+
+.topbar-actions {
+  gap: 8px;
+}
+
+.topbar-actions a,
+.theme-toggle {
+  min-height: 38px;
+  gap: 8px;
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  padding: 8px 13px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--app-text);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: transform var(--transition-smooth), border-color var(--transition-smooth), background var(--transition-smooth);
+}
+
+.topbar-actions a:hover,
+.theme-toggle:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 98, 101, 0.34);
+  background: rgba(255, 98, 101, 0.1);
+}
+
+.theme-toggle-track {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(255, 98, 101, 0.18);
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--coral);
+  color: #fff;
+  font-size: 0.62rem;
+  box-shadow: 0 8px 18px rgba(255, 98, 101, 0.3);
+  transition: transform var(--transition-smooth);
+}
+
+.home-shell[data-theme='dark'] .theme-toggle-thumb {
+  transform: translateX(-18px);
+}
+
+.main-scene {
+  background:
+    radial-gradient(circle at 50% 46%, rgba(255, 98, 101, 0.28), transparent 17rem),
+    linear-gradient(180deg, #242424 0%, #1f1f1f 100%);
+}
+
+.home-shell[data-theme='light'] .main-scene {
+  background:
+    radial-gradient(circle at 50% 46%, rgba(255, 98, 101, 0.32), transparent 17rem),
+    linear-gradient(180deg, #fff 0%, #fff7f0 100%);
+}
+
+.sanctuary-vault,
+.light-beam,
+.geometry-field,
+.floor-rings,
+.celestial-door {
+  opacity: 0.16;
+}
+
+.kaaba-stone {
+  top: 33vh;
+  width: min(210px, 44vw);
+  height: min(210px, 44vw);
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--coral-soft), var(--coral-strong));
+  box-shadow: 0 34px 80px rgba(255, 98, 101, 0.36), 0 70px 90px rgba(255, 98, 101, 0.2);
+  transform: translateX(-50%) translate3d(calc(var(--pointer-x) * -10px), calc(var(--pointer-y) * -8px), 40px);
+}
+
+.kaaba-stone::before {
+  inset: 50% -34% auto;
+  height: 34px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--app-bg) 74%, transparent);
+  filter: blur(18px);
+}
+
+.stars span {
+  background: var(--coral-soft);
+  box-shadow: 0 0 20px rgba(255, 98, 101, 0.3);
+}
+
+.light-particles span {
+  background: rgba(255, 98, 101, 0.36);
+}
+
+.hero-card {
+  min-height: 68svh;
+  padding-top: clamp(34px, 8vh, 76px);
+}
+
+.hero-content {
+  gap: 24px;
+}
+
+.hero-ring {
+  width: 96px;
+  height: 96px;
+  padding: 15px;
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--app-card) 84%, transparent);
+  border: 1px solid var(--app-border);
+  box-shadow: var(--app-shadow);
+}
+
+.ring-core {
+  color: var(--coral);
+  font-size: 1.32rem;
+  font-weight: 700;
+  text-shadow: none;
+}
+
+.greeting,
+.next-prayer-name,
+.countdown-time,
+.quran-tracker-card h2,
+.quran-reader-card h2,
+.name-modal h2 {
+  color: var(--app-text);
+}
+
+.greeting {
+  font-size: clamp(2.8rem, 8vw, 5.6rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.sub-greeting,
+.hint,
+.qibla-hint,
+.iqama-note,
+.countdown-label,
+.athar-footer,
+.prayer-label,
+.qibla-header .card-label {
+  color: var(--app-muted);
+  opacity: 1;
+}
+
+.hero-actions a,
+.quran-open-button,
+.quran-close-button,
+.name-modal button,
+.location-action,
+.athar-refresh {
+  min-height: 42px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.primary-action,
+.quran-open-button,
+.quran-close-button,
+.name-modal button {
+  background: linear-gradient(135deg, #ff8a8c, var(--coral) 58%, #ef4a50);
+  color: #fff !important;
+  border-color: transparent !important;
+  box-shadow: 0 16px 38px rgba(255, 98, 101, 0.28);
+}
+
+.secondary-action,
+.location-action,
+.athar-refresh {
+  color: var(--app-text);
+  border-color: var(--app-border) !important;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.glass-card,
+.athar-card,
+.prayer-card,
+.qibla-card,
+.quran-tracker-card,
+.name-modal,
+.quran-reader-card {
+  background: var(--app-card);
+  border-color: var(--app-border);
+  border-radius: var(--app-radius-xl);
+  box-shadow: var(--app-shadow);
+  color: var(--app-text);
+}
+
+.glass-card:hover,
+.glass-card:focus-within {
+  border-color: rgba(255, 98, 101, 0.22);
+  box-shadow: var(--app-raised-shadow);
+}
+
+.athar-card,
+.prayer-card,
+.qibla-card,
+.quran-tracker-card {
+  overflow: hidden;
+}
+
+.athar-card::after,
+.prayer-card::after,
+.qibla-card::after,
+.quran-tracker-card::after {
+  content: '';
+  position: absolute;
+  inset: auto 20px 0;
+  height: 4px;
+  border-radius: 999px 999px 0 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 98, 101, 0.72), transparent);
+  opacity: 0.48;
+}
+
+.athar-text,
+.prayer-name,
+.prayer-time,
+.quran-page-indicator,
+.footer-text,
+.qibla-header h2,
+.next-prayer-time,
+.athar-source {
+  color: var(--app-text);
+}
+
+.athar-quote-open,
+.athar-quote-close,
+.next-prayer-time,
+.qibla-header h2,
+.quran-tracker-label,
+.kaaba-label {
+  color: var(--coral);
+}
+
+.prayer-list li,
+.prayer-alert,
+.quran-view-shell,
+.name-modal input {
+  background: color-mix(in srgb, var(--app-bg-soft) 72%, transparent);
+  border: 1px solid var(--app-border);
+  color: var(--app-text);
+}
+
+.prayer-list li.is-next {
+  background: rgba(255, 98, 101, 0.11);
+  border-color: rgba(255, 98, 101, 0.28);
+}
+
+.countdown-ring circle:last-child {
+  stroke: var(--coral);
+}
+
+.needle-tip {
+  background: linear-gradient(to top, #64d8bd, var(--coral));
+}
+
+.name-modal-backdrop,
+.quran-reader-backdrop {
+  background: color-mix(in srgb, var(--app-bg) 76%, transparent);
+}
+
+.quran-reader-card {
+  width: min(760px, 100%);
+  max-height: calc(100svh - 36px);
+  overflow: auto;
+}
+
+.bottom-dock {
+  position: fixed;
+  right: 50%;
+  bottom: var(--app-safe-bottom);
+  z-index: 45;
+  display: none;
+  transform: translateX(50%);
+  width: min(430px, calc(100% - 28px));
+  padding: 8px;
+  border: 1px solid var(--app-border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--app-card) 90%, transparent);
+  backdrop-filter: blur(22px) saturate(1.2);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  box-shadow: var(--app-raised-shadow);
+}
+
+.bottom-dock a,
+.bottom-dock button {
+  flex: 1;
+  justify-content: center;
+  gap: 6px;
+  min-height: 42px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--app-muted);
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.bottom-dock button {
+  background: var(--coral);
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(255, 98, 101, 0.3);
+}
+
+.site-footer {
+  padding-bottom: 26px;
+}
+
+@media (min-width: 860px) {
+  .content-stack {
+    max-width: 920px;
+  }
+
+  .content-stack > .hero-card,
+  .content-stack > .athar-card,
+  .content-stack > .site-footer {
+    max-width: 720px;
+  }
+
+  .prayer-card,
+  .qibla-card,
+  .quran-tracker-card {
+    max-width: 720px;
+  }
+}
+
+@media (max-width: 680px) {
+  .home-shell {
+    padding-top: 12px;
+  }
+
+  .app-topbar {
+    top: 10px;
+  }
+
+  .topbar-actions a {
+    display: none;
+  }
+
+  .bottom-dock {
+    display: flex;
+  }
+
+  .hero-card {
+    min-height: 62svh;
+  }
+
+  .quran-tracker-card,
+  .quran-reader-header,
+  .quran-reader-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
