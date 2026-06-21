@@ -30,7 +30,10 @@ function normalizePageNumber(pageNumber) {
     return FIRST_QURAN_PAGE;
   }
 
-  return Math.min(Math.max(Math.round(numericPage), FIRST_QURAN_PAGE), LAST_QURAN_PAGE);
+  return Math.min(
+    Math.max(Math.round(numericPage), FIRST_QURAN_PAGE),
+    LAST_QURAN_PAGE
+  );
 }
 
 export function getQuranProgress() {
@@ -52,7 +55,9 @@ export function getQuranProgress() {
       ...getDefaultQuranProgress(),
       ...parsedProgress,
       pageNumber: normalizePageNumber(parsedProgress.pageNumber),
+      pagesReadToday: Number(parsedProgress.pagesReadToday) || 0,
       targetPages: Number(parsedProgress.targetPages) || DEFAULT_TARGET_PAGES,
+      lastReadDate: parsedProgress.lastReadDate || today,
     };
 
     if (progress.lastReadDate !== today) {
@@ -73,19 +78,24 @@ export function getQuranProgress() {
   }
 }
 
-export function saveQuranProgress(progress) {
+export function saveQuranProgress(progress = {}) {
   const safeProgress = {
     ...getDefaultQuranProgress(),
     ...progress,
-    pageNumber: normalizePageNumber(progress?.pageNumber),
-    targetPages: Number(progress?.targetPages) || DEFAULT_TARGET_PAGES,
-    lastReadDate: progress?.lastReadDate || getTodayDate(),
+    pageNumber: normalizePageNumber(progress.pageNumber),
+    pagesReadToday: Number(progress.pagesReadToday) || 0,
+    targetPages: Number(progress.targetPages) || DEFAULT_TARGET_PAGES,
+    lastReadDate: progress.lastReadDate || getTodayDate(),
   };
 
-  safeProgress.completedToday = safeProgress.pagesReadToday >= safeProgress.targetPages;
+  safeProgress.completedToday =
+    safeProgress.pagesReadToday >= safeProgress.targetPages;
 
   if (typeof window !== 'undefined') {
-    window.localStorage.setItem(QURAN_PROGRESS_KEY, JSON.stringify(safeProgress));
+    window.localStorage.setItem(
+      QURAN_PROGRESS_KEY,
+      JSON.stringify(safeProgress)
+    );
   }
 
   return safeProgress;
@@ -98,11 +108,13 @@ export function markPageRead(pageNumber) {
   const updatedProgress = {
     ...progress,
     pageNumber: normalizePageNumber(pageNumber),
-    pagesReadToday: progress.lastReadDate === today ? progress.pagesReadToday + 1 : 1,
+    pagesReadToday:
+      progress.lastReadDate === today ? progress.pagesReadToday + 1 : 1,
     lastReadDate: today,
   };
 
-  updatedProgress.completedToday = updatedProgress.pagesReadToday >= updatedProgress.targetPages;
+  updatedProgress.completedToday =
+    updatedProgress.pagesReadToday >= updatedProgress.targetPages;
 
   return saveQuranProgress(updatedProgress);
 }
