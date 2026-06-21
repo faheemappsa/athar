@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import useGeolocation from '../hooks/useGeolocation';
+import usePrayerCountdown from '../hooks/usePrayerCountdown';
 import usePrayerTimes from '../hooks/usePrayerTimes';
+import { formatDateTime12Hour, formatTime12Hour } from '../utils/timeFormat';
 
 export default function PrayerTimes() {
   const {
@@ -21,6 +23,10 @@ export default function PrayerTimes() {
     isDefault,
     updatedFromLocation,
   } = usePrayerTimes(coords);
+  const countdown = usePrayerCountdown(prayers);
+  const highlightedPrayer = countdown.nextPrayer || nextPrayer;
+  const displayedNextTime = highlightedPrayer?.displayTime || formatTime12Hour(highlightedPrayer?.time);
+  const iqamaDisplayTime = formatDateTime12Hour(countdown.iqamaTime);
   const isLoading = locationLoading || prayerLoading;
   const statusMessage = prayerError || locationError;
 
@@ -42,16 +48,30 @@ export default function PrayerTimes() {
       <div className="card-header">
         <div>
           <div className="card-label">مواقيت الصلاة</div>
-          <h2>الموعد القادم: {nextPrayer.name}</h2>
+          <h2>الموعد القادم: {highlightedPrayer?.name || nextPrayer.name}</h2>
         </div>
-        <strong>{nextPrayer.time}</strong>
+        <strong>{displayedNextTime}</strong>
       </div>
+
+      {countdown.label ? (
+        <div className="prayer-countdown" role="timer" aria-live="polite">
+          <div>
+            <p className="countdown-label">{countdown.label}</p>
+            {countdown.phase === 'before-iqama' && countdown.iqamaOffsetMinutes ? (
+              <p className="iqama-note">
+                الإقامة بعد الأذان بـ {countdown.iqamaOffsetMinutes} دقيقة{iqamaDisplayTime ? ` (${iqamaDisplayTime})` : ''}
+              </p>
+            ) : null}
+          </div>
+          <strong className="countdown-time">{countdown.countdownText}</strong>
+        </div>
+      ) : null}
 
       <ul className="prayer-list">
         {prayers.map((prayer) => (
-          <li key={prayer.key} className={prayer.key === nextPrayer.key ? 'is-next' : ''}>
+          <li key={prayer.key} className={prayer.key === highlightedPrayer?.key ? 'is-next' : ''}>
             <span>{prayer.name}</span>
-            <time>{prayer.time}</time>
+            <time>{prayer.displayTime}</time>
           </li>
         ))}
       </ul>
