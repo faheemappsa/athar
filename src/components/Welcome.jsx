@@ -2,30 +2,40 @@ export default function Welcome({ userName }) {
   return (
     <header className="hero-card">
       <div className="hero-content">
-        <p className="eyebrow">أثر — غرفة نور رقمية للذكر والصلاة</p>
-        {userName ? (
-          <>
-            <h1>يا {userName}، ادخل السكينة كأنها مكان.</h1>
-            <p className="hero-copy">مواقيت حيّة، أثر يومي، وقبلة تتحرك في فضاء هادئ من الحجر الأسود، العاج، والذهب الخافت.</p>
-          </>
-        ) : (
-          <>
-            <h1>رفيق روحاني يشبه دخول محراب من الضوء.</h1>
-            <p className="hero-copy">أثر يجمع الذكر، الصلاة القادمة، واتجاه القبلة في تجربة سينمائية هادئة لا تشبه تطبيقات المواقيت التقليدية.</p>
-          </>
-        )}
+        <div className="hero-ring" aria-hidden="true">
+          <svg viewBox="0 0 200 200" className="sacred-ring">
+            <circle cx="100" cy="100" r="80" fill="none" stroke="rgba(212, 175, 55, 0.15)" strokeWidth="1" />
+            <circle cx="100" cy="100" r="60" fill="none" stroke="rgba(212, 175, 55, 0.1)" strokeWidth="0.5" />
+            <circle cx="100" cy="100" r="40" fill="none" stroke="rgba(212, 175, 55, 0.2)" strokeWidth="2" strokeDasharray="8 12" />
+            <circle cx="100" cy="100" r="20" fill="rgba(212, 175, 55, 0.08)" stroke="rgba(212, 175, 55, 0.3)" strokeWidth="1" />
+          </svg>
+          <span className="ring-core">أثر</span>
+        </div>
+
+        <div className="hero-text">
+          {userName ? (
+            <>
+              <h1 className="greeting">يا {userName}</h1>
+              <p className="sub-greeting">ادخل السكينة كأنها مكان</p>
+            </>
+          ) : (
+            <>
+              <h1 className="greeting">رفيق روحاني</h1>
+              <p className="sub-greeting">من نور الذكر إلى قبلة القلب</p>
+            </>
+          )}
+        </div>
+
         <div className="hero-actions">
-          <a href="#prayer-times" className="primary-action">ابدأ من الصلاة القادمة</a>
-          <a href="#qibla" className="secondary-action">افتح بوصلة القبلة</a>
+          <a href="#prayer-times" className="primary-action">الصلاة القادمة</a>
+          <a href="#qibla" className="secondary-action">اتجاه القبلة</a>
         </div>
       </div>
-      <div className="hero-orbit" aria-hidden="true">
-        <span className="orbit-core">أثر</span>
-        <span className="orbit-line orbit-line-one" />
-        <span className="orbit-line orbit-line-two" />
-        <span className="orbit-line orbit-line-three" />
+
+      <div className="scroll-cue" aria-hidden="true">
+        <span>انزل بهدوء</span>
+        <span className="cue-chevron">⌄</span>
       </div>
-      <div className="scroll-cue" aria-hidden="true">انزل بهدوء</div>
     </header>
   );
 }
