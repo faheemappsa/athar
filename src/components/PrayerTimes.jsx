@@ -1,39 +1,79 @@
-const PRAYERS = [
-  ['الفجر', '04:08'],
-  ['الشروق', '05:36'],
-  ['الظهر', '12:18'],
-  ['العصر', '15:43'],
-  ['المغرب', '19:01'],
-  ['العشاء', '20:31'],
-];
+import { useEffect } from 'react';
+import useGeolocation from '../hooks/useGeolocation';
+import usePrayerTimes from '../hooks/usePrayerTimes';
 
 export default function PrayerTimes() {
-  const nextPrayer = PRAYERS.find(([, time]) => {
-    const [hours, minutes] = time.split(':').map(Number);
-    const now = new Date();
-    const prayerDate = new Date();
-    prayerDate.setHours(hours, minutes, 0, 0);
-    return prayerDate > now;
-  }) || PRAYERS[0];
+  const {
+    coords,
+    error: locationError,
+    loading: locationLoading,
+    requestLocation,
+    checkCurrentLocation,
+    hasStoredCoords,
+    locationChanged,
+    updateStoredCoords,
+  } = useGeolocation();
+  const {
+    prayers,
+    nextPrayer,
+    error: prayerError,
+    loading: prayerLoading,
+    isDefault,
+    updatedFromLocation,
+  } = usePrayerTimes(coords);
+  const isLoading = locationLoading || prayerLoading;
+  const statusMessage = prayerError || locationError;
+
+  useEffect(() => {
+    if (hasStoredCoords) {
+      checkCurrentLocation();
+    }
+  }, [checkCurrentLocation, hasStoredCoords]);
+
+  const hintText = (() => {
+    if (prayerLoading) return 'جاري تحديث المواقيت…';
+    if (updatedFromLocation && !prayerError) return 'تم تحديث المواقيت حسب موقعك';
+    if (isDefault) return 'اعرض مواقيت دقيقة تلقائيًا حسب موقعك الحالي بدل المواقيت الافتراضية.';
+    return 'نعرض مواقيت الصلاة بناءً على موقعك المحفوظ.';
+  })();
 
   return (
     <article id="prayer-times" className="glass-card prayer-card">
       <div className="card-header">
         <div>
           <div className="card-label">مواقيت الصلاة</div>
-          <h2>الموعد القادم: {nextPrayer[0]}</h2>
+          <h2>الموعد القادم: {nextPrayer.name}</h2>
         </div>
-        <strong>{nextPrayer[1]}</strong>
+        <strong>{nextPrayer.time}</strong>
       </div>
+
       <ul className="prayer-list">
-        {PRAYERS.map(([name, time]) => (
-          <li key={name} className={name === nextPrayer[0] ? 'is-next' : ''}>
-            <span>{name}</span>
-            <time>{time}</time>
+        {prayers.map((prayer) => (
+          <li key={prayer.key} className={prayer.key === nextPrayer.key ? 'is-next' : ''}>
+            <span>{prayer.name}</span>
+            <time>{prayer.time}</time>
           </li>
         ))}
       </ul>
-      <p className="hint">المواقيت المعروضة افتراضية إلى حين السماح بالموقع أو ربط خدمة المواقيت.</p>
+
+      {locationChanged ? (
+        <div className="prayer-alert" role="status">
+          <span>يبدو أنك في موقع جديد، هل تريد تحديث مواقيت الصلاة؟</span>
+          <button type="button" className="location-action" onClick={updateStoredCoords} disabled={isLoading}>
+            تحديث موقعي
+          </button>
+        </div>
+      ) : null}
+
+      <p className="hint">{hintText}</p>
+
+      {!hasStoredCoords ? (
+        <button type="button" className="location-action" onClick={requestLocation} disabled={isLoading}>
+          {locationLoading ? 'جارٍ تحديد موقعك...' : 'استخدم موقعي'}
+        </button>
+      ) : null}
+
+      {statusMessage ? <p className="error-text prayer-error">{statusMessage}</p> : null}
     </article>
   );
 }
