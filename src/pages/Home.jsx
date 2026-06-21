@@ -14,6 +14,7 @@ export default function Home() {
   const [userName, setUserName] = useState('');
   const [shouldShowNameModal, setShouldShowNameModal] = useState(false);
   const [showQuranReader, setShowQuranReader] = useState(false);
+  const [theme, setTheme] = useState('day');
 
   useEffect(() => {
     const storedName = getStoredName();
@@ -34,9 +35,22 @@ export default function Home() {
     }
   };
 
+  const isNight = theme === 'night';
+
   return (
-    <main className="home-shell" dir="rtl">
+    <main className="home-shell" dir="rtl" data-theme={theme}>
       <MainScene />
+      <button
+        type="button"
+        className="theme-switch"
+        onClick={() => setTheme((currentTheme) => (currentTheme === 'day' ? 'night' : 'day'))}
+        aria-pressed={isNight}
+        aria-label={isNight ? 'تفعيل الوضع النهاري' : 'تفعيل الوضع الليلي'}
+      >
+        <span className="theme-switch-mark">{isNight ? 'ليل' : 'نهار'}</span>
+        <span className="theme-switch-orb" />
+      </button>
+
       <div className="content-stack">
         <Welcome userName={userName} />
         <AtharOfDay />
@@ -45,7 +59,7 @@ export default function Home() {
         <QiblaFinder />
         <Footer />
       </div>
-      {showQuranReader && <QuranReader onClose={() => setShowQuranReader(false)} />}
+      {showQuranReader && <QuranReader theme={theme} onClose={() => setShowQuranReader(false)} />}
       {shouldShowNameModal && <NameModal onSave={handleNameSave} />}
     </main>
   );

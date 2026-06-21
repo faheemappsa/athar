@@ -5,7 +5,7 @@ const FIRST_QURAN_PAGE = 1;
 const LAST_QURAN_PAGE = 604;
 const QURAN_VIEW_WEB_MODULE_URL = 'https://esm.sh/open-quran-view@0.5.0/view/web?bundle';
 
-export default function QuranReader({ onClose }) {
+export default function QuranReader({ theme = 'day', onClose }) {
   const savedProgress = useMemo(() => getQuranProgress(), []);
   const [page, setPage] = useState(savedProgress?.pageNumber || FIRST_QURAN_PAGE);
   const [readerStatus, setReaderStatus] = useState('loading');
@@ -88,7 +88,7 @@ export default function QuranReader({ onClose }) {
               page={String(page)}
               mushaf-layout="hafs-v2"
               fit="width"
-              theme="dark"
+              theme={theme === 'night' ? 'dark' : 'light'}
             ></open-quran-view>
           ) : (
             <p className="hint">
