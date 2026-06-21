@@ -45,34 +45,45 @@ export default function PrayerTimes() {
 
   return (
     <article id="prayer-times" className="glass-card prayer-card">
-      <div className="prayer-orbit" aria-hidden="true"><span /><span /><span /></div>
-      <div className="card-header">
-        <div>
-          <div className="card-label">مواقيت الصلاة</div>
-          <h2>الموعد القادم: {highlightedPrayer?.name || nextPrayer.name}</h2>
+      <div className="prayer-orbit" aria-hidden="true">
+        <span className="orbit-ring ring-1" />
+        <span className="orbit-ring ring-2" />
+        <span className="orbit-ring ring-3" />
+      </div>
+
+      <div className="prayer-header">
+        <div className="prayer-label">مواقيت الصلاة</div>
+        <div className="next-prayer-block">
+          <span className="next-prayer-name">{highlightedPrayer?.name}</span>
+          <strong className="next-prayer-time">{displayedNextTime}</strong>
         </div>
-        <strong className="next-prayer-time">{displayedNextTime}</strong>
       </div>
 
       {countdown.label ? (
         <div className="prayer-countdown" role="timer" aria-live="polite">
-          <div>
-            <p className="countdown-label">{countdown.label}</p>
+          <div className="countdown-ring">
+            <svg viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(212, 175, 55, 0.1)" strokeWidth="2" />
+              <circle cx="50" cy="50" r="45" fill="none" stroke="#d4af37" strokeWidth="2" strokeDasharray="283" strokeDashoffset="0" />
+            </svg>
+          </div>
+          <div className="countdown-text">
+            <span className="countdown-label">{countdown.label}</span>
+            <strong className="countdown-time">{countdown.countdownText}</strong>
             {countdown.phase === 'before-iqama' && countdown.iqamaOffsetMinutes ? (
-              <p className="iqama-note">
+              <span className="iqama-note">
                 الإقامة بعد الأذان بـ {countdown.iqamaOffsetMinutes} دقيقة{iqamaDisplayTime ? ` (${iqamaDisplayTime})` : ''}
-              </p>
+              </span>
             ) : null}
           </div>
-          <strong className="countdown-time">{countdown.countdownText}</strong>
         </div>
       ) : null}
 
       <ul className="prayer-list">
         {prayers.map((prayer) => (
           <li key={prayer.key} className={prayer.key === highlightedPrayer?.key ? 'is-next' : ''} tabIndex="0">
-            <span><i aria-hidden="true" />{prayer.name}</span>
-            <time>{prayer.displayTime}</time>
+            <span className="prayer-name">{prayer.name}</span>
+            <time className="prayer-time">{prayer.displayTime}</time>
           </li>
         ))}
       </ul>
