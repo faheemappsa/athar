@@ -8,38 +8,33 @@ export default function AtharOfDay({ prayers }) {
   const handleRefresh = () => {
     setIsChanging(true);
     refreshAthar();
-    window.setTimeout(() => setIsChanging(false), 220);
+    window.setTimeout(() => setIsChanging(false), 300);
   };
 
   return (
     <article className={`glass-card athar-card ${isChanging ? 'athar-fade' : ''}`} data-period={period}>
-      <div className="athar-card-topline">
-        <div>
-          <div className="card-label">{athar.title || 'أثر اليوم'}</div>
-          <span className="athar-period-hint">{sourceLabel}</span>
-        </div>
-        {athar.type ? <span className="athar-type-label">{athar.type}</span> : null}
-      </div>
+      <div className="athar-glow" aria-hidden="true" />
 
-      <div className="athar-ritual-light" aria-hidden="true" />
-      <div className="athar-quote-shell">
-        <span className="quote-mark">﴿</span>
+      <div className="athar-content">
+        <span className="athar-quote-open">﴿</span>
         <blockquote className="athar-text">{athar.text}</blockquote>
-        <span className="quote-mark quote-mark-end">﴾</span>
-      </div>
+        <span className="athar-quote-close">﴾</span>
 
-      {athar.source || athar.benefit ? (
-        <div className="athar-source">
-          {athar.source ? <span>{athar.source}</span> : null}
-          {athar.benefit ? <p>{athar.benefit}</p> : null}
+        <div className="athar-footer">
+          <span className="athar-source">{athar.source || sourceLabel}</span>
+          {athar.benefit && <span className="athar-benefit">— {athar.benefit}</span>}
         </div>
-      ) : null}
+      </div>
 
       <button type="button" className="athar-refresh" onClick={handleRefresh}>
-        <span>تجديد الأثر</span><i aria-hidden="true" />
+        <span>تجديد</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M1 4v6h6" />
+          <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+        </svg>
       </button>
 
-      {isFallback ? <p className="hint">نعرض تذكيرًا عامًا حتى تتوفر محتويات أكثر.</p> : null}
+      {isFallback && <p className="hint">نعرض تذكيرًا عامًا حتى تتوفر محتويات أكثر.</p>}
     </article>
   );
 }
