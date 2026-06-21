@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { getPrayerTimesByCoordinates } from '../services/prayerApi';
+import { cleanTime, formatTime12Hour } from '../utils/timeFormat';
 
 const DEFAULT_TIMINGS = {
   Fajr: '04:08',
@@ -19,15 +20,14 @@ const PRAYER_LABELS = [
   ['Isha', 'العشاء'],
 ];
 
-function cleanTime(value) {
-  return String(value || '').split(' ')[0].slice(0, 5);
-}
-
 function getNextPrayer(prayers) {
   const now = new Date();
 
   return prayers.find((prayer) => {
-    const [hours, minutes] = prayer.time.split(':').map(Number);
+    const [hours, minutes] = String(prayer.time || '').split(':').map(Number);
+
+    if (Number.isNaN(hours) || Number.isNaN(minutes)) return false;
+
     const prayerDate = new Date();
     prayerDate.setHours(hours, minutes, 0, 0);
     return prayerDate > now;
@@ -79,6 +79,7 @@ export default function usePrayerTimes(coords) {
     key,
     name,
     time: cleanTime(timings[key]),
+    displayTime: formatTime12Hour(timings[key]),
   })), [timings]);
 
   const nextPrayer = useMemo(() => getNextPrayer(prayers), [prayers]);

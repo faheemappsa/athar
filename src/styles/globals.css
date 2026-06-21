@@ -69,6 +69,7 @@ h1 { max-width: 820px; margin: 10px 0; font-size: clamp(2.2rem, 7vw, 5.6rem); li
 .countdown-time { direction: ltr; color: #f5d483; font-size: clamp(2rem, 8vw, 3.4rem); line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: .04em; }
 .iqama-note { margin: 6px 0 0; color: #c9d3e4; font-size: .95rem; }
 @media (max-width: 620px) { .prayer-countdown { align-items: flex-start; flex-direction: column; } }
+
 .athar-card { position: relative; overflow: hidden; transition: transform .22s ease, border-color .22s ease, opacity .22s ease; }
 .athar-card::after { content: ''; position: absolute; inset: auto 18px 18px 18px; height: 1px; background: linear-gradient(90deg, transparent, rgba(245,212,131,.55), transparent); opacity: .7; }
 .athar-card-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
