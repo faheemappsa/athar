@@ -21,7 +21,11 @@ export default function AtharOfDay({ prayers }) {
         {athar.type ? <span className="athar-type-label">{athar.type}</span> : null}
       </div>
 
-      <blockquote className="athar-text">{athar.text}</blockquote>
+      <div className="athar-quote-shell">
+        <span className="quote-mark">﴿</span>
+        <blockquote className="athar-text">{athar.text}</blockquote>
+        <span className="quote-mark quote-mark-end">﴾</span>
+      </div>
 
       {athar.source || athar.benefit ? (
         <div className="athar-source">
@@ -31,7 +35,7 @@ export default function AtharOfDay({ prayers }) {
       ) : null}
 
       <button type="button" className="athar-refresh" onClick={handleRefresh}>
-        أثر جديد
+        تجديد الأثر
       </button>
 
       {isFallback ? <p className="hint">نعرض تذكيرًا عامًا حتى تتوفر محتويات أكثر.</p> : null}

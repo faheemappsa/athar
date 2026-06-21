@@ -20,8 +20,10 @@ export default function QiblaFinder() {
     <article id="qibla" className="glass-card qibla-card">
       <div className="card-label">اتجاه القبلة</div>
       <h2>{roundedAngle == null ? 'جاهز للحساب' : `${roundedAngle}° من الشمال`}</h2>
+      <p className="qibla-intro">بوصلة هادئة تساعدك على التوجه بقلبك قبل جسدك.</p>
       <div className="compass" aria-label="بوصلة القبلة">
         <span className="needle" style={{ transform: `rotate(${roundedAngle ?? 0}deg)` }} />
+        <span className="compass-glow" />
         <span className="kaaba">الكعبة</span>
       </div>
       {error ? <p className="error-text">{error}</p> : <p>يمكنك استخدام موقعك الحالي لحساب الاتجاه بدقة أكبر.</p>}
