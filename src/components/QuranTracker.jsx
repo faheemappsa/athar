@@ -13,6 +13,7 @@ export default function QuranTracker({ onOpenReader }) {
           {progress?.pageNumber ? `آخر صفحة قرأتها: ${progress.pageNumber}` : 'ابدأ قراءة القرآن من الصفحة الأولى.'}
         </p>
       </div>
+
       <button type="button" className="quran-open-button" onClick={onOpenReader}>
         فتح القارئ
       </button>

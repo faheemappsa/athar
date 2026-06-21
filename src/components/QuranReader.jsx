@@ -59,18 +59,37 @@ export default function QuranReader({ onClose }) {
         </div>
 
         <div className="quran-reader-toolbar" aria-label="التنقل بين صفحات القرآن">
-          <button type="button" className="quran-open-button" onClick={goToNextPage} disabled={page >= LAST_QURAN_PAGE}>
+          <button
+            type="button"
+            className="quran-open-button"
+            onClick={goToNextPage}
+            disabled={page >= LAST_QURAN_PAGE}
+          >
             الصفحة التالية
           </button>
-          <span className="quran-page-indicator">صفحة {page} من {LAST_QURAN_PAGE}</span>
-          <button type="button" className="quran-open-button" onClick={goToPreviousPage} disabled={page <= FIRST_QURAN_PAGE}>
+
+          <span className="quran-page-indicator">
+            صفحة {page} من {LAST_QURAN_PAGE}
+          </span>
+
+          <button
+            type="button"
+            className="quran-open-button"
+            onClick={goToPreviousPage}
+            disabled={page <= FIRST_QURAN_PAGE}
+          >
             الصفحة السابقة
           </button>
         </div>
 
         <div className="quran-view-shell">
           {readerStatus === 'ready' ? (
-            <open-quran-view page={String(page)} mushaf-layout="hafs-v2" fit="width" theme="dark"></open-quran-view>
+            <open-quran-view
+              page={String(page)}
+              mushaf-layout="hafs-v2"
+              fit="width"
+              theme="dark"
+            ></open-quran-view>
           ) : (
             <p className="hint">
               {readerStatus === 'loading'
