@@ -47,6 +47,8 @@ h1 { max-width: 820px; margin: 10px 0; font-size: clamp(2.2rem, 7vw, 5.6rem); li
 .prayer-list { list-style: none; padding: 0; margin: 20px 0; display: grid; gap: 10px; }
 .prayer-list li { display: flex; justify-content: space-between; padding: 10px 12px; border-radius: 16px; background: rgba(255,255,255,.07); }
 .prayer-list .is-next { color: #112033; background: #f5d483; font-weight: 800; }
+.prayer-alert { display: grid; gap: 12px; margin: 14px 0; padding: 14px; border: 1px solid rgba(245,212,131,.35); border-radius: 18px; background: rgba(245,212,131,.1); color: #f8efd8; }
+.prayer-error { margin-top: 10px; }
 .hint, .glass-card p, .site-footer { color: #c9d3e4; }
 .compass { position: relative; width: 180px; height: 180px; margin: 24px auto; border: 2px solid rgba(245,212,131,.55); border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.06); }
 .needle { position: absolute; width: 8px; height: 74px; top: 18px; transform-origin: 50% 72px; border-radius: 999px; background: linear-gradient(#f5d483 0 55%, #8fe7d3 55%); }

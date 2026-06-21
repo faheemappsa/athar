@@ -36,13 +36,16 @@ function getNextPrayer(prayers) {
 
 export default function usePrayerTimes(coords) {
   const [timings, setTimings] = useState(DEFAULT_TIMINGS);
-  const [locationName, setLocationName] = useState('المواقيت الافتراضية');
-  const [dateLabel, setDateLabel] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [updatedFromLocation, setUpdatedFromLocation] = useState(false);
 
   useEffect(() => {
-    if (!coords) return;
+    if (!coords) {
+      setTimings(DEFAULT_TIMINGS);
+      setUpdatedFromLocation(false);
+      return;
+    }
 
     let isActive = true;
 
@@ -51,13 +54,12 @@ export default function usePrayerTimes(coords) {
       setError(null);
 
       try {
-        const data = await getPrayerTimesByCoordinates(coords);
+        const nextTimings = await getPrayerTimesByCoordinates(coords);
 
         if (!isActive) return;
 
-        setTimings(data.timings);
-        setLocationName(data.location);
-        setDateLabel(data.date);
+        setTimings(nextTimings);
+        setUpdatedFromLocation(true);
       } catch (err) {
         if (!isActive) return;
         setError(err.message || 'تعذر تحديث مواقيت الصلاة حسب موقعك.');
@@ -81,5 +83,12 @@ export default function usePrayerTimes(coords) {
 
   const nextPrayer = useMemo(() => getNextPrayer(prayers), [prayers]);
 
-  return { prayers, nextPrayer, locationName, dateLabel, error, loading, isDefault: !coords };
+  return {
+    prayers,
+    nextPrayer,
+    error,
+    loading,
+    isDefault: !coords,
+    updatedFromLocation,
+  };
 }
