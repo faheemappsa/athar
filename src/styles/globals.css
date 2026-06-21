@@ -1318,3 +1318,123 @@ body {
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+/* ---------- QURAN PLACEHOLDERS ---------- */
+.quran-tracker-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.quran-tracker-content {
+  display: grid;
+  gap: 8px;
+}
+
+.quran-tracker-label {
+  color: var(--gold);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+
+.quran-tracker-card h2,
+.quran-reader-card h2 {
+  margin: 0;
+  color: #fff;
+  font-family: 'Noto Naskh Arabic', serif;
+  font-weight: 300;
+}
+
+.quran-open-button,
+.quran-close-button {
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #f5e7b2, var(--gold) 50%, #b8860b);
+  color: #0a0c14;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-smooth);
+}
+
+.quran-open-button:hover,
+.quran-close-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 28px rgba(212, 175, 55, 0.18);
+}
+
+.quran-reader-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(3, 3, 5, 0.72);
+  backdrop-filter: blur(18px);
+}
+
+.quran-reader-card {
+  width: min(520px, 100%);
+}
+
+.quran-reader-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 560px) {
+  .quran-tracker-card,
+  .quran-reader-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+.quran-reader-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.quran-page-indicator {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.95rem;
+  white-space: nowrap;
+}
+
+.quran-view-shell {
+  display: grid;
+  place-items: center;
+  min-height: min(72vh, 760px);
+  overflow: auto;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.quran-view-shell open-quran-view {
+  width: min(100%, 620px);
+}
+
+.quran-open-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 560px) {
+  .quran-reader-toolbar {
+    flex-direction: column;
+  }
+
+  .quran-reader-toolbar .quran-open-button {
+    width: 100%;
+  }
+}
