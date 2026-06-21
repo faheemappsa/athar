@@ -34,15 +34,13 @@ export default function Home() {
   return (
     <main className="home-shell" dir="rtl">
       <MainScene />
-      <section className="content-stack" aria-label="محتوى أثر الرئيسي">
+      <div className="content-stack">
         <Welcome userName={userName} />
-        <div className="feature-grid">
-          <AtharOfDay />
-          <PrayerTimes />
-          <QiblaFinder />
-        </div>
-      </section>
-      <Footer />
+        <AtharOfDay />
+        <PrayerTimes />
+        <QiblaFinder />
+        <Footer />
+      </div>
       {shouldShowNameModal && <NameModal onSave={handleNameSave} />}
     </main>
   );
