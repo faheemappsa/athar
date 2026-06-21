@@ -1,67 +1,67 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-const KAABA_LAT = 21.4225;
-const KAABA_LNG = 39.8262;
+const KAABA_LATITUDE = 21.4225;
+const KAABA_LONGITUDE = 39.8262;
 
-function toRadians(deg) {
-  return deg * (Math.PI / 180);
+function toRadians(value) {
+  return (value * Math.PI) / 180;
 }
 
-function toDegrees(rad) {
-  return (rad * 180) / Math.PI;
+function toDegrees(value) {
+  return (value * 180) / Math.PI;
 }
 
-function calculateBearing(lat, lng) {
-  const phi1 = toRadians(lat);
-  const phi2 = toRadians(KAABA_LAT);
-  const deltaLambda = toRadians(KAABA_LNG - lng);
+function normalizeCoordinates(coords) {
+  if (!coords) return null;
 
+  const latitude = Number(coords.latitude ?? coords.lat);
+  const longitude = Number(coords.longitude ?? coords.lng ?? coords.lon);
+
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+    throw new Error('إحداثيات غير صالحة');
+  }
+
+  if (Math.abs(latitude) > 90 || Math.abs(longitude) > 180) {
+    throw new Error('الإحداثيات خارج النطاق الجغرافي');
+  }
+
+  return { latitude, longitude };
+}
+
+export function calculateQiblaBearing(latitude, longitude) {
+  const phi1 = toRadians(latitude);
+  const phi2 = toRadians(KAABA_LATITUDE);
+  const deltaLambda = toRadians(KAABA_LONGITUDE - longitude);
+
+  const y = Math.sin(deltaLambda) * Math.cos(phi2);
   const x =
     Math.cos(phi1) * Math.sin(phi2) -
     Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltaLambda);
 
-  const y = Math.sin(deltaLambda) * Math.cos(phi2);
-  const theta = Math.atan2(y, x);
-
-  return (toDegrees(theta) + 360) % 360;
+  return (toDegrees(Math.atan2(y, x)) + 360) % 360;
 }
 
 export default function useQibla(coords) {
   const [qiblaAngle, setQiblaAngle] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!coords || coords.latitude == null || coords.longitude == null) {
-      setQiblaAngle(null);
-      setLoading(false);
-      setError(null);
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
     try {
-      const { latitude, longitude } = coords;
+      const normalized = normalizeCoordinates(coords);
 
-      if (
-        typeof latitude !== 'number' ||
-        typeof longitude !== 'number' ||
-        Math.abs(latitude) > 90 ||
-        Math.abs(longitude) > 180
-      ) {
-        throw new Error('إحداثيات غير صالحة');
+      if (!normalized) {
+        setQiblaAngle(null);
+        setError(null);
+        return;
       }
 
-      const angle = calculateBearing(latitude, longitude);
-      setQiblaAngle(angle);
-      setLoading(false);
+      setQiblaAngle(calculateQiblaBearing(normalized.latitude, normalized.longitude));
+      setError(null);
     } catch (err) {
-      setError(err.message || 'تعذر حساب القبلة');
-      setLoading(false);
+      setQiblaAngle(null);
+      setError(err.message || 'تعذر حساب اتجاه القبلة');
     }
   }, [coords]);
 
-  return { qiblaAngle, error, loading };
+  return { qiblaAngle, error, loading: false };
 }
