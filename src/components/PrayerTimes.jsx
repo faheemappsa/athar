@@ -50,7 +50,7 @@ export default function PrayerTimes() {
           <div className="card-label">مواقيت الصلاة</div>
           <h2>الموعد القادم: {highlightedPrayer?.name || nextPrayer.name}</h2>
         </div>
-        <strong>{displayedNextTime}</strong>
+        <strong className="next-prayer-time">{displayedNextTime}</strong>
       </div>
 
       {countdown.label ? (
@@ -70,7 +70,7 @@ export default function PrayerTimes() {
       <ul className="prayer-list">
         {prayers.map((prayer) => (
           <li key={prayer.key} className={prayer.key === highlightedPrayer?.key ? 'is-next' : ''}>
-            <span>{prayer.name}</span>
+            <span><i aria-hidden="true" />{prayer.name}</span>
             <time>{prayer.displayTime}</time>
           </li>
         ))}
