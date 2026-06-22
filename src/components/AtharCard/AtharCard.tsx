@@ -57,10 +57,10 @@ export default function AtharCard() {
     <div className="bg-card-bg rounded-card p-6 shadow-lg text-center relative">
       <div ref={cardRef} className="p-4">
         <p className="text-sm text-secondary-text mb-1">أثر اليوم</p>
-        <p className="text-xl font-semibold text-primary-text leading-relaxed">"{ayah.text}"</p>
+        <p className="text-xl font-semibold text-primary-text leading-relaxed">&quot;{ayah.text}&quot;</p>
         <p className="text-sm text-secondary-text mt-2">— {ayah.surah}</p>
         {qrCodeUrl && (
-          <div className="flex justify-between items-center mt-4 border-t border-gray-200 pt-3">
+          <div className="flex justify-between items-center mt-4 border-t border-secondary-text pt-3">
             <span className="text-xs text-secondary-text font-arabic">أثر</span>
             <img src={qrCodeUrl} alt="QR" className="w-10 h-10" />
           </div>
