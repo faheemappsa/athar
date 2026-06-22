@@ -50,7 +50,7 @@ export default function Quran() {
         <button
           onClick={() => goToPage(page - 1)}
           disabled={page <= 1}
-          className="bg-action text-white px-4 py-2 rounded-full text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-action text-white px-4 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           السابق
         </button>
@@ -67,7 +67,7 @@ export default function Quran() {
           />
           <button
             onClick={handleJump}
-            className="bg-action text-white px-3 py-1 rounded-full text-sm font-semibold"
+            className="bg-action text-white px-3 py-1 rounded-full text-sm font-semibold hover:opacity-90 transition"
           >
             اذهب
           </button>
@@ -76,7 +76,7 @@ export default function Quran() {
         <button
           onClick={() => goToPage(page + 1)}
           disabled={page >= 604}
-          className="bg-action text-white px-4 py-2 rounded-full text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-action text-white px-4 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
           التالي
         </button>
