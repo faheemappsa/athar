@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 
 function App() {
@@ -11,9 +10,6 @@ function App() {
         <div className="flex items-center gap-6">
           <a href="https://vite.dev" target="_blank" rel="noreferrer">
             <img src={viteLogo} className="h-24 transition hover:drop-shadow-[0_0_2em_#646cffaa]" alt="Vite logo" />
-          </a>
-          <a href="https://react.dev" target="_blank" rel="noreferrer">
-            <img src={reactLogo} className="h-24 animate-spin-slow transition hover:drop-shadow-[0_0_2em_#61dafbaa]" alt="React logo" />
           </a>
         </div>
 
