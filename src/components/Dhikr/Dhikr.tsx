@@ -26,7 +26,7 @@ export default function Dhikr() {
   }, []);
 
   if (dhikrList.length === 0) {
-    return <div className="bg-card-bg rounded-card p-4 shadow-lg text-center text-secondary-text">جاري التحميل...</div>;
+    return <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text">جاري التحميل...</div>;
   }
 
   const current = dhikrList[currentIndex];
@@ -60,7 +60,7 @@ export default function Dhikr() {
   const progressPercent = (count / current.count) * 100;
 
   return (
-    <div className="bg-card-bg rounded-card p-4 shadow-lg">
+    <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
       <h2 className="text-lg font-semibold text-primary-text mb-2">الأذكار اليومية</h2>
       <p className="text-sm text-secondary-text mb-4">{currentIndex + 1} / {dhikrList.length}</p>
 
