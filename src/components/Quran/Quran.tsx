@@ -32,11 +32,11 @@ export default function Quran() {
   };
 
   if (loading) {
-    return <div className="bg-card-bg rounded-card p-4 shadow-lg text-center text-secondary-text">جاري التحميل...</div>;
+    return <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text">جاري التحميل...</div>;
   }
 
   return (
-    <div className="bg-card-bg rounded-card p-4 shadow-lg">
+    <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-primary-text">المصحف</h2>
         <span className="text-sm text-secondary-text">الصفحة {page} / 604</span>
