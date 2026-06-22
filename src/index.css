@@ -2,8 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .animate-spin-slow {
-    animation: spin 20s linear infinite;
-  }
+body {
+  font-family: "Cairo", sans-serif;
+  background-color: #F5F0E8;
+  margin: 0;
+  padding: 0;
+  direction: rtl;
 }
