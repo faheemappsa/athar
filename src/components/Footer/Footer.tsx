@@ -1,7 +1,7 @@
 export default function Footer() {
   const whatsappLink = "https://wa.me/966556445919";
   return (
-    <div className="text-center text-xs text-secondary-text py-3 border-t border-gray-200/50 mt-6">
+    <div className="text-center text-xs text-secondary-text py-3 border-t border-secondary-text/20 mt-6">
       <p className="flex items-center justify-center gap-1 flex-wrap">
         <span>تطوير أستديو التجربة</span>
         <span className="text-secondary-text/40 mx-1">|</span>
