@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { motion } from "framer-motion";
 import { getRandomAyah } from "../../services/quranApi";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import html2canvas from "html2canvas";
@@ -50,11 +51,25 @@ export default function AtharCard() {
   };
 
   if (!ayah) {
-    return <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text">جاري التحميل...</div>;
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+        className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text"
+      >
+        جاري التحميل...
+      </motion.div>
+    );
   }
 
   return (
-    <div className="bg-white rounded-card shadow-xl p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center relative">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.2 }}
+      className="bg-white rounded-card shadow-xl p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center relative"
+    >
       <div ref={cardRef} className="p-4">
         <p className="text-sm text-secondary-text mb-1">أثر اليوم</p>
         <p className="text-xl font-semibold text-primary-text leading-relaxed">&quot;{ayah.text}&quot;</p>
@@ -72,6 +87,6 @@ export default function AtharCard() {
       >
         شارك الأثر
       </button>
-    </div>
+    </motion.div>
   );
 }
