@@ -1,6 +1,7 @@
 import "./index.css";
 import PrayerTimes from "./components/PrayerTimes/PrayerTimes";
 import RadioPlayer from "./components/Radio/RadioPlayer";
+import AtharCard from "./components/AtharCard/AtharCard";
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
         </p>
         <PrayerTimes />
         <RadioPlayer />
+        <AtharCard />
       </div>
     </div>
   );
