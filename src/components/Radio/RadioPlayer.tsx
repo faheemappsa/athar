@@ -20,7 +20,7 @@ export default function RadioPlayer() {
   };
 
   return (
-    <div className="bg-card-bg rounded-card p-4 shadow-lg flex items-center justify-between">
+    <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 flex items-center justify-between">
       <span className="text-primary-text text-lg font-semibold">📻 نداء الإسلام</span>
       <button
         onClick={togglePlay}
