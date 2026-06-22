@@ -53,11 +53,11 @@ export default function PrayerTimes() {
   }, [nextPrayer]);
 
   if (!timings || !nextPrayer) {
-    return <div className="bg-card-bg rounded-card p-4 shadow-lg text-center text-secondary-text">جاري التحميل...</div>;
+    return <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text">جاري التحميل...</div>;
   }
 
   return (
-    <div className="bg-card-bg rounded-card p-4 shadow-lg">
+    <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
       <p className="text-sm text-secondary-text">الصلاة القادمة</p>
       <p className="text-xl font-bold text-primary-text">{nextPrayer.name}</p>
       <p className="text-3xl font-bold text-action text-center mt-2">{countdown}</p>
