@@ -3,6 +3,7 @@ import PrayerTimes from "./components/PrayerTimes/PrayerTimes";
 import RadioPlayer from "./components/Radio/RadioPlayer";
 import AtharCard from "./components/AtharCard/AtharCard";
 import Dhikr from "./components/Dhikr/Dhikr";
+import Quran from "./components/Quran/Quran";
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <RadioPlayer />
         <AtharCard />
         <Dhikr />
+        <Quran />
       </div>
     </div>
   );
