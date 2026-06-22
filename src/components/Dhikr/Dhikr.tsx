@@ -7,6 +7,7 @@ export default function Dhikr() {
   const [dhikrList, setDhikrList] = useState<DhikrItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [count, setCount] = useState(0);
+  const [feedback, setFeedback] = useState<"idle" | "success" | "complete">("idle");
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -14,12 +15,13 @@ export default function Dhikr() {
     if (hour >= 5 && hour < 12) fetchFn = getMorningDhikr;
     else if (hour >= 17 && hour < 20) fetchFn = getEveningDhikr;
     else if (hour >= 23 || hour < 5) fetchFn = getSleepDhikr;
-    else fetchFn = getMorningDhikr; // fallback
+    else fetchFn = getMorningDhikr;
 
     fetchFn().then((data) => {
       setDhikrList(data);
       setCurrentIndex(0);
       setCount(0);
+      setFeedback("idle");
     });
   }, []);
 
@@ -30,22 +32,74 @@ export default function Dhikr() {
   const current = dhikrList[currentIndex];
   const isComplete = count >= current.count;
 
+  const handleTap = () => {
+    if (isComplete) return;
+
+    // Haptic feedback (if supported)
+    if (navigator.vibrate) navigator.vibrate(10);
+
+    const newCount = Math.min(count + 1, current.count);
+    setCount(newCount);
+
+    if (newCount === current.count) {
+      setFeedback("complete");
+      // Move to next after 1.5s
+      setTimeout(() => {
+        if (currentIndex + 1 < dhikrList.length) {
+          setCurrentIndex(currentIndex + 1);
+          setCount(0);
+          setFeedback("idle");
+        } else {
+          setFeedback("complete");
+        }
+      }, 1500);
+    } else {
+      setFeedback("success");
+      setTimeout(() => setFeedback("idle"), 300);
+    }
+  };
+
+  const progressPercent = (count / current.count) * 100;
+
   return (
     <div className="bg-card-bg rounded-card p-4 shadow-lg">
       <h2 className="text-lg font-semibold text-primary-text mb-2">الأذكار اليومية</h2>
       <p className="text-sm text-secondary-text mb-4">{currentIndex + 1} / {dhikrList.length}</p>
+
       <p className="text-xl font-semibold text-primary-text leading-relaxed">{current.text}</p>
       <p className="text-sm text-secondary-text mt-2">التكرار: {current.count}</p>
+
+      <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
+        <div className="bg-action h-2 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
+      </div>
+
       <p className="text-2xl font-bold text-action text-center mt-4">{count} / {current.count}</p>
+
       <button
-        onClick={() => setCount((c) => Math.min(c + 1, current.count))}
+        onClick={handleTap}
         disabled={isComplete}
-        className={`mt-4 w-full py-3 rounded-full text-white font-semibold shadow-md transition ${
-          isComplete ? "bg-gray-400 cursor-not-allowed" : "bg-action hover:opacity-90"
+        className={`mt-4 w-full py-3 rounded-full text-white font-semibold shadow-md transition-all duration-200 ${
+          isComplete
+            ? "bg-gray-400 cursor-not-allowed"
+            : feedback === "complete"
+            ? "bg-green-600 scale-105"
+            : feedback === "success"
+            ? "bg-action scale-95"
+            : "bg-action hover:opacity-90"
         }`}
       >
-        {isComplete ? "✅ تم" : "اضغط للتسبيح"}
+        {isComplete
+          ? "✅ تم"
+          : feedback === "complete"
+          ? "🎉 أتممت!"
+          : feedback === "success"
+          ? "👍"
+          : "اضغط للتسبيح"}
       </button>
+
+      {isComplete && currentIndex + 1 >= dhikrList.length && (
+        <p className="text-center text-sm text-green-600 mt-3 font-semibold">✨ أتممت أذكارك اليومية</p>
+      )}
     </div>
   );
 }
