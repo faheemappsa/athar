@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useGeolocation } from "../../hooks/useGeolocation";
 import { getPrayerTimes } from "../../services/prayerApi";
 
@@ -53,15 +54,29 @@ export default function PrayerTimes() {
   }, [nextPrayer]);
 
   if (!timings || !nextPrayer) {
-    return <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text">جاري التحميل...</div>;
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+        className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text"
+      >
+        جاري التحميل...
+      </motion.div>
+    );
   }
 
   return (
-    <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.1 }}
+      className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+    >
       <p className="text-sm text-secondary-text">الصلاة القادمة</p>
       <p className="text-xl font-bold text-primary-text">{nextPrayer.name}</p>
       <p className="text-3xl font-bold text-action text-center mt-2">{countdown}</p>
       <p className="text-xs text-secondary-text text-center mt-1">متبقي حتى الإقامة</p>
-    </div>
+    </motion.div>
   );
 }
