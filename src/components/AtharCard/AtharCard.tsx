@@ -50,11 +50,11 @@ export default function AtharCard() {
   };
 
   if (!ayah) {
-    return <div className="bg-card-bg rounded-card p-4 shadow-lg text-center text-secondary-text">جاري التحميل...</div>;
+    return <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text">جاري التحميل...</div>;
   }
 
   return (
-    <div className="bg-card-bg rounded-card p-6 shadow-lg text-center relative">
+    <div className="bg-white rounded-card shadow-xl p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center relative">
       <div ref={cardRef} className="p-4">
         <p className="text-sm text-secondary-text mb-1">أثر اليوم</p>
         <p className="text-xl font-semibold text-primary-text leading-relaxed">&quot;{ayah.text}&quot;</p>
