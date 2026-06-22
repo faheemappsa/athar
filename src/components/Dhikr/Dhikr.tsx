@@ -35,7 +35,6 @@ export default function Dhikr() {
   const handleTap = () => {
     if (isComplete) return;
 
-    // Haptic feedback (if supported)
     if (navigator.vibrate) navigator.vibrate(10);
 
     const newCount = Math.min(count + 1, current.count);
@@ -43,7 +42,6 @@ export default function Dhikr() {
 
     if (newCount === current.count) {
       setFeedback("complete");
-      // Move to next after 1.5s
       setTimeout(() => {
         if (currentIndex + 1 < dhikrList.length) {
           setCurrentIndex(currentIndex + 1);
@@ -69,7 +67,7 @@ export default function Dhikr() {
       <p className="text-xl font-semibold text-primary-text leading-relaxed">{current.text}</p>
       <p className="text-sm text-secondary-text mt-2">التكرار: {current.count}</p>
 
-      <div className="w-full bg-gray-200 rounded-full h-2 mt-3">
+      <div className="w-full bg-primary-bg rounded-full h-2 mt-3">
         <div className="bg-action h-2 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
       </div>
 
@@ -80,9 +78,9 @@ export default function Dhikr() {
         disabled={isComplete}
         className={`mt-4 w-full py-3 rounded-full text-white font-semibold shadow-md transition-all duration-200 ${
           isComplete
-            ? "bg-gray-400 cursor-not-allowed"
+            ? "bg-secondary-text cursor-not-allowed"
             : feedback === "complete"
-            ? "bg-green-600 scale-105"
+            ? "bg-highlight scale-105"
             : feedback === "success"
             ? "bg-action scale-95"
             : "bg-action hover:opacity-90"
@@ -98,7 +96,7 @@ export default function Dhikr() {
       </button>
 
       {isComplete && currentIndex + 1 >= dhikrList.length && (
-        <p className="text-center text-sm text-green-600 mt-3 font-semibold">✨ أتممت أذكارك اليومية</p>
+        <p className="text-center text-sm text-highlight mt-3 font-semibold">✨ أتممت أذكارك اليومية</p>
       )}
     </div>
   );
