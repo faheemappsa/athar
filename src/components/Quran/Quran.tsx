@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { getQuranPage } from "../../services/quranApi";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 
@@ -32,11 +33,25 @@ export default function Quran() {
   };
 
   if (loading) {
-    return <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text">جاري التحميل...</div>;
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
+        className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text"
+      >
+        جاري التحميل...
+      </motion.div>
+    );
   }
 
   return (
-    <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.3 }}
+      className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+    >
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-primary-text">المصحف</h2>
         <span className="text-sm text-secondary-text">الصفحة {page} / 604</span>
@@ -81,6 +96,6 @@ export default function Quran() {
           التالي
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }
