@@ -6,6 +6,7 @@ export default function Quran() {
   const [page, setPage] = useLocalStorage<number>("quran-page", 1);
   const [content, setContent] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const [inputPage, setInputPage] = useState<string>("");
 
   useEffect(() => {
     setLoading(true);
@@ -20,6 +21,14 @@ export default function Quran() {
   const goToPage = (newPage: number) => {
     if (newPage < 1 || newPage > 604) return;
     setPage(newPage);
+    setInputPage("");
+  };
+
+  const handleJump = () => {
+    const num = parseInt(inputPage);
+    if (!isNaN(num) && num >= 1 && num <= 604) {
+      goToPage(num);
+    }
   };
 
   if (loading) {
@@ -45,7 +54,25 @@ export default function Quran() {
         >
           السابق
         </button>
-        <span className="text-sm text-secondary-text">{page} / 604</span>
+
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            min="1"
+            max="604"
+            value={inputPage}
+            onChange={(e) => setInputPage(e.target.value)}
+            placeholder="رقم الصفحة"
+            className="w-20 px-2 py-1 text-center border border-gray-300 rounded-full text-sm focus:outline-none focus:border-action"
+          />
+          <button
+            onClick={handleJump}
+            className="bg-action text-white px-3 py-1 rounded-full text-sm font-semibold"
+          >
+            اذهب
+          </button>
+        </div>
+
         <button
           onClick={() => goToPage(page + 1)}
           disabled={page >= 604}
