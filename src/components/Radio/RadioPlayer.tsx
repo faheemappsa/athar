@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 const RADIO_STREAM_URL = "https://aloula.sba.sa/live/nidaalislamadio";
 
@@ -20,7 +21,12 @@ export default function RadioPlayer() {
   };
 
   return (
-    <div className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 flex items-center justify-between">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.15 }}
+      className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 flex items-center justify-between"
+    >
       <span className="text-primary-text text-lg font-semibold">📻 نداء الإسلام</span>
       <button
         onClick={togglePlay}
@@ -28,6 +34,6 @@ export default function RadioPlayer() {
       >
         {isPlaying ? "إيقاف" : "تشغيل"}
       </button>
-    </div>
+    </motion.div>
   );
 }
