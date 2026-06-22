@@ -42,7 +42,7 @@ export default function Quran() {
         <span className="text-sm text-secondary-text">الصفحة {page} / 604</span>
       </div>
 
-      <div className="quran-text text-right leading-relaxed text-lg" style={{ fontFamily: "Uthmanic, serif" }}>
+      <div className="quran-text text-right leading-relaxed text-lg text-primary-text" style={{ fontFamily: "Uthmanic, serif" }}>
         {content}
       </div>
 
@@ -63,7 +63,7 @@ export default function Quran() {
             value={inputPage}
             onChange={(e) => setInputPage(e.target.value)}
             placeholder="رقم الصفحة"
-            className="w-20 px-2 py-1 text-center border border-gray-300 rounded-full text-sm focus:outline-none focus:border-action"
+            className="w-20 px-2 py-1 text-center border border-secondary-text rounded-full text-sm text-primary-text focus:outline-none focus:border-action"
           />
           <button
             onClick={handleJump}
