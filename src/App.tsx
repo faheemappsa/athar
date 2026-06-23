@@ -9,12 +9,14 @@ import PageTransition from "./components/Shared/PageTransition";
 import ErrorBoundary from "./components/Shared/ErrorBoundary";
 import InstallPrompt from "./components/Shared/InstallPrompt";
 import ScrollMemory from "./components/Shared/ScrollMemory";
+import AppIntro from "./components/Shared/AppIntro";
 
 export default function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
         <div className="fixed inset-0 w-full overflow-hidden bg-primary-bg font-arabic">
+          <AppIntro />
           <InstallPrompt />
           <ScrollMemory />
           <main id="app-scroll" className="app-scroll h-full w-full overflow-y-auto px-4 pb-28 pt-16">
