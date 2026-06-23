@@ -19,7 +19,7 @@ export default function PrayerTimes() {
 
   useEffect(() => {
     if (!location) return;
-    getPrayerTimes(location.lat, location.lng).then(setTimings);
+    getPrayerTimes(location.lat, location.lng).then(setTimings).catch(() => {});
   }, [location]);
 
   useEffect(() => {
@@ -56,10 +56,10 @@ export default function PrayerTimes() {
   if (!timings || !nextPrayer) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.1 }}
-        className="w-full bg-white rounded-card shadow-xl p-5 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text"
+        transition={{ duration: 0.35, delay: 0.1 }}
+        className="w-full rounded-card bg-white p-6 text-center text-secondary-text shadow-xl"
       >
         جاري التحميل...
       </motion.div>
@@ -68,15 +68,21 @@ export default function PrayerTimes() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.1 }}
-      className="w-full bg-white rounded-card shadow-xl p-5 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+      transition={{ duration: 0.35, delay: 0.1 }}
+      className="relative w-full overflow-hidden rounded-card bg-white p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
-      <p className="text-sm text-secondary-text">الصلاة القادمة</p>
-      <p className="text-xl font-bold text-primary-text">{nextPrayer.name}</p>
-      <p className="text-4xl font-bold text-action text-center mt-2">{countdown}</p>
-      <p className="text-xs text-secondary-text text-center mt-1">متبقي حتى الإقامة</p>
+      <div className="absolute -left-12 -top-12 h-28 w-28 rounded-full bg-mint-soft" />
+      <div className="relative z-10 flex items-start justify-between gap-4">
+        <div className="text-right">
+          <p className="text-sm font-medium text-secondary-text">الصلاة القادمة</p>
+          <p className="mt-1 text-2xl font-bold text-primary-text">{nextPrayer.name}</p>
+        </div>
+        <div className="grid h-12 w-12 shrink-0 place-items-center rounded-[20px] bg-mint-soft text-xl text-action">☾</div>
+      </div>
+      <p className="relative z-10 mt-5 text-center text-5xl font-bold tracking-tight text-action">{countdown}</p>
+      <p className="relative z-10 mt-2 text-center text-sm text-secondary-text">متبقي حتى الإقامة</p>
     </motion.div>
   );
 }
