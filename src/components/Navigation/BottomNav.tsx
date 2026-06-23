@@ -8,7 +8,7 @@ export default function BottomNav() {
   ];
 
   return (
-    <nav className="fixed bottom-4 left-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 rounded-full bg-white/90 px-4 py-3 shadow-lg backdrop-blur">
+    <nav className="fixed bottom-4 inset-x-4 z-50 mx-auto max-w-md rounded-full bg-white px-4 py-3 shadow-lg">
       <div className="flex items-center justify-around">
         {items.map((item) => (
           <NavLink
@@ -16,7 +16,7 @@ export default function BottomNav() {
             to={item.to}
             className={({ isActive }) =>
               `rounded-full px-4 py-2 text-sm font-semibold transition ${
-                isActive ? "bg-[#E8F2FF] text-[#4A90D9]" : "text-[#6B7280] hover:text-[#4A90D9]"
+                isActive ? "bg-[#EAF6F3] text-[#2F9D75]" : "text-[#6F8F86]"
               }`
             }
           >
