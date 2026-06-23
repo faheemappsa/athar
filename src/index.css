@@ -4,22 +4,26 @@
 
 html {
   overflow-x: hidden;
-  background-color: #F0F4F8;
+  background-color: #EAF6F3;
 }
 
 body {
-  font-family: 'Cairo', sans-serif;
-  background-color: #F0F4F8;
-  color: #1A3B5C;
   margin: 0;
   padding: 0;
   direction: rtl;
   overflow-x: hidden;
+  background-color: #EAF6F3;
+  color: #244A3F;
+  font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
 }
 
 #root {
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 .quran-text {
