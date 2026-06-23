@@ -3,36 +3,50 @@
 @tailwind utilities;
 
 html {
+  height: 100%;
   overflow-x: hidden;
   background-color: #EAF6F3;
+  scroll-behavior: smooth;
+  overscroll-behavior-y: none;
 }
 
 body {
+  min-height: 100%;
   margin: 0;
   padding: 0;
   direction: rtl;
   overflow-x: hidden;
+  overscroll-behavior-y: none;
   background-color: #EAF6F3;
   color: #244A3F;
   font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  touch-action: pan-y;
 }
 
 #root {
   min-height: 100vh;
+  min-height: 100dvh;
   overflow-x: hidden;
   background-color: #EAF6F3;
+  isolation: isolate;
 }
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button,
 a,
 input {
   font: inherit;
+}
+
+button,
+a {
+  touch-action: manipulation;
 }
 
 img,
@@ -42,6 +56,14 @@ video {
   max-width: 100%;
 }
 
+.app-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+}
+
 .quran-text {
   overflow-wrap: anywhere;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
