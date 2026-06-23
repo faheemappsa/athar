@@ -33,6 +33,38 @@ const shouldRefreshAthar = () => {
   return !lastShown || minutes > 20;
 };
 
+const getCardMood = (time: AtharContent["time"]) => {
+  if (time === "morning") {
+    return {
+      shell: "from-white via-[#F5FFF8] to-[#E9F7EF]",
+      glow: "bg-[#BFEAD0]/40",
+      accent: "صباح أثر",
+    };
+  }
+
+  if (time === "night") {
+    return {
+      shell: "from-white via-[#F4FBF8] to-[#E1F0EA]",
+      glow: "bg-[#7FC7A7]/24",
+      accent: "سكون أثر",
+    };
+  }
+
+  if (time === "pressure") {
+    return {
+      shell: "from-white via-[#F7FBF8] to-[#EAF4EF]",
+      glow: "bg-[#A9DCC4]/28",
+      accent: "طمأنينة أثر",
+    };
+  }
+
+  return {
+    shell: "from-white via-[#F8FFFD] to-[#EAF6F3]",
+    glow: "bg-[#B8E3CF]/30",
+    accent: "أثر اليوم",
+  };
+};
+
 export default function AtharCard() {
   const [athar, setAthar] = useState<AtharContent | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -97,13 +129,6 @@ export default function AtharCard() {
     } catch {}
   };
 
-  const refreshAthar = async () => {
-    const content = await getSmartAthar();
-    setAthar(content);
-    localStorage.setItem("athar-content", JSON.stringify(content));
-    localStorage.setItem("athar-last-shown", String(Date.now()));
-  };
-
   if (!athar) {
     return (
       <motion.div
@@ -117,28 +142,45 @@ export default function AtharCard() {
     );
   }
 
+  const mood = getCardMood(athar.time);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: 0.2 }}
-      className="w-full overflow-hidden rounded-card bg-white p-6 text-center shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+      className="w-full overflow-hidden rounded-card bg-white p-4 text-center shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
-      <div ref={cardRef} className="w-full overflow-hidden rounded-[28px] bg-white p-2">
-        <div className="mb-4 flex items-center justify-between">
-          <p className="text-sm font-medium text-secondary-text">أثر اليوم</p>
-          <button onClick={refreshAthar} className="rounded-full bg-primary-bg px-3 py-1 text-xs font-bold text-action">
-            أثر جديد
-          </button>
-        </div>
-        <p className="break-words text-2xl font-bold leading-loose text-primary-text">&quot;{athar.text}&quot;</p>
-        <p className="mt-4 text-base text-secondary-text">— {athar.source}</p>
-        {qrCodeUrl && (
-          <div className="mt-5 flex items-end justify-between border-t border-secondary-text/20 pt-4">
-            <span className="text-sm text-secondary-text">أثر</span>
-            <img src={qrCodeUrl} alt="QR" className="h-16 w-16 shrink-0 rounded-xl" />
+      <div
+        ref={cardRef}
+        className={`relative min-h-[430px] w-full overflow-hidden rounded-[32px] bg-gradient-to-br ${mood.shell} px-6 py-8 shadow-inner`}
+      >
+        <div className={`absolute -top-20 left-1/2 h-56 w-56 -translate-x-1/2 rounded-full blur-3xl ${mood.glow}`} />
+        <div className="absolute -bottom-24 -right-16 h-64 w-64 rounded-full border border-action/10" />
+        <div className="absolute -bottom-28 -left-20 h-72 w-72 rounded-full border border-action/5" />
+        <div className="absolute inset-x-8 top-8 h-40 rounded-b-[90px] border-x border-b border-action/5" />
+
+        <div className="relative z-10 flex min-h-[360px] flex-col items-center justify-between">
+          <p className="rounded-full bg-white/70 px-4 py-2 text-xs font-bold text-action shadow-sm backdrop-blur">
+            {mood.accent}
+          </p>
+
+          <div className="flex flex-1 items-center justify-center py-8">
+            <p className="break-words text-[1.72rem] font-extrabold leading-[2.35] text-primary-text">
+              {athar.text}
+            </p>
           </div>
-        )}
+
+          <div className="w-full">
+            <p className="mb-5 text-sm font-semibold text-secondary-text/85">{athar.source}</p>
+            {qrCodeUrl && (
+              <div className="flex items-end justify-between border-t border-action/10 pt-4">
+                <span className="text-sm font-bold text-action">أثر</span>
+                <img src={qrCodeUrl} alt="QR" className="h-14 w-14 shrink-0 rounded-xl bg-white p-1" />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
       <button
         onClick={handleShare}
