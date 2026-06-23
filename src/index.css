@@ -4,8 +4,17 @@
 
 body {
   font-family: 'Cairo', sans-serif;
-  background-color: #F5F0E8;
+  background-color: #F0F4F8;
   margin: 0;
   padding: 0;
   direction: rtl;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
 }
