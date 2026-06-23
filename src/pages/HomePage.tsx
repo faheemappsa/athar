@@ -5,9 +5,9 @@ import Footer from "../components/Footer/Footer";
 
 export default function HomePage() {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <h1 className="text-3xl font-bold text-center text-[#1A3B5C]">أثر</h1>
-      <p className="text-center text-[#6B7280] text-sm">
+      <p className="text-center text-[#6B7280] text-sm mb-6">
         صدقة جارية عن مسلّم البويني رحمه الله
       </p>
       <PrayerTimes />
