@@ -4,6 +4,7 @@ import BottomNav from "./components/Navigation/BottomNav";
 import HomePage from "./pages/HomePage";
 import DhikrPage from "./pages/DhikrPage";
 import QuranPage from "./pages/QuranPage";
+import RadioPage from "./pages/RadioPage";
 import PageTransition from "./components/Shared/PageTransition";
 import ErrorBoundary from "./components/Shared/ErrorBoundary";
 
@@ -17,6 +18,7 @@ export default function App() {
               <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
               <Route path="/dhikr" element={<PageTransition><DhikrPage /></PageTransition>} />
               <Route path="/quran" element={<PageTransition><QuranPage /></PageTransition>} />
+              <Route path="/radio" element={<PageTransition><RadioPage /></PageTransition>} />
             </Routes>
           </div>
           <BottomNav />
