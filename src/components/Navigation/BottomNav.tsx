@@ -7,8 +7,8 @@ const items = [
 ];
 
 const getIndicatorPosition = (pathname: string) => {
-  if (pathname === "/quran") return "left-[16.66%]";
-  if (pathname === "/dhikr") return "left-[83.33%]";
+  if (pathname === "/quran") return "left-[83.33%]";
+  if (pathname === "/dhikr") return "left-[16.66%]";
   return "left-1/2";
 };
 
