@@ -1,26 +1,27 @@
+/** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        'primary-bg': '#F0F4F8',
-        'card-bg': '#FFFFFF',
-        'primary-text': '#1A3B5C',
-        'secondary-text': '#6B7280',
-        'accent': '#D0E4F5',
-        'highlight': '#4A90D9',
-        'action': '#4A90D9',
+        "primary-bg": "#EAF6F3",
+        "card-bg": "#FFFFFF",
+        "primary-text": "#244A3F",
+        "secondary-text": "#6F8F86",
+        "accent": "#A8D5C2",
+        "highlight": "#3BA77B",
+        "action": "#2F9D75",
+        "mint-soft": "#F4FBF8",
+        "mint-glow": "#CFEADF",
+        "mint-deep": "#1F7B5F"
       },
       borderRadius: {
-        'card': '20px',
+        card: "28px"
       },
       fontFamily: {
-        'arabic': ['IBM Plex Sans Arabic', 'Cairo', 'sans-serif'],
-      },
-    },
+        arabic: ["IBM Plex Sans Arabic", "Cairo", "sans-serif"]
+      }
+    }
   },
-  plugins: [],
+  plugins: []
 };
