@@ -49,6 +49,17 @@ a {
   touch-action: manipulation;
 }
 
+button:active,
+a:active,
+.haptic-tap:active {
+  transform: scale(0.97);
+  filter: brightness(0.98);
+}
+
+.haptic-tap {
+  transition: transform 140ms ease, filter 140ms ease;
+}
+
 img,
 svg,
 canvas,
