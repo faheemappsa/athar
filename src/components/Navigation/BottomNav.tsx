@@ -16,7 +16,7 @@ export default function BottomNav() {
             to={item.to}
             className={({ isActive }) =>
               `rounded-full px-4 py-2 text-sm font-semibold transition ${
-                isActive ? "bg-[#1A3B5C] text-white" : "text-[#6B7280] hover:opacity-90"
+                isActive ? "bg-[#E8F2FF] text-[#4A90D9]" : "text-[#6B7280] hover:text-[#4A90D9]"
               }`
             }
           >
