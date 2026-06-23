@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { getRandomAyah } from "../../services/quranApi";
-import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { getSmartAthar, type AtharContent } from "../../services/atharEngine";
 import html2canvas from "html2canvas";
 import QRCode from "qrcode";
 
-type AtharContent = { text: string; surah: string };
-
 const isAtharContent = (value: unknown): value is AtharContent => {
   const item = value as AtharContent;
-  return Boolean(item && typeof item.text === "string" && typeof item.surah === "string");
+  return Boolean(
+    item &&
+      typeof item.id === "string" &&
+      typeof item.text === "string" &&
+      typeof item.source === "string" &&
+      typeof item.time === "string"
+  );
 };
 
 const readSavedAthar = (): AtharContent | null => {
@@ -24,42 +27,51 @@ const readSavedAthar = (): AtharContent | null => {
   }
 };
 
+const shouldRefreshAthar = () => {
+  const lastShown = Number(localStorage.getItem("athar-last-shown") || 0);
+  const minutes = (Date.now() - lastShown) / 1000 / 60;
+  return !lastShown || minutes > 20;
+};
+
 export default function AtharCard() {
-  const [ayah, setAyah] = useState<AtharContent | null>(null);
-  const [lastDate, setLastDate] = useLocalStorage<string>("athar-date", "");
+  const [athar, setAthar] = useState<AtharContent | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
 
   useEffect(() => {
     let mounted = true;
-    const today = new Date().toDateString();
     const saved = readSavedAthar();
 
-    if (lastDate === today && saved) {
-      setAyah(saved);
+    if (saved && !shouldRefreshAthar()) {
+      setAthar(saved);
       return;
     }
 
-    getRandomAyah()
-      .then((data) => {
+    getSmartAthar()
+      .then((content) => {
         if (!mounted) return;
-        const content = { text: data.text, surah: data.surah.name };
-        setAyah(content);
+        setAthar(content);
         localStorage.setItem("athar-content", JSON.stringify(content));
-        setLastDate(today);
+        localStorage.setItem("athar-last-shown", String(Date.now()));
       })
       .catch(() => {
         if (!mounted) return;
-        const fallback = { text: "لِمِثْلِ هَٰذَا فَلْيَعْمَلِ الْعَامِلُونَ", surah: "سورة الصافات" };
-        setAyah(fallback);
+        const fallback: AtharContent = {
+          id: "fallback-athar",
+          text: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ",
+          source: "الرعد: 28",
+          kind: "ayah",
+          time: "any",
+        };
+        setAthar(fallback);
         localStorage.setItem("athar-content", JSON.stringify(fallback));
-        setLastDate(today);
+        localStorage.setItem("athar-last-shown", String(Date.now()));
       });
 
     return () => {
       mounted = false;
     };
-  }, [lastDate, setLastDate]);
+  }, []);
 
   useEffect(() => {
     QRCode.toDataURL("https://athar-sandy.vercel.app", { width: 120, margin: 1 }, (err, url) => {
@@ -68,14 +80,14 @@ export default function AtharCard() {
   }, []);
 
   const handleShare = async () => {
-    if (!cardRef.current || !ayah) return;
+    if (!cardRef.current || !athar) return;
     try {
       const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: "#F8FFFD" });
       const image = canvas.toDataURL("image/png");
       if (navigator.share) {
         const blob = await fetch(image).then((res) => res.blob());
         const file = new File([blob], "athar.png", { type: "image/png" });
-        await navigator.share({ files: [file], title: "أثر اليوم", text: ayah.text });
+        await navigator.share({ files: [file], title: "أثر اليوم", text: athar.text });
       } else {
         const link = document.createElement("a");
         link.href = image;
@@ -85,7 +97,14 @@ export default function AtharCard() {
     } catch {}
   };
 
-  if (!ayah) {
+  const refreshAthar = async () => {
+    const content = await getSmartAthar();
+    setAthar(content);
+    localStorage.setItem("athar-content", JSON.stringify(content));
+    localStorage.setItem("athar-last-shown", String(Date.now()));
+  };
+
+  if (!athar) {
     return (
       <motion.div
         initial={{ opacity: 0, y: 18 }}
@@ -106,9 +125,14 @@ export default function AtharCard() {
       className="w-full overflow-hidden rounded-card bg-white p-6 text-center shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
       <div ref={cardRef} className="w-full overflow-hidden rounded-[28px] bg-white p-2">
-        <p className="mb-3 text-sm font-medium text-secondary-text">أثر اليوم</p>
-        <p className="break-words text-2xl font-bold leading-loose text-primary-text">&quot;{ayah.text}&quot;</p>
-        <p className="mt-4 text-base text-secondary-text">— {ayah.surah}</p>
+        <div className="mb-4 flex items-center justify-between">
+          <p className="text-sm font-medium text-secondary-text">أثر اليوم</p>
+          <button onClick={refreshAthar} className="rounded-full bg-primary-bg px-3 py-1 text-xs font-bold text-action">
+            أثر جديد
+          </button>
+        </div>
+        <p className="break-words text-2xl font-bold leading-loose text-primary-text">&quot;{athar.text}&quot;</p>
+        <p className="mt-4 text-base text-secondary-text">— {athar.source}</p>
         {qrCodeUrl && (
           <div className="mt-5 flex items-end justify-between border-t border-secondary-text/20 pt-4">
             <span className="text-sm text-secondary-text">أثر</span>
