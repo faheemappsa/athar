@@ -32,7 +32,7 @@ export default function Dhikr() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
-        className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text"
+        className="w-full rounded-card bg-white p-5 text-center text-secondary-text shadow-xl"
       >
         جاري التحميل...
       </motion.div>
@@ -74,24 +74,24 @@ export default function Dhikr() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+      className="w-full overflow-hidden rounded-card bg-white p-5 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
-      <h2 className="text-lg font-semibold text-primary-text mb-2">الأذكار اليومية</h2>
-      <p className="text-sm text-secondary-text mb-4">{currentIndex + 1} / {dhikrList.length}</p>
+      <h2 className="mb-2 text-lg font-bold text-primary-text">الأذكار اليومية</h2>
+      <p className="mb-4 text-sm text-secondary-text">{currentIndex + 1} / {dhikrList.length}</p>
 
-      <p className="text-xl font-semibold text-primary-text leading-relaxed">{current.text}</p>
-      <p className="text-sm text-secondary-text mt-2">التكرار: {current.count}</p>
+      <p className="break-words text-xl font-semibold leading-loose text-primary-text">{current.text}</p>
+      <p className="mt-2 text-sm text-secondary-text">التكرار: {current.count}</p>
 
-      <div className="w-full bg-primary-bg rounded-full h-2 mt-3">
-        <div className="bg-action h-2 rounded-full transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
+      <div className="mt-3 h-3 w-full rounded-full bg-primary-bg">
+        <div className="h-3 rounded-full bg-action transition-all duration-300" style={{ width: `${progressPercent}%` }}></div>
       </div>
 
-      <p className="text-2xl font-bold text-action text-center mt-4">{count} / {current.count}</p>
+      <p className="mt-4 text-center text-2xl font-bold text-action">{count} / {current.count}</p>
 
       <button
         onClick={handleTap}
         disabled={isComplete}
-        className={`mt-4 w-full py-3 rounded-full text-white font-semibold shadow-md transition-all duration-200 ${
+        className={`mt-4 w-full rounded-full py-3 text-base font-semibold text-white shadow-md transition-all duration-200 ${
           isComplete
             ? "bg-secondary-text cursor-not-allowed"
             : feedback === "complete"
@@ -102,16 +102,16 @@ export default function Dhikr() {
         }`}
       >
         {isComplete
-          ? "✅ تم"
+          ? "تم"
           : feedback === "complete"
-          ? "🎉 أتممت!"
+          ? "أتممت"
           : feedback === "success"
-          ? "👍"
+          ? "جميل"
           : "اضغط للتسبيح"}
       </button>
 
       {isComplete && currentIndex + 1 >= dhikrList.length && (
-        <p className="text-center text-sm text-highlight mt-3 font-semibold">✨ أتممت أذكارك اليومية</p>
+        <p className="mt-3 text-center text-sm font-semibold text-highlight">أتممت أذكارك اليومية</p>
       )}
     </motion.div>
   );
