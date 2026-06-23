@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useSavedLocation } from "../../hooks/useSavedLocation";
 import { getPrayerTimes } from "../../services/prayerApi";
@@ -11,12 +11,44 @@ const IQAMAH_OFFSET: Record<string, number> = {
   Isha: 15,
 };
 
+const PRAYER_LABELS: Record<string, string> = {
+  Fajr: "الفجر",
+  Dhuhr: "الظهر",
+  Asr: "العصر",
+  Maghrib: "المغرب",
+  Isha: "العشاء",
+};
+
+const formatTime = (date: Date) =>
+  new Intl.DateTimeFormat("ar-SA", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  }).format(date);
+
 export default function PrayerTimes() {
   const { location, status, error, requestLocation, daysSinceUpdate, shouldRefresh } = useSavedLocation();
   const [timings, setTimings] = useState<Record<string, string> | null>(null);
-  const [nextPrayer, setNextPrayer] = useState<{ name: string; time: Date } | null>(null);
+  const [nextPrayer, setNextPrayer] = useState<{ name: string; time: Date; adhan: Date } | null>(null);
   const [countdown, setCountdown] = useState<string>("--:--");
   const [loadError, setLoadError] = useState("");
+
+  const dates = useMemo(() => {
+    const now = new Date();
+    return {
+      gregorian: new Intl.DateTimeFormat("ar-SA", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }).format(now),
+      hijri: new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      }).format(now),
+    };
+  }, []);
 
   useEffect(() => {
     if (!location) return;
@@ -26,24 +58,25 @@ export default function PrayerTimes() {
       .catch(() => setLoadError("تعذر تحميل مواقيت الصلاة"));
   }, [location]);
 
-  useEffect(() => {
-    if (!timings) return;
+  const prayerRows = useMemo(() => {
+    if (!timings) return [];
     const now = new Date();
-    const prayerNames = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
-    const prayerTimes = prayerNames.map((name) => {
+    return ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"].map((name) => {
       const [h, m] = timings[name].split(":").map(Number);
-      const d = new Date(now);
-      d.setHours(h, m, 0, 0);
-      return { name, time: d };
+      const adhan = new Date(now);
+      adhan.setHours(h, m, 0, 0);
+      const iqamah = new Date(adhan);
+      iqamah.setMinutes(iqamah.getMinutes() + (IQAMAH_OFFSET[name] || 15));
+      return { name, adhan, iqamah };
     });
-    const iqamahTimes = prayerTimes.map((p) => {
-      const iqamah = new Date(p.time);
-      iqamah.setMinutes(iqamah.getMinutes() + (IQAMAH_OFFSET[p.name] || 15));
-      return { ...p, iqamah };
-    });
-    const next = iqamahTimes.find((p) => p.iqamah > now) || iqamahTimes[0];
-    setNextPrayer({ name: next.name, time: next.iqamah });
   }, [timings]);
+
+  useEffect(() => {
+    if (prayerRows.length === 0) return;
+    const now = new Date();
+    const next = prayerRows.find((p) => p.iqamah > now) || prayerRows[0];
+    setNextPrayer({ name: next.name, time: next.iqamah, adhan: next.adhan });
+  }, [prayerRows]);
 
   useEffect(() => {
     if (!nextPrayer) return;
@@ -102,13 +135,37 @@ export default function PrayerTimes() {
       <div className="absolute -left-12 -top-12 h-28 w-28 rounded-full bg-mint-soft" />
       <div className="relative z-10 flex items-start justify-between gap-4">
         <div className="text-right">
-          <p className="text-sm font-medium text-secondary-text">الصلاة القادمة</p>
-          <p className="mt-1 text-2xl font-bold text-primary-text">{nextPrayer.name}</p>
+          <p className="text-xs font-medium text-secondary-text">{dates.gregorian}</p>
+          <p className="mt-1 text-sm font-semibold text-action">{dates.hijri}</p>
         </div>
         <button onClick={requestLocation} className="grid h-12 w-12 shrink-0 place-items-center rounded-[20px] bg-mint-soft text-xl text-action">⌖</button>
       </div>
-      <p className="relative z-10 mt-5 text-center text-5xl font-bold tracking-tight text-action">{countdown}</p>
-      <p className="relative z-10 mt-2 text-center text-sm text-secondary-text">متبقي حتى الإقامة</p>
+
+      <div className="relative z-10 mt-5 text-center">
+        <p className="text-sm font-medium text-secondary-text">الصلاة القادمة</p>
+        <p className="mt-1 text-3xl font-bold text-primary-text">{PRAYER_LABELS[nextPrayer.name]}</p>
+        <p className="mt-4 text-5xl font-bold tracking-tight text-action">{countdown}</p>
+        <p className="mt-2 text-sm text-secondary-text">متبقي حتى الإقامة</p>
+      </div>
+
+      <div className="relative z-10 mt-5 grid grid-cols-5 gap-1 rounded-[26px] bg-primary-bg p-2">
+        {prayerRows.map((prayer) => {
+          const active = prayer.name === nextPrayer.name;
+          return (
+            <div key={prayer.name} className={`rounded-[18px] px-1 py-2 text-center ${active ? "bg-white shadow-sm" : ""}`}>
+              <p className={`text-xs font-bold ${active ? "text-action" : "text-secondary-text"}`}>{PRAYER_LABELS[prayer.name]}</p>
+              <p className="mt-1 text-[11px] font-semibold text-primary-text">{formatTime(prayer.adhan)}</p>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="relative z-10 mt-4 rounded-[24px] bg-mint-soft p-3 text-center">
+        <p className="text-sm font-semibold text-primary-text">
+          إقامة {PRAYER_LABELS[nextPrayer.name]}: {formatTime(nextPrayer.time)}
+        </p>
+      </div>
+
       <p className="relative z-10 mt-3 text-center text-xs text-secondary-text">
         {shouldRefresh ? "يفضل تحديث الموقع لدقة أعلى" : daysSinceUpdate !== null ? `آخر تحديث للموقع قبل ${daysSinceUpdate} يوم` : "الموقع محفوظ"}
       </p>
