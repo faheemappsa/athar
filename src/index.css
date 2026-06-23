@@ -4,11 +4,13 @@
 
 html {
   overflow-x: hidden;
+  background-color: #F0F4F8;
 }
 
 body {
   font-family: 'Cairo', sans-serif;
   background-color: #F0F4F8;
+  color: #1A3B5C;
   margin: 0;
   padding: 0;
   direction: rtl;
@@ -18,4 +20,8 @@ body {
 #root {
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+.quran-text {
+  overflow-wrap: anywhere;
 }
