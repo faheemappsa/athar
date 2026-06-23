@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Cairo', sans-serif;
   background-color: #F0F4F8;
@@ -11,10 +15,7 @@ body {
   overflow-x: hidden;
 }
 
-html {
-  overflow-x: hidden;
-}
-
 #root {
   min-height: 100vh;
+  overflow-x: hidden;
 }
