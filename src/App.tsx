@@ -9,14 +9,14 @@ import PageTransition from "./components/Shared/PageTransition";
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-b from-[#F0F4F8] to-white font-arabic flex flex-col">
-        <main className="flex-1 w-full max-w-md mx-auto px-4 pb-24 pt-4 overflow-x-hidden">
+      <div className="min-h-screen w-full bg-primary-bg font-arabic flex flex-col">
+        <div className="flex-1 w-full max-w-md mx-auto px-4 pb-28 pt-4">
           <Routes>
             <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
             <Route path="/dhikr" element={<PageTransition><DhikrPage /></PageTransition>} />
             <Route path="/quran" element={<PageTransition><QuranPage /></PageTransition>} />
           </Routes>
-        </main>
+        </div>
         <BottomNav />
       </div>
     </BrowserRouter>
