@@ -38,7 +38,7 @@ export default function Quran() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
-        className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text"
+        className="w-full overflow-hidden rounded-card bg-white p-5 text-center text-secondary-text shadow-xl"
       >
         جاري التحميل...
       </motion.div>
@@ -50,39 +50,39 @@ export default function Quran() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.3 }}
-      className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+      className="w-full overflow-hidden rounded-card bg-white p-5 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold text-primary-text">المصحف</h2>
-        <span className="text-sm text-secondary-text">الصفحة {page} / 604</span>
+        <span className="shrink-0 text-sm text-secondary-text">الصفحة {page} / 604</span>
       </div>
 
-      <div className="quran-text text-right leading-relaxed text-lg text-primary-text" style={{ fontFamily: "Uthmanic, serif" }}>
+      <div className="quran-text text-right text-lg leading-loose text-primary-text" style={{ fontFamily: "Uthmanic, serif" }}>
         {content}
       </div>
 
-      <div className="flex items-center justify-between mt-4 gap-2">
+      <div className="mt-4 grid grid-cols-3 items-center gap-2">
         <button
           onClick={() => goToPage(page - 1)}
           disabled={page <= 1}
-          className="bg-action text-white px-4 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-full bg-action px-3 py-2 text-xs font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           السابق
         </button>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-1">
           <input
             type="number"
             min="1"
             max="604"
             value={inputPage}
             onChange={(e) => setInputPage(e.target.value)}
-            placeholder="رقم الصفحة"
-            className="w-20 px-2 py-1 text-center border border-secondary-text rounded-full text-sm text-primary-text focus:outline-none focus:border-action"
+            placeholder="صفحة"
+            className="w-16 rounded-full border border-secondary-text/40 px-2 py-2 text-center text-xs text-primary-text focus:border-action focus:outline-none"
           />
           <button
             onClick={handleJump}
-            className="bg-action text-white px-3 py-1 rounded-full text-sm font-semibold hover:opacity-90 transition"
+            className="rounded-full bg-action px-2 py-2 text-xs font-semibold text-white transition hover:opacity-90"
           >
             اذهب
           </button>
@@ -91,7 +91,7 @@ export default function Quran() {
         <button
           onClick={() => goToPage(page + 1)}
           disabled={page >= 604}
-          className="bg-action text-white px-4 py-2 rounded-full text-sm font-semibold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+          className="rounded-full bg-action px-3 py-2 text-xs font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           التالي
         </button>
