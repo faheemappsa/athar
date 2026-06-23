@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ADHKAR, CATEGORY_LABELS, type DhikrCategory, type DhikrMode } from "../../data/adhkar";
-import { useGeolocation } from "../../hooks/useGeolocation";
+import { useSavedLocation } from "../../hooks/useSavedLocation";
 import { getPrayerTimes } from "../../services/prayerApi";
 
 const getFallbackCategory = (): DhikrCategory => {
@@ -20,7 +20,7 @@ const parseTime = (time: string) => {
 };
 
 export default function Dhikr() {
-  const { location } = useGeolocation();
+  const { location } = useSavedLocation();
   const [category, setCategory] = useState<DhikrCategory>(getFallbackCategory);
   const [mode, setMode] = useState<DhikrMode>("full");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -32,6 +32,7 @@ export default function Dhikr() {
     let mounted = true;
 
     const resolveCategory = async () => {
+      setLoaded(false);
       try {
         if (!location) {
           setCategory(getFallbackCategory());
@@ -65,7 +66,7 @@ export default function Dhikr() {
   }, [location]);
 
   const dhikrList = useMemo(() => {
-    const all = ADHKAR[category];
+    const all = ADHKAR[category] || ADHKAR.morning;
     return mode === "brief" ? all.filter((item) => item.mode === "brief") : all;
   }, [category, mode]);
 
@@ -90,7 +91,9 @@ export default function Dhikr() {
   }, [progressKey, dhikrList.length]);
 
   useEffect(() => {
-    localStorage.setItem(progressKey, JSON.stringify({ index: currentIndex, count }));
+    try {
+      localStorage.setItem(progressKey, JSON.stringify({ index: currentIndex, count }));
+    } catch {}
   }, [progressKey, currentIndex, count]);
 
   const current = dhikrList[currentIndex] || dhikrList[0];
