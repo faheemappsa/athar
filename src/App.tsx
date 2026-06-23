@@ -8,6 +8,7 @@ import RadioPage from "./pages/RadioPage";
 import PageTransition from "./components/Shared/PageTransition";
 import ErrorBoundary from "./components/Shared/ErrorBoundary";
 import InstallPrompt from "./components/Shared/InstallPrompt";
+import ScrollMemory from "./components/Shared/ScrollMemory";
 
 export default function App() {
   return (
@@ -15,7 +16,8 @@ export default function App() {
       <BrowserRouter>
         <div className="fixed inset-0 w-full overflow-hidden bg-primary-bg font-arabic">
           <InstallPrompt />
-          <main className="app-scroll h-full w-full overflow-y-auto px-4 pb-28 pt-16">
+          <ScrollMemory />
+          <main id="app-scroll" className="app-scroll h-full w-full overflow-y-auto px-4 pb-28 pt-16">
             <div className="mx-auto w-full max-w-md">
               <Routes>
                 <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
