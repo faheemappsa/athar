@@ -13,16 +13,18 @@ export default function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
-        <div className="min-h-screen w-full bg-primary-bg font-arabic flex flex-col">
+        <div className="fixed inset-0 w-full overflow-hidden bg-primary-bg font-arabic">
           <InstallPrompt />
-          <div className="flex-1 w-full max-w-md mx-auto px-4 pb-28 pt-16">
-            <Routes>
-              <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
-              <Route path="/dhikr" element={<PageTransition><DhikrPage /></PageTransition>} />
-              <Route path="/quran" element={<PageTransition><QuranPage /></PageTransition>} />
-              <Route path="/radio" element={<PageTransition><RadioPage /></PageTransition>} />
-            </Routes>
-          </div>
+          <main className="app-scroll h-full w-full overflow-y-auto px-4 pb-28 pt-16">
+            <div className="mx-auto w-full max-w-md">
+              <Routes>
+                <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
+                <Route path="/dhikr" element={<PageTransition><DhikrPage /></PageTransition>} />
+                <Route path="/quran" element={<PageTransition><QuranPage /></PageTransition>} />
+                <Route path="/radio" element={<PageTransition><RadioPage /></PageTransition>} />
+              </Routes>
+            </div>
+          </main>
           <BottomNav />
         </div>
       </BrowserRouter>
