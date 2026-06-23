@@ -15,15 +15,31 @@ body {
   background-color: #EAF6F3;
   color: #244A3F;
   font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 #root {
   min-height: 100vh;
   overflow-x: hidden;
+  background-color: #EAF6F3;
 }
 
 * {
   box-sizing: border-box;
+}
+
+button,
+a,
+input {
+  font: inherit;
+}
+
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
 }
 
 .quran-text {
