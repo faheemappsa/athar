@@ -5,18 +5,21 @@ type AppHeroProps = {
 
 export default function AppHero({ title, subtitle }: AppHeroProps) {
   return (
-    <section className="relative mb-6 overflow-hidden rounded-[34px] bg-action px-6 pb-14 pt-7 text-white shadow-xl">
+    <section className="relative mb-6 overflow-hidden rounded-[36px] bg-action px-6 pb-16 pt-8 text-white shadow-xl">
       <div className="relative z-10 flex items-start justify-between gap-4">
         <div className="text-right">
           <p className="text-xs font-medium text-white/75">أثر</p>
           <h1 className="mt-2 text-3xl font-bold leading-snug">{title}</h1>
-          {subtitle && <p className="mt-2 text-sm leading-relaxed text-white/80">{subtitle}</p>}
+          {subtitle && <p className="mt-2 max-w-[240px] text-sm leading-relaxed text-white/80">{subtitle}</p>}
         </div>
-        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white/20 text-xl">✦</div>
+        <div className="grid h-11 w-11 shrink-0 place-items-center rounded-[20px] bg-white/20 text-xl shadow-inner">✦</div>
       </div>
-      <div className="absolute -bottom-8 left-0 h-20 w-2/3 rounded-tr-[90px] bg-primary-bg" />
+
+      <div className="absolute -bottom-10 left-[-8%] h-24 w-[78%] rounded-tr-[110px] bg-primary-bg" />
+      <div className="absolute -bottom-14 right-[-16%] h-28 w-[58%] rounded-tl-[120px] bg-primary-bg/90" />
       <div className="absolute -left-10 top-8 h-28 w-28 rounded-full bg-white/10" />
       <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/10" />
+      <div className="absolute bottom-9 left-8 h-2 w-20 rounded-full bg-white/20" />
     </section>
   );
 }
