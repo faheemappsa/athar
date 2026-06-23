@@ -35,7 +35,7 @@ export default function AtharCard() {
 
   const handleShare = async () => {
     if (!cardRef.current || !ayah) return;
-    const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: "#EAF6F3" });
+    const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: "#F8FFFD" });
     const image = canvas.toDataURL("image/png");
     if (navigator.share) {
       try {
@@ -54,10 +54,10 @@ export default function AtharCard() {
   if (!ayah) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
-        className="w-full rounded-card bg-white p-5 text-center text-secondary-text shadow-xl"
+        transition={{ duration: 0.35, delay: 0.2 }}
+        className="w-full rounded-card bg-white p-6 text-center text-secondary-text shadow-xl"
       >
         جاري التحميل...
       </motion.div>
@@ -66,25 +66,25 @@ export default function AtharCard() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.2 }}
-      className="w-full overflow-hidden rounded-card bg-white p-5 text-center shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+      transition={{ duration: 0.35, delay: 0.2 }}
+      className="w-full overflow-hidden rounded-card bg-white p-6 text-center shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
-      <div ref={cardRef} className="w-full overflow-hidden rounded-[24px] bg-white p-3">
-        <p className="mb-2 text-sm text-secondary-text">أثر اليوم</p>
-        <p className="break-words text-xl font-semibold leading-loose text-primary-text">&quot;{ayah.text}&quot;</p>
-        <p className="mt-3 text-sm text-secondary-text">— {ayah.surah}</p>
+      <div ref={cardRef} className="w-full overflow-hidden rounded-[28px] bg-white p-2">
+        <p className="mb-3 text-sm font-medium text-secondary-text">أثر اليوم</p>
+        <p className="break-words text-2xl font-bold leading-loose text-primary-text">&quot;{ayah.text}&quot;</p>
+        <p className="mt-4 text-base text-secondary-text">— {ayah.surah}</p>
         {qrCodeUrl && (
-          <div className="mt-4 flex items-center justify-between border-t border-secondary-text/20 pt-3">
-            <span className="text-xs text-secondary-text">أثر</span>
-            <img src={qrCodeUrl} alt="QR" className="h-12 w-12 shrink-0 rounded-lg" />
+          <div className="mt-5 flex items-end justify-between border-t border-secondary-text/20 pt-4">
+            <span className="text-sm text-secondary-text">أثر</span>
+            <img src={qrCodeUrl} alt="QR" className="h-16 w-16 shrink-0 rounded-xl" />
           </div>
         )}
       </div>
       <button
         onClick={handleShare}
-        className="mt-4 w-full rounded-full bg-action px-6 py-3 text-base font-semibold text-white shadow-md transition hover:opacity-90"
+        className="mt-5 w-full rounded-full bg-action px-6 py-4 text-lg font-bold text-white shadow-lg shadow-action/20 transition hover:opacity-90"
       >
         شارك الأثر
       </button>
