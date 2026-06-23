@@ -18,7 +18,7 @@ export default {
         'card': '20px',
       },
       fontFamily: {
-        'arabic': ['Cairo', 'sans-serif'],
+        'arabic': ['IBM Plex Sans Arabic', 'Cairo', 'sans-serif'],
       },
     },
   },
