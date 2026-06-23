@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { getRandomAyah } from "../../services/quranApi";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
@@ -8,7 +8,7 @@ import QRCode from "qrcode";
 export default function AtharCard() {
   const [ayah, setAyah] = useState<{ text: string; surah: string } | null>(null);
   const [lastDate, setLastDate] = useLocalStorage<string>("athar-date", "");
-  const [savedContent, setSavedContent] = useLocalStorage<string>("athar-content", "");
+  const [savedContent] = useLocalStorage<string>("athar-content", "");
   const cardRef = useRef<HTMLDivElement>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
 
@@ -18,13 +18,14 @@ export default function AtharCard() {
       setAyah(JSON.parse(savedContent));
       return;
     }
+
     getRandomAyah().then((data) => {
       const content = { text: data.text, surah: data.surah.name };
       setAyah(content);
       localStorage.setItem("athar-content", JSON.stringify(content));
       setLastDate(today);
     });
-  }, [lastDate, savedContent]);
+  }, [lastDate, savedContent, setLastDate]);
 
   useEffect(() => {
     QRCode.toDataURL("https://athar-sandy.vercel.app", { width: 120, margin: 1 }, (err, url) => {
@@ -34,7 +35,7 @@ export default function AtharCard() {
 
   const handleShare = async () => {
     if (!cardRef.current || !ayah) return;
-    const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: "#F5F0E8" });
+    const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: "#EAF6F3" });
     const image = canvas.toDataURL("image/png");
     if (navigator.share) {
       try {
@@ -56,7 +57,7 @@ export default function AtharCard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
-        className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center text-secondary-text"
+        className="w-full rounded-card bg-white p-5 text-center text-secondary-text shadow-xl"
       >
         جاري التحميل...
       </motion.div>
@@ -68,22 +69,22 @@ export default function AtharCard() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className="bg-white rounded-card shadow-xl p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 text-center relative"
+      className="w-full overflow-hidden rounded-card bg-white p-5 text-center shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
-      <div ref={cardRef} className="p-4">
-        <p className="text-sm text-secondary-text mb-1">أثر اليوم</p>
-        <p className="text-xl font-semibold text-primary-text leading-relaxed">&quot;{ayah.text}&quot;</p>
-        <p className="text-sm text-secondary-text mt-2">— {ayah.surah}</p>
+      <div ref={cardRef} className="w-full overflow-hidden rounded-[24px] bg-white p-3">
+        <p className="mb-2 text-sm text-secondary-text">أثر اليوم</p>
+        <p className="break-words text-xl font-semibold leading-loose text-primary-text">&quot;{ayah.text}&quot;</p>
+        <p className="mt-3 text-sm text-secondary-text">— {ayah.surah}</p>
         {qrCodeUrl && (
-          <div className="flex justify-between items-center mt-4 border-t border-secondary-text pt-3">
-            <span className="text-xs text-secondary-text font-arabic">أثر</span>
-            <img src={qrCodeUrl} alt="QR" className="w-10 h-10" />
+          <div className="mt-4 flex items-center justify-between border-t border-secondary-text/20 pt-3">
+            <span className="text-xs text-secondary-text">أثر</span>
+            <img src={qrCodeUrl} alt="QR" className="h-12 w-12 shrink-0 rounded-lg" />
           </div>
         )}
       </div>
       <button
         onClick={handleShare}
-        className="mt-4 bg-action text-white px-6 py-2 rounded-full text-lg font-semibold shadow-md hover:opacity-90 transition w-full"
+        className="mt-4 w-full rounded-full bg-action px-6 py-3 text-base font-semibold text-white shadow-md transition hover:opacity-90"
       >
         شارك الأثر
       </button>
