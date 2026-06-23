@@ -19,6 +19,12 @@ const parseTime = (time: string) => {
   return date;
 };
 
+const PERIOD_LABEL: Record<DhikrCategory, string> = {
+  morning: "وقت الصباح",
+  evening: "وقت المساء",
+  sleep: "وقت السكينة",
+};
+
 export default function Dhikr() {
   const { location } = useSavedLocation();
   const [category, setCategory] = useState<DhikrCategory>(getFallbackCategory);
@@ -99,7 +105,7 @@ export default function Dhikr() {
   const current = dhikrList[currentIndex] || dhikrList[0];
   const safeCount = Math.max(1, current?.count || 1);
   const isComplete = count >= safeCount;
-  const totalProgress = dhikrList.length > 0 ? ((currentIndex + (count / safeCount)) / dhikrList.length) * 100 : 0;
+  const totalProgress = dhikrList.length > 0 ? ((currentIndex + count / safeCount) / dhikrList.length) * 100 : 0;
   const categoryInfo = CATEGORY_LABELS[category];
   const stage = totalProgress >= 100 ? "🌳 اكتملت" : totalProgress >= 55 ? "🌿 تتقدم" : "🌱 بداية طيبة";
 
@@ -159,7 +165,7 @@ export default function Dhikr() {
     >
       <div className="relative mb-5 overflow-hidden rounded-[28px] bg-action p-5 text-white">
         <div className="relative z-10">
-          <p className="text-sm text-white/75">{categoryInfo.subtitle}</p>
+          <p className="text-sm text-white/75">{PERIOD_LABEL[category]}</p>
           <h2 className="mt-1 text-2xl font-bold">{categoryInfo.emoji} {categoryInfo.title}</h2>
           <p className="mt-2 text-sm text-white/80">{stage} · {Math.round(totalProgress)}٪ مكتمل</p>
         </div>
