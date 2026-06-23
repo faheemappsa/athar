@@ -12,11 +12,13 @@ export default function RadioPlayer() {
       audioRef.current = new Audio(RADIO_STREAM_URL);
       audioRef.current.loop = true;
     }
+
     if (isPlaying) {
       audioRef.current.pause();
     } else {
       audioRef.current.play().catch(() => {});
     }
+
     setIsPlaying(!isPlaying);
   };
 
@@ -25,12 +27,15 @@ export default function RadioPlayer() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.15 }}
-      className="bg-white rounded-card shadow-xl p-4 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 flex items-center justify-between"
+      className="flex w-full items-center justify-between gap-3 rounded-card bg-white p-5 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
-      <span className="text-primary-text text-lg font-semibold">📻 نداء الإسلام</span>
+      <div className="min-w-0">
+        <p className="text-xs text-secondary-text">إذاعة مباشرة</p>
+        <p className="truncate text-base font-semibold text-primary-text">📻 نداء الإسلام</p>
+      </div>
       <button
         onClick={togglePlay}
-        className="bg-action text-white px-6 py-2 rounded-full text-lg font-semibold shadow-md hover:opacity-90 transition"
+        className="shrink-0 rounded-full bg-action px-5 py-2 text-base font-semibold text-white shadow-md transition hover:opacity-90"
       >
         {isPlaying ? "إيقاف" : "تشغيل"}
       </button>
