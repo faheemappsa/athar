@@ -5,27 +5,61 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 import html2canvas from "html2canvas";
 import QRCode from "qrcode";
 
+type AtharContent = { text: string; surah: string };
+
+const isAtharContent = (value: unknown): value is AtharContent => {
+  const item = value as AtharContent;
+  return Boolean(item && typeof item.text === "string" && typeof item.surah === "string");
+};
+
+const readSavedAthar = (): AtharContent | null => {
+  try {
+    const raw = localStorage.getItem("athar-content");
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return isAtharContent(parsed) ? parsed : null;
+  } catch {
+    localStorage.removeItem("athar-content");
+    return null;
+  }
+};
+
 export default function AtharCard() {
-  const [ayah, setAyah] = useState<{ text: string; surah: string } | null>(null);
+  const [ayah, setAyah] = useState<AtharContent | null>(null);
   const [lastDate, setLastDate] = useLocalStorage<string>("athar-date", "");
-  const [savedContent] = useLocalStorage<string>("athar-content", "");
   const cardRef = useRef<HTMLDivElement>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState<string>("");
 
   useEffect(() => {
+    let mounted = true;
     const today = new Date().toDateString();
-    if (lastDate === today && savedContent) {
-      setAyah(JSON.parse(savedContent));
+    const saved = readSavedAthar();
+
+    if (lastDate === today && saved) {
+      setAyah(saved);
       return;
     }
 
-    getRandomAyah().then((data) => {
-      const content = { text: data.text, surah: data.surah.name };
-      setAyah(content);
-      localStorage.setItem("athar-content", JSON.stringify(content));
-      setLastDate(today);
-    });
-  }, [lastDate, savedContent, setLastDate]);
+    getRandomAyah()
+      .then((data) => {
+        if (!mounted) return;
+        const content = { text: data.text, surah: data.surah.name };
+        setAyah(content);
+        localStorage.setItem("athar-content", JSON.stringify(content));
+        setLastDate(today);
+      })
+      .catch(() => {
+        if (!mounted) return;
+        const fallback = { text: "لِمِثْلِ هَٰذَا فَلْيَعْمَلِ الْعَامِلُونَ", surah: "سورة الصافات" };
+        setAyah(fallback);
+        localStorage.setItem("athar-content", JSON.stringify(fallback));
+        setLastDate(today);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, [lastDate, setLastDate]);
 
   useEffect(() => {
     QRCode.toDataURL("https://athar-sandy.vercel.app", { width: 120, margin: 1 }, (err, url) => {
@@ -35,20 +69,20 @@ export default function AtharCard() {
 
   const handleShare = async () => {
     if (!cardRef.current || !ayah) return;
-    const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: "#F8FFFD" });
-    const image = canvas.toDataURL("image/png");
-    if (navigator.share) {
-      try {
+    try {
+      const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: "#F8FFFD" });
+      const image = canvas.toDataURL("image/png");
+      if (navigator.share) {
         const blob = await fetch(image).then((res) => res.blob());
         const file = new File([blob], "athar.png", { type: "image/png" });
         await navigator.share({ files: [file], title: "أثر اليوم", text: ayah.text });
-      } catch {}
-    } else {
-      const link = document.createElement("a");
-      link.href = image;
-      link.download = "athar.png";
-      link.click();
-    }
+      } else {
+        const link = document.createElement("a");
+        link.href = image;
+        link.download = "athar.png";
+        link.click();
+      }
+    } catch {}
   };
 
   if (!ayah) {
