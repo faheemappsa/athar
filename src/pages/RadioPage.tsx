@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-const RADIO_PAGE_URL = "https://radioplus.sba.sa/ar/live/1";
+const RADIO_PAGE_URL = "https://aloula.sba.sa/ar/live/nidaalislamadio";
 
 export default function RadioPage() {
   return (
