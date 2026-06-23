@@ -26,29 +26,38 @@ const formatTime = (date: Date) =>
     hour12: true,
   }).format(date);
 
+const formatCountdown = (secondsTotal: number) => {
+  const hours = Math.floor(secondsTotal / 3600);
+  const minutes = Math.floor((secondsTotal % 3600) / 60);
+  const seconds = secondsTotal % 60;
+  return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+};
+
+const getHijriDate = () => {
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).formatToParts(now);
+
+  const weekday = parts.find((part) => part.type === "weekday")?.value || "";
+  const day = parts.find((part) => part.type === "day")?.value || "";
+  const month = parts.find((part) => part.type === "month")?.value || "";
+  const year = parts.find((part) => part.type === "year")?.value || "";
+
+  return `${weekday}، ${year}/${day} ${month}`;
+};
+
 export default function PrayerTimes() {
   const { location, status, error, requestLocation, daysSinceUpdate, shouldRefresh } = useSavedLocation();
   const [timings, setTimings] = useState<Record<string, string> | null>(null);
   const [nextPrayer, setNextPrayer] = useState<{ name: string; time: Date; adhan: Date } | null>(null);
-  const [countdown, setCountdown] = useState<string>("--:--");
+  const [countdown, setCountdown] = useState<string>("0:00:00");
   const [loadError, setLoadError] = useState("");
 
-  const dates = useMemo(() => {
-    const now = new Date();
-    return {
-      gregorian: new Intl.DateTimeFormat("ar-SA", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }).format(now),
-      hijri: new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      }).format(now),
-    };
-  }, []);
+  const hijriDate = useMemo(() => getHijriDate(), []);
 
   useEffect(() => {
     if (!location) return;
@@ -74,19 +83,20 @@ export default function PrayerTimes() {
   useEffect(() => {
     if (prayerRows.length === 0) return;
     const now = new Date();
-    const next = prayerRows.find((p) => p.iqamah > now) || prayerRows[0];
+    const todayNext = prayerRows.find((p) => p.iqamah > now);
+    const next = todayNext || { ...prayerRows[0], iqamah: new Date(prayerRows[0].iqamah.getTime() + 24 * 60 * 60 * 1000) };
     setNextPrayer({ name: next.name, time: next.iqamah, adhan: next.adhan });
   }, [prayerRows]);
 
   useEffect(() => {
     if (!nextPrayer) return;
-    const interval = setInterval(() => {
+    const updateCountdown = () => {
       const now = new Date();
       const diff = Math.max(0, Math.floor((nextPrayer.time.getTime() - now.getTime()) / 1000));
-      const mins = Math.floor(diff / 60);
-      const secs = diff % 60;
-      setCountdown(`${mins}:${secs.toString().padStart(2, "0")}`);
-    }, 1000);
+      setCountdown(formatCountdown(diff));
+    };
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
     return () => clearInterval(interval);
   }, [nextPrayer]);
 
@@ -135,8 +145,7 @@ export default function PrayerTimes() {
       <div className="absolute -left-12 -top-12 h-28 w-28 rounded-full bg-mint-soft" />
       <div className="relative z-10 flex items-start justify-between gap-4">
         <div className="text-right">
-          <p className="text-xs font-medium text-secondary-text">{dates.gregorian}</p>
-          <p className="mt-1 text-sm font-semibold text-action">{dates.hijri}</p>
+          <p className="text-sm font-bold text-action">{hijriDate}</p>
         </div>
         <button onClick={requestLocation} className="grid h-12 w-12 shrink-0 place-items-center rounded-[20px] bg-mint-soft text-xl text-action">⌖</button>
       </div>
@@ -144,7 +153,7 @@ export default function PrayerTimes() {
       <div className="relative z-10 mt-5 text-center">
         <p className="text-sm font-medium text-secondary-text">الصلاة القادمة</p>
         <p className="mt-1 text-3xl font-bold text-primary-text">{PRAYER_LABELS[nextPrayer.name]}</p>
-        <p className="mt-4 text-5xl font-bold tracking-tight text-action">{countdown}</p>
+        <p className="mt-4 text-5xl font-bold tracking-tight text-action" dir="ltr">{countdown}</p>
         <p className="mt-2 text-sm text-secondary-text">متبقي حتى الإقامة</p>
       </div>
 
