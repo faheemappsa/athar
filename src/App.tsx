@@ -11,17 +11,16 @@ import ErrorBoundary from "./components/Shared/ErrorBoundary";
 import InstallPrompt from "./components/Shared/InstallPrompt";
 import ScrollMemory from "./components/Shared/ScrollMemory";
 import AppIntro from "./components/Shared/AppIntro";
+import { trackEvent } from "./utils/analytics";
 
 const AnalyticsPageView = () => {
   const location = useLocation();
 
   useEffect(() => {
-    try {
-      (window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.("event", "page_view", {
-        page_path: `${location.pathname}${location.search}`,
-        page_title: document.title,
-      });
-    } catch {}
+    trackEvent("page_view", {
+      page_path: `${location.pathname}${location.search}`,
+      page_title: document.title,
+    });
   }, [location.pathname, location.search]);
 
   return null;
