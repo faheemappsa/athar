@@ -11,6 +11,7 @@ import ErrorBoundary from "./components/Shared/ErrorBoundary";
 import InstallPrompt from "./components/Shared/InstallPrompt";
 import ScrollMemory from "./components/Shared/ScrollMemory";
 import AppIntro from "./components/Shared/AppIntro";
+import ConnectionBanner from "./components/Shared/ConnectionBanner";
 import { trackEvent } from "./utils/analytics";
 
 const AnalyticsPageView = () => {
@@ -37,6 +38,7 @@ export default function App() {
           <ScrollMemory />
           <main id="app-scroll" className="app-scroll h-full w-full overflow-y-auto px-4 pb-28 pt-6">
             <div className="mx-auto w-full max-w-md">
+              <ConnectionBanner />
               <Routes>
                 <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
                 <Route path="/dhikr" element={<PageTransition><DhikrPage /></PageTransition>} />
