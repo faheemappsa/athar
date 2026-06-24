@@ -7,6 +7,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      includeAssets: ['athar-icon.svg', 'favicon.svg', 'robots.txt'],
       manifest: {
         name: 'أثر | وقف خيري عن مسلّم عوده البويني رحمه الله',
         short_name: 'أثر',
@@ -30,7 +31,36 @@ export default defineConfig({
       },
       workbox: {
         navigateFallback: '/index.html',
-        cleanupOutdatedCaches: true
+        cleanupOutdatedCaches: true,
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff2}'],
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.mode === 'navigate',
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'athar-pages',
+              networkTimeoutSeconds: 3
+            }
+          },
+          {
+            urlPattern: ({ request }) => ['script', 'style', 'worker'].includes(request.destination),
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'athar-assets'
+            }
+          },
+          {
+            urlPattern: ({ request }) => ['image', 'font'].includes(request.destination),
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'athar-media',
+              expiration: {
+                maxEntries: 80,
+                maxAgeSeconds: 30 * 24 * 60 * 60
+              }
+            }
+          }
+        ]
       }
     })
   ]
