@@ -99,7 +99,7 @@ export default function AtharCard() {
       await navigator.share({
         files: [file],
         title: "أثر",
-        text: "وقف خيري عن مسلّم عوده البويني رحمه الله",
+        text: athar?.text || "أثر اليوم",
       });
       trackEvent("athar_share_success", { method: "native_share" });
       return;
@@ -245,12 +245,7 @@ export default function AtharCard() {
           transition={{ duration: 0.38, ease: "easeOut" }}
           className="relative z-10 flex min-h-[352px] flex-col items-center justify-between"
         >
-          <div className="space-y-1">
-            <p className="text-sm font-bold tracking-wide text-action/80">🌿 أثر</p>
-            <p className="text-[11px] font-bold leading-relaxed text-secondary-text/80">
-              وقف خيري عن مسلّم عوده البويني رحمه الله
-            </p>
-          </div>
+          <p className="text-sm font-bold tracking-wide text-action/80">أثر اليوم</p>
 
           <div className="flex flex-1 items-center justify-center py-9">
             <p className="break-words text-[1.72rem] font-extrabold leading-[2.35] text-primary-text">
@@ -260,10 +255,6 @@ export default function AtharCard() {
 
           <div className="w-full space-y-3">
             <p className="text-sm font-semibold text-secondary-text/80">{athar.source}</p>
-            <div className="space-y-1 text-[11px] font-bold leading-relaxed text-secondary-text/75">
-              <p>لعلنا نكون منهم...</p>
-              <p>﴿ وولدٌ صالحٌ يدعو له ﴾</p>
-            </div>
             {shareName && (
               <div className="flex w-full justify-start">
                 <button
