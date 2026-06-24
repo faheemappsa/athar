@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="أثر">
+  <rect width="512" height="512" rx="128" fill="#EAF6F3"/>
+  <circle cx="256" cy="256" r="190" fill="#F8FFFD" stroke="#38A47C" stroke-width="18"/>
+  <path d="M258 142c42 54 78 108 78 160 0 48-34 82-80 82s-80-34-80-82c0-52 38-106 82-160Z" fill="#38A47C"/>
+  <path d="M258 183c24 39 43 76 43 111 0 30-18 52-45 52s-45-22-45-52c0-35 21-72 47-111Z" fill="#EAF6F3" opacity="0.88"/>
+  <text x="256" y="438" text-anchor="middle" font-family="Arial, sans-serif" font-size="58" font-weight="700" fill="#244A3F">أثر</text>
+</svg>
