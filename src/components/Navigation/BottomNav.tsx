@@ -1,9 +1,10 @@
 import { NavLink, useLocation } from "react-router-dom";
+import { trackEvent } from "../../utils/analytics";
 
 const items = [
-  { to: "/quran", label: "المصحف" },
-  { to: "/", label: "الرئيسية" },
-  { to: "/dhikr", label: "الأذكار" },
+  { to: "/quran", label: "المصحف", event: "nav_quran" },
+  { to: "/", label: "الرئيسية", event: "nav_home" },
+  { to: "/dhikr", label: "الأذكار", event: "nav_dhikr" },
 ];
 
 const getIndicatorPosition = (pathname: string) => {
@@ -28,6 +29,7 @@ export default function BottomNav() {
             <NavLink
               key={item.to}
               to={item.to}
+              onClick={() => trackEvent(item.event, { from: location.pathname, to: item.to })}
               className={({ isActive }) =>
                 `flex h-full items-center justify-center rounded-full text-sm font-bold transition-all duration-300 ${
                   isActive ? "-translate-y-2 text-white" : "translate-y-0 text-secondary-text"
