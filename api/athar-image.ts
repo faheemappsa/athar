@@ -26,16 +26,24 @@ const makeQrSvg = async () => {
   return QRCode.toString(APP_URL, {
     type: "svg",
     margin: 0,
-    width: 118,
+    width: 108,
     color: {
-      dark: "#2F6F57",
+      dark: "#245C49",
       light: "#FFFFFF",
     },
   });
 };
 
+const getTextSize = (text: string) => {
+  if (text.length > 210) return { fontSize: 46, lineHeight: 1.9, maxWidth: 850 };
+  if (text.length > 150) return { fontSize: 52, lineHeight: 1.95, maxWidth: 850 };
+  if (text.length > 95) return { fontSize: 62, lineHeight: 2, maxWidth: 835 };
+  return { fontSize: 76, lineHeight: 2.05, maxWidth: 820 };
+};
+
 const makeElement = (text: string, source: string, name: string, qrSvg: string) => {
   const personalLine = name ? `شارك الأثر • ${name}` : "أثر";
+  const textStyle = getTextSize(text);
 
   return {
     type: "div",
@@ -47,9 +55,9 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
         position: "relative",
         direction: "rtl",
         overflow: "hidden",
-        background: "linear-gradient(145deg, #F7FFF9 0%, #EAF6F3 48%, #DDEFE7 100%)",
+        background: "linear-gradient(155deg, #FBFFF9 0%, #EFF8F2 42%, #DCEFE6 100%)",
         fontFamily: "NotoNaskhArabic",
-        color: "#284337",
+        color: "#1F3B30",
       },
       children: [
         {
@@ -57,13 +65,9 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              width: 700,
-              height: 700,
-              borderRadius: 700,
-              left: -210,
-              top: -170,
-              background: "rgba(125, 199, 167, 0.22)",
-              filter: "blur(12px)",
+              inset: 0,
+              background:
+                "radial-gradient(circle at 28% 18%, rgba(115, 196, 155, 0.24), transparent 26%), radial-gradient(circle at 86% 82%, rgba(47, 111, 87, 0.16), transparent 30%), linear-gradient(110deg, rgba(255,255,255,0.55), transparent 48%)",
             },
           },
         },
@@ -72,12 +76,12 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              width: 860,
-              height: 860,
-              borderRadius: 860,
-              right: -300,
-              bottom: -230,
-              border: "2px solid rgba(47, 111, 87, 0.10)",
+              width: 920,
+              height: 920,
+              borderRadius: 920,
+              right: -390,
+              top: -330,
+              border: "2px solid rgba(36, 92, 73, 0.070)",
             },
           },
         },
@@ -86,12 +90,12 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              width: 660,
-              height: 660,
-              borderRadius: 660,
-              left: -230,
-              bottom: -210,
-              border: "2px solid rgba(47, 111, 87, 0.075)",
+              width: 980,
+              height: 980,
+              borderRadius: 980,
+              left: -420,
+              bottom: -370,
+              border: "2px solid rgba(36, 92, 73, 0.075)",
             },
           },
         },
@@ -100,15 +104,15 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              left: 150,
-              right: 150,
-              top: 160,
-              height: 470,
-              borderLeft: "2px solid rgba(47, 111, 87, 0.07)",
-              borderRight: "2px solid rgba(47, 111, 87, 0.07)",
-              borderBottom: "2px solid rgba(47, 111, 87, 0.07)",
-              borderBottomLeftRadius: 240,
-              borderBottomRightRadius: 240,
+              left: 118,
+              right: 118,
+              top: 150,
+              height: 520,
+              borderLeft: "2px solid rgba(36, 92, 73, 0.065)",
+              borderRight: "2px solid rgba(36, 92, 73, 0.065)",
+              borderBottom: "2px solid rgba(36, 92, 73, 0.065)",
+              borderBottomLeftRadius: 280,
+              borderBottomRightRadius: 280,
             },
           },
         },
@@ -118,9 +122,9 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
             style: {
               position: "absolute",
               inset: 54,
-              borderRadius: 52,
-              border: "1.5px solid rgba(47, 111, 87, 0.13)",
-              boxShadow: "0 0 70px rgba(103, 185, 157, 0.20)",
+              borderRadius: 58,
+              border: "1.5px solid rgba(36, 92, 73, 0.14)",
+              boxShadow: "0 0 88px rgba(103, 185, 157, 0.22), inset 0 0 80px rgba(255,255,255,0.34)",
             },
           },
         },
@@ -129,10 +133,10 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              left: 92,
-              right: 92,
-              top: 190,
-              bottom: 190,
+              left: 116,
+              right: 116,
+              top: 220,
+              bottom: 250,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -145,14 +149,15 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                 props: {
                   style: {
                     display: "flex",
-                    maxWidth: 850,
-                    fontSize: text.length > 140 ? 56 : text.length > 86 ? 65 : 76,
-                    lineHeight: 1.95,
+                    maxWidth: textStyle.maxWidth,
+                    fontSize: textStyle.fontSize,
+                    lineHeight: textStyle.lineHeight,
                     fontWeight: 700,
-                    letterSpacing: -1.4,
-                    color: "#1F3B30",
+                    letterSpacing: -1.3,
+                    color: "#1E3B30",
                     textWrap: "balance",
                     whiteSpace: "pre-wrap",
+                    textShadow: "0 10px 34px rgba(31, 59, 48, 0.08)",
                   },
                   children: text,
                 },
@@ -162,11 +167,12 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                 props: {
                   style: {
                     display: "flex",
-                    marginTop: 54,
-                    padding: "10px 28px",
+                    marginTop: 60,
+                    padding: "10px 30px",
                     borderRadius: 999,
-                    background: "rgba(255,255,255,0.62)",
-                    color: "rgba(92,75,58,0.75)",
+                    background: "rgba(255,255,255,0.56)",
+                    border: "1px solid rgba(36, 92, 73, 0.08)",
+                    color: "rgba(92,75,58,0.72)",
                     fontSize: 31,
                     fontWeight: 700,
                   },
@@ -183,7 +189,7 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
               position: "absolute",
               left: 92,
               right: 92,
-              bottom: 88,
+              bottom: 92,
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -195,7 +201,7 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                   style: {
                     display: "flex",
                     alignItems: "center",
-                    gap: 22,
+                    gap: 20,
                   },
                   children: [
                     {
@@ -203,11 +209,11 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                       props: {
                         style: {
                           display: "flex",
-                          width: 126,
-                          height: 126,
+                          width: 118,
+                          height: 118,
                           borderRadius: 24,
                           background: "#FFFFFF",
-                          padding: 10,
+                          padding: 9,
                           boxShadow: "0 18px 44px rgba(31, 59, 48, 0.10)",
                         },
                         dangerouslySetInnerHTML: { __html: qrSvg },
@@ -218,17 +224,12 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                       props: {
                         style: {
                           display: "flex",
-                          flexDirection: "column",
-                          alignItems: "flex-start",
-                          color: "rgba(31, 59, 48, 0.62)",
-                          fontSize: 25,
-                          lineHeight: 1.45,
-                          fontWeight: 700,
+                          fontSize: 34,
+                          color: "#245C49",
+                          fontWeight: 800,
+                          letterSpacing: -0.6,
                         },
-                        children: [
-                          { type: "div", props: { children: "امسح الأثر" } },
-                          { type: "div", props: { children: APP_URL.replace("https://", "") } },
-                        ],
+                        children: "أثر",
                       },
                     },
                   ],
@@ -239,12 +240,13 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                 props: {
                   style: {
                     display: "flex",
-                    fontSize: 30,
-                    color: "#2F6F57",
+                    fontSize: 28,
+                    color: "rgba(36, 92, 73, 0.88)",
                     fontWeight: 800,
                     padding: "12px 26px",
                     borderRadius: 999,
-                    background: "rgba(255,255,255,0.55)",
+                    background: "rgba(255,255,255,0.58)",
+                    border: "1px solid rgba(36, 92, 73, 0.08)",
                   },
                   children: `✦ ${personalLine}`,
                 },
