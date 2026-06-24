@@ -33,6 +33,7 @@ export default function Dhikr() {
   const [count, setCount] = useState(0);
   const [feedback, setFeedback] = useState<"idle" | "success" | "complete">("idle");
   const [loaded, setLoaded] = useState(false);
+  const [pulseKey, setPulseKey] = useState(0);
 
   useEffect(() => {
     let mounted = true;
@@ -105,16 +106,20 @@ export default function Dhikr() {
   const current = dhikrList[currentIndex] || dhikrList[0];
   const safeCount = Math.max(1, current?.count || 1);
   const isComplete = count >= safeCount;
+  const itemProgress = Math.min(100, (count / safeCount) * 100);
   const totalProgress = dhikrList.length > 0 ? ((currentIndex + count / safeCount) / dhikrList.length) * 100 : 0;
   const categoryInfo = CATEGORY_LABELS[category];
   const stage = totalProgress >= 100 ? "🌳 اكتملت" : totalProgress >= 55 ? "🌿 تتقدم" : "🌱 بداية طيبة";
 
   const handleTap = () => {
     if (!current || isComplete) return;
-    if (navigator.vibrate) navigator.vibrate(10);
+    try {
+      navigator.vibrate?.(8);
+    } catch {}
 
     const newCount = Math.min(count + 1, safeCount);
     setCount(newCount);
+    setPulseKey((value) => value + 1);
 
     if (newCount === safeCount) {
       setFeedback("complete");
@@ -124,7 +129,7 @@ export default function Dhikr() {
           setCount(0);
           setFeedback("idle");
         }
-      }, 700);
+      }, 900);
     } else {
       setFeedback("success");
       setTimeout(() => setFeedback("idle"), 180);
@@ -141,6 +146,7 @@ export default function Dhikr() {
     setCurrentIndex(0);
     setCount(0);
     setFeedback("idle");
+    setPulseKey((value) => value + 1);
   };
 
   if (!loaded || !current) {
@@ -200,28 +206,57 @@ export default function Dhikr() {
       <p className="break-words text-xl font-semibold leading-loose text-primary-text">{current.text}</p>
       <p className="mt-3 text-sm text-secondary-text">التكرار: {safeCount}</p>
 
-      <div className="mt-4 rounded-[26px] bg-primary-bg p-4 text-center">
-        <p className="text-3xl font-bold text-action">{count} / {safeCount}</p>
-        <p className="mt-1 text-xs text-secondary-text">تقدم هذا الذكر محفوظ تلقائياً</p>
-      </div>
-
       <button
         onClick={handleTap}
         disabled={isComplete}
-        className={`mt-4 w-full rounded-full py-4 text-lg font-bold text-white shadow-md transition-all duration-200 ${
-          isComplete
-            ? "bg-secondary-text cursor-not-allowed"
-            : feedback === "complete"
-            ? "bg-highlight scale-105"
-            : feedback === "success"
-            ? "bg-action scale-95"
-            : "bg-action hover:opacity-90"
-        }`}
+        className="group mt-6 block w-full outline-none disabled:cursor-default"
+        aria-label="اضغط للتسبيح"
       >
-        {isComplete ? "تم هذا الذكر" : feedback === "complete" ? "أحسنت" : feedback === "success" ? "جميل" : "اضغط للتسبيح"}
+        <motion.div
+          key={`ring-${pulseKey}`}
+          animate={feedback === "success" ? { scale: [1, 0.975, 1.012, 1] } : feedback === "complete" ? { scale: [1, 1.035, 1] } : { scale: 1 }}
+          transition={{ duration: feedback === "complete" ? 0.55 : 0.22, ease: "easeOut" }}
+          className="relative mx-auto grid h-60 w-60 place-items-center rounded-full"
+        >
+          <div
+            className="absolute inset-0 rounded-full transition-all duration-300"
+            style={{
+              background: `conic-gradient(#38A47C ${itemProgress}%, rgba(56,164,124,0.12) ${itemProgress}%)`,
+            }}
+          />
+          <div className="absolute inset-[10px] rounded-full bg-white shadow-xl shadow-action/10" />
+          <div className="absolute inset-[22px] rounded-full bg-primary-bg/80" />
+
+          <motion.div
+            key={`pulse-${pulseKey}`}
+            initial={{ opacity: 0.42, scale: 0.78 }}
+            animate={{ opacity: 0, scale: 1.28 }}
+            transition={{ duration: 0.42, ease: "easeOut" }}
+            className="absolute inset-2 rounded-full border border-action/30"
+          />
+
+          {feedback === "complete" && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.75 }}
+              animate={{ opacity: [0, 0.55, 0], scale: [0.75, 1.2, 1.42] }}
+              transition={{ duration: 0.85, ease: "easeOut" }}
+              className="absolute inset-0 rounded-full bg-action/20 blur-md"
+            />
+          )}
+
+          <div className="relative z-10 text-center">
+            <p className="text-5xl font-extrabold leading-none text-action">{count}</p>
+            <p className="mt-2 text-sm font-bold text-secondary-text">من {safeCount}</p>
+            <p className="mt-4 text-sm font-semibold text-primary-text">
+              {feedback === "complete" ? "تم الذكر" : feedback === "success" ? "" : "اضغط للتسبيح"}
+            </p>
+          </div>
+        </motion.div>
       </button>
 
-      <div className="mt-3 grid grid-cols-2 gap-2">
+      <p className="mt-3 text-center text-xs text-secondary-text">تقدم هذا الذكر محفوظ تلقائياً</p>
+
+      <div className="mt-4 grid grid-cols-2 gap-2">
         <button onClick={saveForLater} className="rounded-full bg-primary-bg py-3 text-sm font-semibold text-action">
           حفظ التقدم
         </button>
@@ -233,7 +268,7 @@ export default function Dhikr() {
       {currentIndex + 1 >= dhikrList.length && isComplete && (
         <div className="mt-4 rounded-[28px] bg-mint-soft p-5 text-center">
           <p className="text-2xl">🌳</p>
-          <p className="mt-2 font-bold text-primary-text">أحسنت، أتممت أذكارك</p>
+          <p className="mt-2 font-bold text-primary-text">أتممت أذكارك</p>
           <p className="mt-1 text-sm text-secondary-text">أثر طيب يُكتب لك بإذن الله</p>
         </div>
       )}
