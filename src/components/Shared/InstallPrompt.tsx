@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { trackEvent } from "../../utils/analytics";
 
 const isStandalone = () =>
   window.matchMedia?.("(display-mode: standalone)").matches ||
@@ -28,7 +29,13 @@ export default function InstallPrompt() {
 
   const dismiss = () => {
     localStorage.setItem("athar-install-hidden", "true");
+    trackEvent("pwa_install_prompt_dismiss", { device });
     setHidden(true);
+  };
+
+  const openPrompt = () => {
+    trackEvent("pwa_install_prompt_open", { device });
+    setOpen(true);
   };
 
   return (
@@ -37,7 +44,7 @@ export default function InstallPrompt() {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.5 }}
-        onClick={() => setOpen(true)}
+        onClick={openPrompt}
         className="fixed left-4 right-4 top-3 z-[60] mx-auto max-w-sm rounded-full bg-white/95 px-5 py-3 text-sm font-bold text-action shadow-xl shadow-action/10 backdrop-blur"
       >
         🌿 ثبّت أثر كتطبيق يومي
@@ -72,7 +79,13 @@ export default function InstallPrompt() {
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-2">
-              <button onClick={() => setOpen(false)} className="rounded-full bg-action py-3 font-bold text-white">
+              <button
+                onClick={() => {
+                  trackEvent("pwa_install_prompt_understood", { device });
+                  setOpen(false);
+                }}
+                className="rounded-full bg-action py-3 font-bold text-white"
+              >
                 فهمت
               </button>
               <button onClick={dismiss} className="rounded-full bg-primary-bg py-3 font-bold text-secondary-text">
