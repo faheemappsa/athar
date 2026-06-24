@@ -3,6 +3,9 @@ import { motion } from "framer-motion";
 import { getSmartAthar, type AtharContent } from "../../services/atharEngine";
 import html2canvas from "html2canvas";
 
+const NAME_KEY = "athar-share-name";
+const NAME_SEEN_KEY = "athar-name-prompt-seen";
+
 const getCardMood = (time: AtharContent["time"]) => {
   if (time === "morning") {
     return {
@@ -31,12 +34,29 @@ const getCardMood = (time: AtharContent["time"]) => {
   };
 };
 
+const pulse = () => {
+  try {
+    navigator.vibrate?.(18);
+  } catch {}
+};
+
 export default function AtharCard() {
   const [athar, setAthar] = useState<AtharContent | null>(null);
+  const [shareName, setShareName] = useState("");
+  const [nameDraft, setNameDraft] = useState("");
+  const [showNamePrompt, setShowNamePrompt] = useState(false);
+  const [showNameActions, setShowNameActions] = useState(false);
+  const [shareAfterName, setShareAfterName] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let mounted = true;
+
+    try {
+      const savedName = localStorage.getItem(NAME_KEY) || "";
+      setShareName(savedName);
+      setNameDraft(savedName);
+    } catch {}
 
     getSmartAthar()
       .then((content) => {
@@ -62,7 +82,7 @@ export default function AtharCard() {
     };
   }, []);
 
-  const handleShare = async () => {
+  const shareImage = async () => {
     if (!cardRef.current || !athar) return;
     try {
       const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: "#F8FFFD" });
@@ -78,6 +98,50 @@ export default function AtharCard() {
         link.click();
       }
     } catch {}
+  };
+
+  const handleShare = async () => {
+    pulse();
+    const hasSeenPrompt = localStorage.getItem(NAME_SEEN_KEY) === "1";
+    if (!hasSeenPrompt) {
+      setShareAfterName(true);
+      setShowNamePrompt(true);
+      return;
+    }
+    await shareImage();
+  };
+
+  const saveName = async () => {
+    const cleanName = nameDraft.trim().slice(0, 28);
+    localStorage.setItem(NAME_SEEN_KEY, "1");
+    if (cleanName) {
+      localStorage.setItem(NAME_KEY, cleanName);
+      setShareName(cleanName);
+      setNameDraft(cleanName);
+    }
+    setShowNamePrompt(false);
+    setShowNameActions(false);
+    if (shareAfterName) {
+      setShareAfterName(false);
+      setTimeout(() => void shareImage(), 120);
+    }
+  };
+
+  const skipName = async () => {
+    localStorage.setItem(NAME_SEEN_KEY, "1");
+    setShowNamePrompt(false);
+    setShowNameActions(false);
+    if (shareAfterName) {
+      setShareAfterName(false);
+      setTimeout(() => void shareImage(), 120);
+    }
+  };
+
+  const deleteName = () => {
+    localStorage.removeItem(NAME_KEY);
+    setShareName("");
+    setNameDraft("");
+    setShowNameActions(false);
   };
 
   if (!athar) {
@@ -120,7 +184,21 @@ export default function AtharCard() {
             </p>
           </div>
 
-          <p className="text-sm font-semibold text-secondary-text/80">{athar.source}</p>
+          <div className="space-y-3">
+            <p className="text-sm font-semibold text-secondary-text/80">{athar.source}</p>
+            {shareName && (
+              <button
+                type="button"
+                onClick={() => {
+                  setNameDraft(shareName);
+                  setShowNameActions(true);
+                }}
+                className="rounded-full bg-white/70 px-4 py-2 text-xs font-bold text-action shadow-sm backdrop-blur"
+              >
+                ✦ {shareName} <span className="opacity-70">✎</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
       <button
@@ -129,6 +207,44 @@ export default function AtharCard() {
       >
         شارك الأثر
       </button>
+
+      {(showNamePrompt || showNameActions) && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/25 px-4 pb-5 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.22 }}
+            className="w-full max-w-md rounded-[30px] bg-white p-5 text-center shadow-2xl"
+          >
+            <p className="text-xl font-extrabold text-primary-text">
+              {showNameActions ? "تعديل اسمك" : "تحب نكتب اسمك على بطاقة الأثر؟"}
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-secondary-text">
+              {showNameActions ? "عدّل الاسم أو احذفه من بطاقة أثر." : "اكتب اسمك أو لقبك مرة واحدة، ونحفظه لك بهدوء."}
+            </p>
+            <input
+              value={nameDraft}
+              onChange={(event) => setNameDraft(event.target.value)}
+              maxLength={28}
+              placeholder="اسمك أو لقبك"
+              className="mt-5 w-full rounded-2xl border border-action/15 bg-primary-bg px-4 py-4 text-center text-lg font-bold text-primary-text outline-none focus:border-action"
+            />
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <button onClick={saveName} className="rounded-full bg-action px-5 py-3 font-bold text-white shadow-lg shadow-action/20">
+                متابعة
+              </button>
+              <button onClick={skipName} className="rounded-full bg-primary-bg px-5 py-3 font-bold text-secondary-text">
+                تخطي
+              </button>
+            </div>
+            {showNameActions && (
+              <button onClick={deleteName} className="mt-3 w-full rounded-full bg-red-50 px-5 py-3 font-bold text-red-500">
+                حذف الاسم
+              </button>
+            )}
+          </motion.div>
+        </div>
+      )}
     </motion.div>
   );
 }
