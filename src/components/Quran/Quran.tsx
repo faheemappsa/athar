@@ -72,56 +72,61 @@ export default function Quran() {
         </span>
       </div>
 
-      <div className="relative overflow-hidden rounded-[28px] bg-[#FDFBF7] p-4 shadow-inner">
+      <div className="relative overflow-hidden rounded-[30px] bg-[#FBF7EC] p-2.5 shadow-inner ring-1 ring-black/5">
         {isLoading ? (
-          <div className="grid min-h-[430px] place-items-center text-sm font-semibold text-secondary-text">
+          <div className="grid min-h-[470px] place-items-center rounded-[24px] bg-[#FDFBF7] text-sm font-semibold text-secondary-text">
             جاري تحميل الآيات...
           </div>
         ) : hasError ? (
-          <div className="grid min-h-[430px] place-items-center text-center text-sm font-semibold leading-7 text-secondary-text">
+          <div className="grid min-h-[470px] place-items-center rounded-[24px] bg-[#FDFBF7] px-5 text-center text-sm font-semibold leading-7 text-secondary-text">
             تعذر تحميل صفحة المصحف. تأكد من اتصال الإنترنت ثم حاول مرة أخرى.
           </div>
         ) : (
-          <div className="max-h-[62vh] min-h-[430px] overflow-y-auto rounded-[24px] bg-[#FDFBF7] px-3 py-5 text-justify text-[22px] leading-[2.25] text-[#1E1B18]" style={{ fontFamily: '"Traditional Arabic", "Amiri", "Scheherazade New", serif' }}>
+          <div
+            className="max-h-[64vh] min-h-[470px] overflow-y-auto rounded-[24px] bg-[#FDFBF7] px-5 py-6 text-center text-[20px] leading-[2.45] text-[#1E1B18] shadow-sm"
+            style={{ fontFamily: '"Traditional Arabic", "Amiri", "Scheherazade New", serif' }}
+          >
             {pageText}
           </div>
         )}
       </div>
 
-      <div className="mt-3 grid grid-cols-3 items-center gap-2">
-        <button
-          onClick={() => goToPage(page - 1)}
-          disabled={page <= 1}
-          className="rounded-full bg-action px-3 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          السابق
-        </button>
-
-        <div className="flex items-center justify-center gap-1">
-          <input
-            type="number"
-            min="1"
-            max={TOTAL_PAGES}
-            value={inputPage}
-            onChange={(event) => setInputPage(event.target.value)}
-            placeholder="صفحة"
-            className="w-16 rounded-full border border-secondary-text/40 bg-white px-2 py-3 text-center text-sm text-primary-text focus:border-action focus:outline-none"
-          />
+      <div className="mt-3 rounded-[28px] bg-white p-2 shadow-sm ring-1 ring-black/5">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
           <button
-            onClick={handleJump}
-            className="rounded-full bg-action px-3 py-3 text-sm font-semibold text-white transition hover:opacity-90"
+            onClick={() => goToPage(page - 1)}
+            disabled={page <= 1}
+            className="rounded-full bg-action px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            اذهب
+            السابق
+          </button>
+
+          <div className="flex items-center justify-center gap-1.5">
+            <input
+              type="number"
+              min="1"
+              max={TOTAL_PAGES}
+              value={inputPage}
+              onChange={(event) => setInputPage(event.target.value)}
+              placeholder="صفحة"
+              className="h-12 w-[68px] rounded-full border border-secondary-text/30 bg-primary-bg/40 px-2 text-center text-sm font-semibold text-primary-text focus:border-action focus:bg-white focus:outline-none"
+            />
+            <button
+              onClick={handleJump}
+              className="h-12 rounded-full bg-action px-4 text-sm font-bold text-white shadow-sm transition hover:opacity-90"
+            >
+              اذهب
+            </button>
+          </div>
+
+          <button
+            onClick={() => goToPage(page + 1)}
+            disabled={page >= TOTAL_PAGES}
+            className="rounded-full bg-action px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            التالي
           </button>
         </div>
-
-        <button
-          onClick={() => goToPage(page + 1)}
-          disabled={page >= TOTAL_PAGES}
-          className="rounded-full bg-action px-3 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          التالي
-        </button>
       </div>
     </motion.div>
   );
