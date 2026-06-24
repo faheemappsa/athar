@@ -18,5 +18,5 @@ export default function ConnectionBanner() {
 
   if (!offline) return null;
 
-  return <div className="mb-4 rounded-full bg-white px-4 py-3 text-center text-sm font-bold text-secondary-text shadow-lg">Connection status</div>;
+  return <div className="mb-4 rounded-full bg-white/90 px-4 py-3 text-center text-sm font-bold text-secondary-text shadow-lg shadow-action/10 backdrop-blur">☁️ أنت تستخدم تطبيق أثر بدون إنترنت</div>;
 }
