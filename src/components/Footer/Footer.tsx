@@ -1,12 +1,17 @@
-export default function Footer() {
+type FooterProps = {
+  showWaqf?: boolean;
+};
+
+export default function Footer({ showWaqf = false }: FooterProps) {
   const whatsappLink = "https://wa.me/966556445919";
   return (
     <footer className="mt-6 space-y-3 border-t border-secondary-text/20 py-5 text-center text-xs text-secondary-text">
-      <div className="space-y-1 leading-relaxed">
-        <p className="font-extrabold text-primary-text">وقف خيري عن مسلّم عوده البويني رحمه الله</p>
-        <p>لعلنا نكون منهم...</p>
-        <p>﴿ وولدٌ صالحٌ يدعو له ﴾</p>
-      </div>
+      {showWaqf && (
+        <div className="space-y-1 leading-relaxed">
+          <p className="font-extrabold text-primary-text">وقف خيري عن مسلّم عوده البويني رحمه الله</p>
+          <p>لعلنا نكون منهم.. ( و ولد صالح يدعوا له )</p>
+        </div>
+      )}
 
       <p className="flex flex-wrap items-center justify-center gap-1 pt-2">
         <span>تطوير أستديو التجربة</span>
