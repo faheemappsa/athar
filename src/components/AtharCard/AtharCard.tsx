@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { getSmartAthar, type AtharContent } from "../../services/atharEngine";
 import html2canvas from "html2canvas";
+import { trackEvent } from "../../utils/analytics";
 
 const NAME_KEY = "athar-share-name";
 const NAME_SEEN_KEY = "athar-name-prompt-seen";
@@ -48,12 +49,6 @@ const pulse = () => {
   } catch {}
 };
 
-const trackEvent = (name: string, params?: Record<string, string | number | boolean>) => {
-  try {
-    (window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.("event", name, params || {});
-  } catch {}
-};
-
 export default function AtharCard() {
   const [athar, setAthar] = useState<AtharContent | null>(null);
   const [shareName, setShareName] = useState("");
@@ -79,6 +74,7 @@ export default function AtharCard() {
         setAthar(content);
         localStorage.setItem("athar-content", JSON.stringify(content));
         localStorage.setItem("athar-last-shown", String(Date.now()));
+        trackEvent("athar_content_view", { kind: content.kind, time: content.time });
       })
       .catch(() => {
         if (!mounted) return;
@@ -200,6 +196,7 @@ export default function AtharCard() {
     setShareName("");
     setNameDraft("");
     setShowNameActions(false);
+    trackEvent("athar_name_deleted");
   };
 
   if (!athar) {
