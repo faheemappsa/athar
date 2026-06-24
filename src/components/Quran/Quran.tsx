@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 
@@ -36,7 +36,16 @@ const SURAHS = [
 
 const JUZ_START_PAGES = [1, 22, 42, 62, 82, 102, 121, 142, 162, 182, 201, 222, 242, 262, 282, 302, 322, 342, 362, 382, 402, 422, 442, 462, 482, 502, 522, 542, 562, 582];
 
-const getMushafPageImage = (page: number) => `https://quran.ksu.edu.sa/png-big/${page}.png`;
+const getMushafPageImage = (page: number) => {
+  const paddedPage = String(page).padStart(3, "0");
+  return `/mushaf-pages/${paddedPage}.webp`;
+};
+
+const preloadMushafPage = (page: number) => {
+  if (page < 1 || page > 604) return;
+  const image = new Image();
+  image.src = getMushafPageImage(page);
+};
 
 export default function Quran() {
   const [page, setPage] = useLocalStorage<number>("quran-page", 1);
@@ -45,6 +54,11 @@ export default function Quran() {
   const [inputPage, setInputPage] = useState<string>("");
   const [surahQuery, setSurahQuery] = useState<string>("");
   const [juzValue, setJuzValue] = useState<string>("");
+
+  useEffect(() => {
+    preloadMushafPage(page - 1);
+    preloadMushafPage(page + 1);
+  }, [page]);
 
   const currentSurah = useMemo(() => {
     return [...SURAHS].reverse().find((surah) => page >= surah.page)?.name || "الفاتحة";
