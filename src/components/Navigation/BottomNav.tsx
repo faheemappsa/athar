@@ -17,7 +17,7 @@ export default function BottomNav() {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-5 inset-x-4 z-50 mx-auto max-w-sm">
+    <nav className="fixed inset-x-4 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-50 mx-auto max-w-sm">
       <div className="relative h-20 overflow-hidden rounded-[34px] bg-white shadow-xl shadow-action/10">
         <div
           className={`absolute bottom-0 h-16 w-28 -translate-x-1/2 rounded-t-[80px] bg-action transition-all duration-300 ease-out ${getIndicatorPosition(
