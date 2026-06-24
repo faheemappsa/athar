@@ -1,5 +1,3 @@
-import { Resvg } from "@resvg/resvg-js";
-
 const escapeXml = (value: string) =>
   value
     .replace(/&/g, "&amp;")
@@ -8,12 +6,11 @@ const escapeXml = (value: string) =>
     .replace(/"/g, "&quot;");
 
 export default function handler(_req: any, res: any) {
-  try {
-    const title = escapeXml("أثر");
-    const subtitle = escapeXml("رفيق يومي للأذكار وورد القرآن ومشاركة الأثر");
-    const dedication = escapeXml("عن مسلّم عوده البويني رحمه الله");
+  const title = escapeXml("أثر");
+  const subtitle = escapeXml("رفيق يومي للأذكار وورد القرآن ومشاركة الأثر");
+  const dedication = escapeXml("عن مسلّم عوده البويني رحمه الله");
 
-    const svg = `<?xml version="1.0" encoding="UTF-8"?>
+  const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect width="1200" height="630" fill="#F9F3E8"/>
   <rect x="34" y="34" width="1132" height="562" rx="58" fill="url(#card)" stroke="rgba(35,76,64,0.10)"/>
@@ -35,20 +32,7 @@ export default function handler(_req: any, res: any) {
   </defs>
 </svg>`;
 
-    const png = new Resvg(svg, {
-      fitTo: {
-        mode: "width",
-        value: 1200,
-      },
-    })
-      .render()
-      .asPng();
-
-    res.setHeader("Content-Type", "image/png");
-    res.setHeader("Cache-Control", "public, max-age=0, s-maxage=86400, stale-while-revalidate=604800");
-    return res.status(200).send(Buffer.from(png));
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Unable to generate OG image" });
-  }
+  res.setHeader("Content-Type", "image/svg+xml; charset=utf-8");
+  res.setHeader("Cache-Control", "public, max-age=0, s-maxage=86400, stale-while-revalidate=604800");
+  return res.status(200).send(svg);
 }
