@@ -4,13 +4,15 @@ type AppHeroProps = {
 };
 
 export default function AppHero({ title, subtitle }: AppHeroProps) {
+  const isLongTitle = title.length >= 6;
+
   return (
     <section className="relative mb-6 min-h-[220px] overflow-hidden rounded-[38px] bg-gradient-to-br from-[#2F9D75] via-[#39AA80] to-[#67B99D] px-7 pb-20 pt-10 text-white shadow-xl">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_25%,rgba(255,255,255,0.18),transparent_22%),radial-gradient(circle_at_88%_10%,rgba(255,255,255,0.14),transparent_20%)]" />
       <div className="relative z-20 flex items-start justify-between gap-4">
         <div className="grid h-11 w-11 shrink-0 place-items-center rounded-[20px] bg-white/18 text-2xl shadow-inner backdrop-blur-sm">✦</div>
-        <div className="text-right">
-          <h1 className="text-4xl font-bold leading-snug">{title}</h1>
+        <div className="max-w-[72%] text-right">
+          <h1 className={`${isLongTitle ? "text-[2.55rem]" : "text-4xl"} font-bold leading-snug`}>{title}</h1>
           {subtitle && <p className="mt-3 max-w-[280px] text-base leading-relaxed text-white/82">{subtitle}</p>}
         </div>
       </div>
