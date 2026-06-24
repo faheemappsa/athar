@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import "./index.css";
 import BottomNav from "./components/Navigation/BottomNav";
 import HomePage from "./pages/HomePage";
@@ -11,10 +12,26 @@ import InstallPrompt from "./components/Shared/InstallPrompt";
 import ScrollMemory from "./components/Shared/ScrollMemory";
 import AppIntro from "./components/Shared/AppIntro";
 
+const AnalyticsPageView = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    try {
+      (window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.("event", "page_view", {
+        page_path: `${location.pathname}${location.search}`,
+        page_title: document.title,
+      });
+    } catch {}
+  }, [location.pathname, location.search]);
+
+  return null;
+};
+
 export default function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
+        <AnalyticsPageView />
         <div className="fixed inset-0 w-full overflow-hidden bg-primary-bg font-arabic">
           <AppIntro />
           <InstallPrompt />
