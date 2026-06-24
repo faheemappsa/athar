@@ -55,6 +55,7 @@ export default function AtharCard() {
   const [showNamePrompt, setShowNamePrompt] = useState(false);
   const [showNameActions, setShowNameActions] = useState(false);
   const [shareAfterName, setShareAfterName] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -90,22 +91,54 @@ export default function AtharCard() {
     };
   }, []);
 
+  const shareBlob = async (blob: Blob) => {
+    const file = new File([blob], "athar-story.png", { type: "image/png" });
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file], title: "أثر اليوم", text: athar?.text || "أثر اليوم" });
+      return;
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "athar-story.png";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const generateServerImage = async () => {
+    if (!athar) throw new Error("No Athar content");
+    const response = await fetch("/api/athar-image", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: athar.text,
+        source: athar.source,
+        name: shareName,
+      }),
+    });
+
+    if (!response.ok) throw new Error("Server image failed");
+    return response.blob();
+  };
+
+  const generateFallbackImage = async () => {
+    if (!cardRef.current) throw new Error("No card element");
+    const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: "#F8FFFD" });
+    const image = canvas.toDataURL("image/png");
+    return fetch(image).then((res) => res.blob());
+  };
+
   const shareImage = async () => {
-    if (!cardRef.current || !athar) return;
+    if (!athar || isSharing) return;
+    setIsSharing(true);
     try {
-      const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: "#F8FFFD" });
-      const image = canvas.toDataURL("image/png");
-      if (navigator.share) {
-        const blob = await fetch(image).then((res) => res.blob());
-        const file = new File([blob], "athar.png", { type: "image/png" });
-        await navigator.share({ files: [file], title: "أثر اليوم", text: athar.text });
-      } else {
-        const link = document.createElement("a");
-        link.href = image;
-        link.download = "athar.png";
-        link.click();
-      }
-    } catch {}
+      const blob = await generateServerImage().catch(() => generateFallbackImage());
+      await shareBlob(blob);
+    } catch {
+    } finally {
+      setIsSharing(false);
+    }
   };
 
   const handleShare = async () => {
@@ -230,9 +263,10 @@ export default function AtharCard() {
       </motion.div>
       <button
         onClick={handleShare}
-        className="mt-5 w-full rounded-full bg-action px-6 py-4 text-lg font-bold text-white shadow-lg shadow-action/20 transition hover:opacity-90 active:scale-[0.98]"
+        disabled={isSharing}
+        className="mt-5 w-full rounded-full bg-action px-6 py-4 text-lg font-bold text-white shadow-lg shadow-action/20 transition hover:opacity-90 active:scale-[0.98] disabled:cursor-wait disabled:opacity-75"
       >
-        شارك الأثر
+        {isSharing ? "جاري تجهيز الأثر..." : "شارك الأثر"}
       </button>
 
       {(showNamePrompt || showNameActions) && (
