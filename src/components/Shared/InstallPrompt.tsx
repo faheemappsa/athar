@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { trackEvent } from "../../utils/analytics";
 
@@ -17,6 +17,12 @@ export default function InstallPrompt() {
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(() => localStorage.getItem("athar-install-hidden") === "true");
   const device = useMemo(getDevice, []);
+
+  useEffect(() => {
+    const handleInstalled = () => trackEvent("pwa_app_installed", { device });
+    window.addEventListener("appinstalled", handleInstalled);
+    return () => window.removeEventListener("appinstalled", handleInstalled);
+  }, [device]);
 
   if (hidden || isStandalone()) return null;
 
