@@ -2,6 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { trackEvent } from "../../utils/analytics";
 
+const INSTALL_SNOOZE_KEY = "athar-install-snooze-until";
+const INSTALL_INSTALLED_KEY = "athar-install-installed";
+const DAY = 24 * 60 * 60 * 1000;
+
 const isStandalone = () =>
   window.matchMedia?.("(display-mode: standalone)").matches ||
   (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
@@ -13,15 +17,47 @@ const getDevice = () => {
   return "other";
 };
 
+const shouldHidePrompt = () => {
+  if (isStandalone()) {
+    localStorage.setItem(INSTALL_INSTALLED_KEY, "true");
+    return true;
+  }
+
+  if (localStorage.getItem(INSTALL_INSTALLED_KEY) === "true") return true;
+
+  const snoozeUntil = Number(localStorage.getItem(INSTALL_SNOOZE_KEY) || 0);
+  return Number.isFinite(snoozeUntil) && Date.now() < snoozeUntil;
+};
+
+const snoozePrompt = (days: number) => {
+  localStorage.setItem(INSTALL_SNOOZE_KEY, String(Date.now() + days * DAY));
+};
+
 export default function InstallPrompt() {
   const [open, setOpen] = useState(false);
-  const [hidden, setHidden] = useState(() => localStorage.getItem("athar-install-hidden") === "true");
+  const [hidden, setHidden] = useState(shouldHidePrompt);
   const device = useMemo(getDevice, []);
 
   useEffect(() => {
-    const handleInstalled = () => trackEvent("pwa_app_installed", { device });
+    const handleInstalled = () => {
+      localStorage.setItem(INSTALL_INSTALLED_KEY, "true");
+      trackEvent("pwa_app_installed", { device });
+      setHidden(true);
+    };
+
+    const handleVisibility = () => {
+      if (shouldHidePrompt()) setHidden(true);
+    };
+
     window.addEventListener("appinstalled", handleInstalled);
-    return () => window.removeEventListener("appinstalled", handleInstalled);
+    window.addEventListener("focus", handleVisibility);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("appinstalled", handleInstalled);
+      window.removeEventListener("focus", handleVisibility);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, [device]);
 
   if (hidden || isStandalone()) return null;
@@ -34,8 +70,15 @@ export default function InstallPrompt() {
       : ["افتح قائمة المتصفح", "اختر إضافة إلى الشاشة الرئيسية", "ثبّت أثر للوصول اليومي السريع"];
 
   const dismiss = () => {
-    localStorage.setItem("athar-install-hidden", "true");
-    trackEvent("pwa_install_prompt_dismiss", { device });
+    snoozePrompt(7);
+    trackEvent("pwa_install_prompt_dismiss", { device, snooze_days: 7 });
+    setHidden(true);
+  };
+
+  const understood = () => {
+    snoozePrompt(4);
+    trackEvent("pwa_install_prompt_understood", { device, snooze_days: 4 });
+    setOpen(false);
     setHidden(true);
   };
 
@@ -85,13 +128,7 @@ export default function InstallPrompt() {
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-2">
-              <button
-                onClick={() => {
-                  trackEvent("pwa_install_prompt_understood", { device });
-                  setOpen(false);
-                }}
-                className="rounded-full bg-action py-3 font-bold text-white"
-              >
+              <button onClick={understood} className="rounded-full bg-action py-3 font-bold text-white">
                 فهمت
               </button>
               <button onClick={dismiss} className="rounded-full bg-primary-bg py-3 font-bold text-secondary-text">
