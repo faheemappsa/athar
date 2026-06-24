@@ -25,15 +25,44 @@ const PERIOD_LABEL: Record<DhikrCategory, string> = {
   sleep: "وقت السكينة",
 };
 
+const CONTINUITY_KEY = "athar-dhikr-completion-days";
+
+const getTodayKey = () => new Date().toISOString().slice(0, 10);
+
+const readCompletionDays = () => {
+  try {
+    return JSON.parse(localStorage.getItem(CONTINUITY_KEY) || "[]") as string[];
+  } catch {
+    return [];
+  }
+};
+
+const saveCompletionDay = () => {
+  try {
+    const today = getTodayKey();
+    const days = readCompletionDays();
+    const next = [today, ...days.filter((day) => day !== today)].slice(0, 30);
+    localStorage.setItem(CONTINUITY_KEY, JSON.stringify(next));
+    return next;
+  } catch {
+    return [];
+  }
+};
+
 export default function Dhikr() {
   const { location } = useSavedLocation();
   const [category, setCategory] = useState<DhikrCategory>(getFallbackCategory);
-  const [mode, setMode] = useState<DhikrMode>("full");
+  const mode: DhikrMode = "full";
   const [currentIndex, setCurrentIndex] = useState(0);
   const [count, setCount] = useState(0);
   const [feedback, setFeedback] = useState<"idle" | "success" | "complete">("idle");
   const [loaded, setLoaded] = useState(false);
   const [pulseKey, setPulseKey] = useState(0);
+  const [completionDays, setCompletionDays] = useState<string[]>([]);
+
+  useEffect(() => {
+    setCompletionDays(readCompletionDays());
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -72,10 +101,7 @@ export default function Dhikr() {
     };
   }, [location]);
 
-  const dhikrList = useMemo(() => {
-    const all = ADHKAR[category] || ADHKAR.morning;
-    return mode === "brief" ? all.filter((item) => item.mode === "brief") : all;
-  }, [category, mode]);
+  const dhikrList = useMemo(() => ADHKAR[category] || ADHKAR.morning, [category]);
 
   const progressKey = `athar-dhikr-${category}-${mode}`;
 
@@ -106,10 +132,32 @@ export default function Dhikr() {
   const current = dhikrList[currentIndex] || dhikrList[0];
   const safeCount = Math.max(1, current?.count || 1);
   const isComplete = count >= safeCount;
+  const isFinalDhikr = currentIndex + 1 >= dhikrList.length;
   const itemProgress = Math.min(100, (count / safeCount) * 100);
+  const remainingCount = Math.max(0, safeCount - count);
   const totalProgress = dhikrList.length > 0 ? ((currentIndex + count / safeCount) / dhikrList.length) * 100 : 0;
   const categoryInfo = CATEGORY_LABELS[category];
-  const stage = totalProgress >= 100 ? "🌳 اكتملت" : totalProgress >= 55 ? "🌿 تتقدم" : "🌱 بداية طيبة";
+  const completionCount = completionDays.length;
+  const identityCopy = completionCount >= 7 ? "أسبوع من المواظبة" : completionCount >= 3 ? `${completionCount} أيام من الوصل` : "عدت اليوم إلى الذكر";
+
+  const recordSessionCompletion = () => {
+    const next = saveCompletionDay();
+    setCompletionDays(next);
+  };
+
+  const goToNextDhikr = () => {
+    if (currentIndex + 1 < dhikrList.length) {
+      setCurrentIndex(currentIndex + 1);
+      setCount(0);
+      setFeedback("idle");
+      setPulseKey((value) => value + 1);
+      return;
+    }
+
+    setCount(safeCount);
+    setFeedback("complete");
+    recordSessionCompletion();
+  };
 
   const handleTap = () => {
     if (!current || isComplete) return;
@@ -123,6 +171,7 @@ export default function Dhikr() {
 
     if (newCount === safeCount) {
       setFeedback("complete");
+      if (isFinalDhikr) recordSessionCompletion();
       setTimeout(() => {
         if (currentIndex + 1 < dhikrList.length) {
           setCurrentIndex(currentIndex + 1);
@@ -134,11 +183,6 @@ export default function Dhikr() {
       setFeedback("success");
       setTimeout(() => setFeedback("idle"), 180);
     }
-  };
-
-  const saveForLater = () => {
-    setFeedback("complete");
-    setTimeout(() => setFeedback("idle"), 700);
   };
 
   const resetProgress = () => {
@@ -169,29 +213,13 @@ export default function Dhikr() {
       transition={{ duration: 0.4, delay: 0.2 }}
       className="w-full overflow-hidden rounded-card bg-white p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
-      <div className="relative mb-5 overflow-hidden rounded-[28px] bg-action p-5 text-white">
-        <div className="relative z-10">
-          <p className="text-sm text-white/75">{PERIOD_LABEL[category]}</p>
-          <h2 className="mt-1 text-2xl font-bold">{categoryInfo.emoji} {categoryInfo.title}</h2>
-          <p className="mt-2 text-sm text-white/80">{stage} · {Math.round(totalProgress)}٪ مكتمل</p>
-        </div>
-        <div className="absolute -bottom-10 left-0 h-20 w-2/3 rounded-tr-[90px] bg-white/20" />
-        <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/10" />
+      <div className="mb-4 flex items-center justify-between rounded-full bg-primary-bg px-4 py-3 text-sm font-bold text-secondary-text">
+        <span className="text-action">{categoryInfo.emoji} {categoryInfo.title}</span>
+        <span>{PERIOD_LABEL[category]}</span>
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-2 rounded-full bg-primary-bg p-1">
-        <button
-          onClick={() => setMode("brief")}
-          className={`rounded-full py-2 text-sm font-semibold transition ${mode === "brief" ? "bg-white text-action shadow" : "text-secondary-text"}`}
-        >
-          ⚡ مختصر
-        </button>
-        <button
-          onClick={() => setMode("full")}
-          className={`rounded-full py-2 text-sm font-semibold transition ${mode === "full" ? "bg-white text-action shadow" : "text-secondary-text"}`}
-        >
-          🌿 كامل
-        </button>
+      <div className="mb-4 h-3 w-full overflow-hidden rounded-full bg-primary-bg">
+        <div className="h-full rounded-full bg-action transition-all duration-300" style={{ width: `${Math.min(100, totalProgress)}%` }} />
       </div>
 
       <div className="mb-4 flex items-center justify-between text-sm text-secondary-text">
@@ -199,12 +227,11 @@ export default function Dhikr() {
         <span>{current.title}</span>
       </div>
 
-      <div className="mb-5 h-3 w-full overflow-hidden rounded-full bg-primary-bg">
-        <div className="h-full rounded-full bg-action transition-all duration-300" style={{ width: `${Math.min(100, totalProgress)}%` }} />
-      </div>
-
       <p className="break-words text-xl font-semibold leading-loose text-primary-text">{current.text}</p>
-      <p className="mt-3 text-sm text-secondary-text">التكرار: {safeCount}</p>
+      <div className="mt-3 flex items-center justify-between text-sm text-secondary-text">
+        <span>التكرار: {safeCount}</span>
+        <span className="font-bold text-action">المتبقي: {remainingCount}</span>
+      </div>
 
       <button
         onClick={handleTap}
@@ -254,22 +281,26 @@ export default function Dhikr() {
         </motion.div>
       </button>
 
-      <p className="mt-3 text-center text-xs text-secondary-text">تقدم هذا الذكر محفوظ تلقائياً</p>
-
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        <button onClick={saveForLater} className="rounded-full bg-primary-bg py-3 text-sm font-semibold text-action">
-          حفظ التقدم
+      {!isComplete && (
+        <button onClick={goToNextDhikr} className="mx-auto mt-3 block rounded-full px-5 py-2 text-sm font-bold text-secondary-text transition hover:bg-primary-bg">
+          الذكر التالي ←
         </button>
-        <button onClick={resetProgress} className="rounded-full bg-primary-bg py-3 text-sm font-semibold text-secondary-text">
-          البدء من جديد
+      )}
+
+      <p className="mt-3 text-center text-xs text-secondary-text">تقدمك محفوظ تلقائياً</p>
+
+      <div className="mt-4 flex justify-center">
+        <button onClick={resetProgress} className="rounded-full bg-primary-bg px-6 py-3 text-sm font-semibold text-secondary-text">
+          إعادة الأذكار
         </button>
       </div>
 
-      {currentIndex + 1 >= dhikrList.length && isComplete && (
-        <div className="mt-4 rounded-[28px] bg-mint-soft p-5 text-center">
-          <p className="text-2xl">🌳</p>
-          <p className="mt-2 font-bold text-primary-text">أتممت أذكارك</p>
-          <p className="mt-1 text-sm text-secondary-text">أثر طيب يُكتب لك بإذن الله</p>
+      {isFinalDhikr && isComplete && (
+        <div className="mt-4 overflow-hidden rounded-[28px] bg-mint-soft p-5 text-center">
+          <p className="text-2xl">🌿</p>
+          <p className="mt-2 text-lg font-extrabold text-primary-text">من أهل الذكر</p>
+          <p className="mt-1 text-sm font-semibold text-secondary-text">{identityCopy}</p>
+          <p className="mt-3 text-sm leading-relaxed text-secondary-text">غدًا نلتقي على ذكرٍ جديد.</p>
         </div>
       )}
     </motion.div>
