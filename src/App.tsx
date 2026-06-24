@@ -35,7 +35,7 @@ export default function App() {
           <AppIntro />
           <InstallPrompt />
           <ScrollMemory />
-          <main id="app-scroll" className="app-scroll h-full w-full overflow-y-auto px-4 pb-28 pt-10">
+          <main id="app-scroll" className="app-scroll h-full w-full overflow-y-auto px-4 pb-28 pt-6">
             <div className="mx-auto w-full max-w-md">
               <Routes>
                 <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
