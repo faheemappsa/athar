@@ -11,6 +11,8 @@ const getCardMood = (time: AtharContent["time"]) => {
     return {
       shell: "from-white via-[#F8FFF9] to-[#EAF7EF]",
       glow: "bg-[#CBEFD8]/35",
+      ring: "ring-[#BFEAD0]/45",
+      aura: "shadow-[#8FD3B3]/25",
     };
   }
 
@@ -18,6 +20,8 @@ const getCardMood = (time: AtharContent["time"]) => {
     return {
       shell: "from-white via-[#F4FBF8] to-[#E2F0EA]",
       glow: "bg-[#7FC7A7]/22",
+      ring: "ring-[#7FC7A7]/30",
+      aura: "shadow-[#5EAA8C]/20",
     };
   }
 
@@ -25,12 +29,16 @@ const getCardMood = (time: AtharContent["time"]) => {
     return {
       shell: "from-white via-[#F8FBF8] to-[#ECF5F0]",
       glow: "bg-[#A9DCC4]/24",
+      ring: "ring-[#A9DCC4]/34",
+      aura: "shadow-[#86C6AA]/20",
     };
   }
 
   return {
     shell: "from-white via-[#F8FFFD] to-[#EAF6F3]",
     glow: "bg-[#B8E3CF]/26",
+    ring: "ring-[#B8E3CF]/36",
+    aura: "shadow-[#8FD3B3]/18",
   };
 };
 
@@ -164,18 +172,32 @@ export default function AtharCard() {
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: 0.2 }}
-      className="w-full overflow-hidden rounded-card bg-white p-4 text-center shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+      className={`w-full overflow-hidden rounded-card bg-white p-4 text-center shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${mood.aura}`}
     >
-      <div
+      <motion.div
         ref={cardRef}
-        className={`relative min-h-[430px] w-full overflow-hidden rounded-[32px] bg-gradient-to-br ${mood.shell} px-7 py-9 shadow-inner`}
+        initial={{ opacity: 0.96, scale: 0.992 }}
+        animate={{ opacity: 1, scale: [1, 1.006, 1] }}
+        transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
+        className={`relative min-h-[430px] w-full overflow-hidden rounded-[32px] bg-gradient-to-br ${mood.shell} px-7 py-9 shadow-inner ring-1 ${mood.ring}`}
       >
-        <div className={`absolute -top-24 left-1/2 h-60 w-60 -translate-x-1/2 rounded-full blur-3xl ${mood.glow}`} />
+        <motion.div
+          animate={{ opacity: [0.5, 0.82, 0.5], scale: [1, 1.08, 1] }}
+          transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
+          className={`absolute -top-24 left-1/2 h-60 w-60 -translate-x-1/2 rounded-full blur-3xl ${mood.glow}`}
+        />
+        <div className="absolute inset-0 rounded-[32px] bg-[radial-gradient(circle_at_50%_8%,rgba(255,255,255,0.52),transparent_24%),linear-gradient(135deg,rgba(255,255,255,0.22),transparent_38%)]" />
         <div className="absolute -bottom-24 -right-16 h-64 w-64 rounded-full border border-action/8" />
         <div className="absolute -bottom-28 -left-20 h-72 w-72 rounded-full border border-action/5" />
         <div className="absolute inset-x-8 top-10 h-44 rounded-b-[96px] border-x border-b border-action/5" />
 
-        <div className="relative z-10 flex min-h-[352px] flex-col items-center justify-between">
+        <motion.div
+          key={athar.id}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.38, ease: "easeOut" }}
+          className="relative z-10 flex min-h-[352px] flex-col items-center justify-between"
+        >
           <p className="text-sm font-bold tracking-wide text-action/80">أثر اليوم</p>
 
           <div className="flex flex-1 items-center justify-center py-9">
@@ -204,8 +226,8 @@ export default function AtharCard() {
               </div>
             )}
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
       <button
         onClick={handleShare}
         className="mt-5 w-full rounded-full bg-action px-6 py-4 text-lg font-bold text-white shadow-lg shadow-action/20 transition hover:opacity-90 active:scale-[0.98]"
