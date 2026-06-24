@@ -209,9 +209,9 @@ export default function AtharCard() {
       </button>
 
       {(showNamePrompt || showNameActions) && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/25 px-4 pb-5 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/25 px-4 pb-8 pt-[18vh] backdrop-blur-sm">
           <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.98 }}
+            initial={{ opacity: 0, y: 18, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.22 }}
             className="w-full max-w-md rounded-[30px] bg-white p-5 text-center shadow-2xl"
