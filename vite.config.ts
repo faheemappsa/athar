@@ -19,7 +19,14 @@ export default defineConfig({
         scope: '/',
         dir: 'rtl',
         lang: 'ar-SA',
-        icons: []
+        icons: [
+          {
+            src: '/athar-icon.svg',
+            sizes: '512x512',
+            type: 'image/svg+xml',
+            purpose: 'any maskable'
+          }
+        ]
       },
       workbox: {
         navigateFallback: '/index.html',
