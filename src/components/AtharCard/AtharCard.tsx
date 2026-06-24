@@ -184,19 +184,24 @@ export default function AtharCard() {
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="w-full space-y-3">
             <p className="text-sm font-semibold text-secondary-text/80">{athar.source}</p>
             {shareName && (
-              <button
-                type="button"
-                onClick={() => {
-                  setNameDraft(shareName);
-                  setShowNameActions(true);
-                }}
-                className="rounded-full bg-white/70 px-4 py-2 text-xs font-bold text-action shadow-sm backdrop-blur"
-              >
-                ✦ {shareName} <span className="opacity-70">✎</span>
-              </button>
+              <div className="flex w-full justify-start">
+                <button
+                  type="button"
+                  onClick={() => {
+                    pulse();
+                    setNameDraft(shareName);
+                    setShowNameActions(true);
+                  }}
+                  className="inline-flex items-center gap-2 rounded-full bg-white/75 px-4 py-2.5 text-sm font-extrabold text-action shadow-md shadow-action/5 backdrop-blur active:scale-[0.97]"
+                >
+                  <span className="text-base leading-none">✦</span>
+                  <span>{shareName}</span>
+                  <span className="text-base leading-none opacity-80">✎</span>
+                </button>
+              </div>
             )}
           </div>
         </div>
