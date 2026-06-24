@@ -1,1 +1,26 @@
-{"name":"Athar","short_name":"Athar","start_url":"/","display":"standalone","background_color":"#EAF6F3","theme_color":"#38A47C"}
+{
+  "name": "أثر | وقف خيري عن مسلّم عوده البويني رحمه الله",
+  "short_name": "أثر",
+  "description": "رفيق يومي للأذكار وورد القرآن ومشاركة الأثر.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "dir": "rtl",
+  "lang": "ar-SA",
+  "background_color": "#EAF6F3",
+  "theme_color": "#38A47C",
+  "categories": ["lifestyle", "books", "education"],
+  "shortcuts": [
+    {
+      "name": "الأذكار",
+      "short_name": "الأذكار",
+      "url": "/dhikr?source=pwa-shortcut"
+    },
+    {
+      "name": "ورد القرآن",
+      "short_name": "القرآن",
+      "url": "/quran?source=pwa-shortcut"
+    }
+  ]
+}
