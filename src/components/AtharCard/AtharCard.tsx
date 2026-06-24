@@ -48,6 +48,12 @@ const pulse = () => {
   } catch {}
 };
 
+const trackEvent = (name: string, params?: Record<string, string | number | boolean>) => {
+  try {
+    (window as Window & { gtag?: (...args: unknown[]) => void }).gtag?.("event", name, params || {});
+  } catch {}
+};
+
 export default function AtharCard() {
   const [athar, setAthar] = useState<AtharContent | null>(null);
   const [shareName, setShareName] = useState("");
@@ -94,7 +100,12 @@ export default function AtharCard() {
   const shareBlob = async (blob: Blob) => {
     const file = new File([blob], "athar-story.png", { type: "image/png" });
     if (navigator.share && navigator.canShare?.({ files: [file] })) {
-      await navigator.share({ files: [file], title: "أثر اليوم", text: athar?.text || "أثر اليوم" });
+      await navigator.share({
+        files: [file],
+        title: "أثر",
+        text: "وقف خيري عن مسلّم عوده البويني رحمه الله",
+      });
+      trackEvent("athar_share_success", { method: "native_share" });
       return;
     }
 
@@ -104,6 +115,7 @@ export default function AtharCard() {
     link.download = "athar-story.png";
     link.click();
     URL.revokeObjectURL(url);
+    trackEvent("athar_share_success", { method: "download" });
   };
 
   const generateServerImage = async () => {
@@ -132,10 +144,12 @@ export default function AtharCard() {
   const shareImage = async () => {
     if (!athar || isSharing) return;
     setIsSharing(true);
+    trackEvent("athar_share_start", { kind: athar.kind, time: athar.time });
     try {
       const blob = await generateServerImage().catch(() => generateFallbackImage());
       await shareBlob(blob);
     } catch {
+      trackEvent("athar_share_error");
     } finally {
       setIsSharing(false);
     }
@@ -147,6 +161,7 @@ export default function AtharCard() {
     if (!hasSeenPrompt) {
       setShareAfterName(true);
       setShowNamePrompt(true);
+      trackEvent("athar_name_prompt_view");
       return;
     }
     await shareImage();
@@ -159,6 +174,7 @@ export default function AtharCard() {
       localStorage.setItem(NAME_KEY, cleanName);
       setShareName(cleanName);
       setNameDraft(cleanName);
+      trackEvent("athar_name_saved");
     }
     setShowNamePrompt(false);
     setShowNameActions(false);
@@ -170,6 +186,7 @@ export default function AtharCard() {
 
   const skipName = async () => {
     localStorage.setItem(NAME_SEEN_KEY, "1");
+    trackEvent("athar_name_skipped");
     setShowNamePrompt(false);
     setShowNameActions(false);
     if (shareAfterName) {
@@ -231,7 +248,12 @@ export default function AtharCard() {
           transition={{ duration: 0.38, ease: "easeOut" }}
           className="relative z-10 flex min-h-[352px] flex-col items-center justify-between"
         >
-          <p className="text-sm font-bold tracking-wide text-action/80">أثر اليوم</p>
+          <div className="space-y-1">
+            <p className="text-sm font-bold tracking-wide text-action/80">🌿 أثر</p>
+            <p className="text-[11px] font-bold leading-relaxed text-secondary-text/80">
+              وقف خيري عن مسلّم عوده البويني رحمه الله
+            </p>
+          </div>
 
           <div className="flex flex-1 items-center justify-center py-9">
             <p className="break-words text-[1.72rem] font-extrabold leading-[2.35] text-primary-text">
@@ -241,6 +263,10 @@ export default function AtharCard() {
 
           <div className="w-full space-y-3">
             <p className="text-sm font-semibold text-secondary-text/80">{athar.source}</p>
+            <div className="space-y-1 text-[11px] font-bold leading-relaxed text-secondary-text/75">
+              <p>لعلنا نكون منهم...</p>
+              <p>﴿ وولدٌ صالحٌ يدعو له ﴾</p>
+            </div>
             {shareName && (
               <div className="flex w-full justify-start">
                 <button
