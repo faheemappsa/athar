@@ -1,55 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { getQuranPage } from "../../services/quranApi";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 
-type QuranAyah = { text: string; numberInSurah?: number; surah?: { name?: string } };
-
-type QuranPageResponse = {
-  text?: string;
-  ayahs?: QuranAyah[];
-};
+const getMushafPageImage = (page: number) => `/mushaf-pages/${String(page).padStart(3, "0")}.png`;
 
 export default function Quran() {
   const [page, setPage] = useLocalStorage<number>("quran-page", 1);
-  const [content, setContent] = useState<string>("");
-  const [surahName, setSurahName] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false);
+  const [imageError, setImageError] = useState<boolean>(false);
   const [inputPage, setInputPage] = useState<string>("");
-  const [error, setError] = useState<string>("");
-
-  useEffect(() => {
-    let mounted = true;
-    setLoading(true);
-    setError("");
-
-    getQuranPage(page)
-      .then((data: QuranPageResponse) => {
-        if (!mounted) return;
-        const ayahs = Array.isArray(data?.ayahs) ? data.ayahs : [];
-        const pageText = ayahs.length > 0 ? ayahs.map((ayah) => ayah.text).join(" ﴿۞﴾ ") : data?.text || "";
-        const firstSurah = ayahs[0]?.surah?.name || "";
-        setContent(pageText);
-        setSurahName(firstSurah);
-        if (!pageText) setError("تعذر عرض الصفحة حالياً");
-      })
-      .catch(() => {
-        if (!mounted) return;
-        setContent("");
-        setSurahName("");
-        setError("تعذر تحميل صفحة المصحف");
-      })
-      .finally(() => {
-        if (mounted) setLoading(false);
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, [page]);
 
   const goToPage = (newPage: number) => {
     if (newPage < 1 || newPage > 604) return;
+    setImageLoaded(false);
+    setImageError(false);
     setPage(newPage);
     setInputPage("");
   };
@@ -61,43 +25,52 @@ export default function Quran() {
     }
   };
 
-  if (loading) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.3 }}
-        className="w-full overflow-hidden rounded-card bg-white p-6 text-center text-secondary-text shadow-xl"
-      >
-        جاري التحميل...
-      </motion.div>
-    );
-  }
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.3 }}
-      className="w-full overflow-hidden rounded-card bg-white p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+      className="w-full overflow-hidden rounded-card bg-white p-4 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
-      <div className="mb-4 flex items-center justify-between gap-3">
+      <div className="mb-3 flex items-center justify-between gap-3 px-1">
         <div>
-          <h2 className="text-xl font-bold text-primary-text">المصحف</h2>
-          {surahName && <p className="mt-1 text-sm text-secondary-text">{surahName}</p>}
+          <h2 className="text-lg font-bold text-primary-text">المصحف</h2>
+          <p className="mt-0.5 text-xs text-secondary-text">صفحات مصحف حقيقية</p>
         </div>
-        <span className="shrink-0 text-sm text-secondary-text">الصفحة {page} / 604</span>
+        <span className="shrink-0 rounded-full bg-primary-bg px-3 py-1.5 text-xs font-bold text-secondary-text">الصفحة {page} / 604</span>
       </div>
 
-      {error ? (
-        <div className="rounded-[24px] bg-primary-bg p-5 text-center text-secondary-text">{error}</div>
-      ) : (
-        <div className="quran-text max-h-[460px] overflow-y-auto rounded-[24px] bg-primary-bg/50 p-4 text-right text-xl leading-[2.7] text-primary-text" style={{ fontFamily: "serif" }}>
-          {content}
-        </div>
-      )}
+      <div className="relative overflow-hidden rounded-[26px] bg-[#FBF7EC] p-2 shadow-inner">
+        {!imageLoaded && !imageError && (
+          <div className="absolute inset-2 z-10 grid place-items-center rounded-[22px] bg-primary-bg/80 text-sm font-semibold text-secondary-text">
+            جاري تجهيز صفحة المصحف...
+          </div>
+        )}
 
-      <div className="mt-5 grid grid-cols-3 items-center gap-2">
+        {imageError ? (
+          <div className="rounded-[22px] bg-primary-bg p-5 text-center text-secondary-text">
+            لم يتم العثور على صورة هذه الصفحة بعد.
+          </div>
+        ) : (
+          <img
+            key={page}
+            src={getMushafPageImage(page)}
+            alt={`صفحة ${page} من المصحف`}
+            loading="eager"
+            decoding="async"
+            onLoad={() => setImageLoaded(true)}
+            onError={() => {
+              setImageLoaded(false);
+              setImageError(true);
+            }}
+            className={`mx-auto block w-full max-w-[390px] rounded-[18px] bg-white object-contain shadow-sm transition-opacity duration-300 ${
+              imageLoaded ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        )}
+      </div>
+
+      <div className="mt-4 grid grid-cols-3 items-center gap-2">
         <button
           onClick={() => goToPage(page - 1)}
           disabled={page <= 1}
