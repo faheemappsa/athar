@@ -26,24 +26,19 @@ const makeQrSvg = async () => {
   return QRCode.toString(APP_URL, {
     type: "svg",
     margin: 0,
-    width: 108,
+    width: 104,
     color: {
-      dark: "#245C49",
+      dark: "#275D4A",
       light: "#FFFFFF",
     },
   });
 };
 
-const getTextSize = (text: string) => {
-  if (text.length > 210) return { fontSize: 46, lineHeight: 1.9, maxWidth: 850 };
-  if (text.length > 150) return { fontSize: 52, lineHeight: 1.95, maxWidth: 850 };
-  if (text.length > 95) return { fontSize: 62, lineHeight: 2, maxWidth: 835 };
-  return { fontSize: 76, lineHeight: 2.05, maxWidth: 820 };
-};
-
 const makeElement = (text: string, source: string, name: string, qrSvg: string) => {
-  const personalLine = name ? `شارك الأثر • ${name}` : "أثر";
-  const textStyle = getTextSize(text);
+  const isLong = text.length > 140;
+  const isMedium = text.length > 86;
+  const fontSize = isLong ? 54 : isMedium ? 64 : 76;
+  const sourceLabel = source || "أثر";
 
   return {
     type: "div",
@@ -55,9 +50,9 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
         position: "relative",
         direction: "rtl",
         overflow: "hidden",
-        background: "linear-gradient(155deg, #FBFFF9 0%, #EFF8F2 42%, #DCEFE6 100%)",
+        background: "linear-gradient(145deg, #F8FFFB 0%, #EEF8F2 44%, #DFEFE7 100%)",
         fontFamily: "NotoNaskhArabic",
-        color: "#1F3B30",
+        color: "#20382E",
       },
       children: [
         {
@@ -65,9 +60,24 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              inset: 0,
-              background:
-                "radial-gradient(circle at 28% 18%, rgba(115, 196, 155, 0.24), transparent 26%), radial-gradient(circle at 86% 82%, rgba(47, 111, 87, 0.16), transparent 30%), linear-gradient(110deg, rgba(255,255,255,0.55), transparent 48%)",
+              inset: 42,
+              borderRadius: 64,
+              border: "1.5px solid rgba(39, 93, 74, 0.13)",
+              boxShadow: "0 0 88px rgba(91, 169, 135, 0.22)",
+            },
+          },
+        },
+        {
+          type: "div",
+          props: {
+            style: {
+              position: "absolute",
+              width: 760,
+              height: 760,
+              borderRadius: 760,
+              left: -260,
+              top: -230,
+              background: "rgba(143, 211, 179, 0.26)",
             },
           },
         },
@@ -79,9 +89,9 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
               width: 920,
               height: 920,
               borderRadius: 920,
-              right: -390,
-              top: -330,
-              border: "2px solid rgba(36, 92, 73, 0.070)",
+              right: -340,
+              bottom: -270,
+              border: "2px solid rgba(39, 93, 74, 0.10)",
             },
           },
         },
@@ -90,12 +100,12 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              width: 980,
-              height: 980,
-              borderRadius: 980,
-              left: -420,
-              bottom: -370,
-              border: "2px solid rgba(36, 92, 73, 0.075)",
+              width: 650,
+              height: 650,
+              borderRadius: 650,
+              left: -260,
+              bottom: -230,
+              border: "2px solid rgba(39, 93, 74, 0.065)",
             },
           },
         },
@@ -104,15 +114,15 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              left: 118,
-              right: 118,
-              top: 150,
+              left: 146,
+              right: 146,
+              top: 142,
               height: 520,
-              borderLeft: "2px solid rgba(36, 92, 73, 0.065)",
-              borderRight: "2px solid rgba(36, 92, 73, 0.065)",
-              borderBottom: "2px solid rgba(36, 92, 73, 0.065)",
-              borderBottomLeftRadius: 280,
-              borderBottomRightRadius: 280,
+              borderLeft: "2px solid rgba(39, 93, 74, 0.06)",
+              borderRight: "2px solid rgba(39, 93, 74, 0.06)",
+              borderBottom: "2px solid rgba(39, 93, 74, 0.06)",
+              borderBottomLeftRadius: 260,
+              borderBottomRightRadius: 260,
             },
           },
         },
@@ -121,22 +131,10 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              inset: 54,
-              borderRadius: 58,
-              border: "1.5px solid rgba(36, 92, 73, 0.14)",
-              boxShadow: "0 0 88px rgba(103, 185, 157, 0.22), inset 0 0 80px rgba(255,255,255,0.34)",
-            },
-          },
-        },
-        {
-          type: "div",
-          props: {
-            style: {
-              position: "absolute",
-              left: 116,
-              right: 116,
-              top: 220,
-              bottom: 250,
+              left: 80,
+              right: 80,
+              top: 155,
+              bottom: 190,
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -149,15 +147,14 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                 props: {
                   style: {
                     display: "flex",
-                    maxWidth: textStyle.maxWidth,
-                    fontSize: textStyle.fontSize,
-                    lineHeight: textStyle.lineHeight,
+                    maxWidth: 850,
+                    fontSize,
+                    lineHeight: isLong ? 1.9 : 2.02,
                     fontWeight: 700,
-                    letterSpacing: -1.3,
-                    color: "#1E3B30",
+                    letterSpacing: -1.2,
+                    color: "#1E352B",
                     textWrap: "balance",
                     whiteSpace: "pre-wrap",
-                    textShadow: "0 10px 34px rgba(31, 59, 48, 0.08)",
                   },
                   children: text,
                 },
@@ -167,16 +164,16 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                 props: {
                   style: {
                     display: "flex",
-                    marginTop: 60,
-                    padding: "10px 30px",
+                    marginTop: 54,
+                    padding: "11px 30px",
                     borderRadius: 999,
-                    background: "rgba(255,255,255,0.56)",
-                    border: "1px solid rgba(36, 92, 73, 0.08)",
+                    background: "rgba(255,255,255,0.58)",
+                    border: "1px solid rgba(39, 93, 74, 0.07)",
                     color: "rgba(92,75,58,0.72)",
-                    fontSize: 31,
+                    fontSize: 30,
                     fontWeight: 700,
                   },
-                  children: source,
+                  children: sourceLabel,
                 },
               },
             ],
@@ -187,12 +184,13 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              left: 92,
-              right: 92,
-              bottom: 92,
+              left: 84,
+              right: 84,
+              bottom: 78,
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              gap: 24,
             },
             children: [
               {
@@ -201,7 +199,7 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                   style: {
                     display: "flex",
                     alignItems: "center",
-                    gap: 20,
+                    gap: 18,
                   },
                   children: [
                     {
@@ -209,12 +207,12 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                       props: {
                         style: {
                           display: "flex",
-                          width: 118,
-                          height: 118,
+                          width: 116,
+                          height: 116,
                           borderRadius: 24,
                           background: "#FFFFFF",
-                          padding: 9,
-                          boxShadow: "0 18px 44px rgba(31, 59, 48, 0.10)",
+                          padding: 10,
+                          boxShadow: "0 16px 44px rgba(31, 59, 48, 0.10)",
                         },
                         dangerouslySetInnerHTML: { __html: qrSvg },
                       },
@@ -224,10 +222,10 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                       props: {
                         style: {
                           display: "flex",
-                          fontSize: 34,
-                          color: "#245C49",
+                          fontSize: 32,
+                          color: "#2F6F57",
                           fontWeight: 800,
-                          letterSpacing: -0.6,
+                          letterSpacing: -0.5,
                         },
                         children: "أثر",
                       },
@@ -235,22 +233,27 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                   ],
                 },
               },
-              {
-                type: "div",
-                props: {
-                  style: {
-                    display: "flex",
-                    fontSize: 28,
-                    color: "rgba(36, 92, 73, 0.88)",
-                    fontWeight: 800,
-                    padding: "12px 26px",
-                    borderRadius: 999,
-                    background: "rgba(255,255,255,0.58)",
-                    border: "1px solid rgba(36, 92, 73, 0.08)",
+              name
+                ? {
+                    type: "div",
+                    props: {
+                      style: {
+                        display: "flex",
+                        fontSize: 29,
+                        color: "rgba(39, 93, 74, 0.84)",
+                        fontWeight: 800,
+                        padding: "12px 24px",
+                        borderRadius: 999,
+                        background: "rgba(255,255,255,0.54)",
+                        border: "1px solid rgba(39, 93, 74, 0.07)",
+                      },
+                      children: `✦ شارك الأثر • ${name}`,
+                    },
+                  }
+                : {
+                    type: "div",
+                    props: { style: { display: "flex", width: 1, height: 1, opacity: 0 }, children: "" },
                   },
-                  children: `✦ ${personalLine}`,
-                },
-              },
             ],
           },
         },
