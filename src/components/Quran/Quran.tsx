@@ -23,7 +23,7 @@ export default function Quran() {
 
   const filteredSurahs = useMemo(() => {
     const query = surahSearch.trim();
-    if (!query) return SURAHS.slice(0, 8);
+    if (!query) return [];
     return SURAHS.filter((surah) => surah.name.includes(query)).slice(0, 8);
   }, [surahSearch]);
 
@@ -78,7 +78,7 @@ export default function Quran() {
       <div className="mb-3 flex items-center justify-between px-1">
         <h2 className="text-lg font-bold text-primary-text">المصحف</h2>
         <span className="rounded-full bg-primary-bg px-3 py-1.5 text-xs font-bold text-secondary-text">
-          صفحة {page} / {TOTAL_PAGES}
+          الصفحة {page}
         </span>
       </div>
 
@@ -110,7 +110,7 @@ export default function Quran() {
             placeholder="ابحث باسم السورة"
             className="h-11 w-full rounded-full border border-secondary-text/20 bg-white px-4 text-center text-sm font-bold text-primary-text placeholder:text-secondary-text/70 focus:border-action focus:outline-none"
           />
-          {surahSearch && filteredSurahs.length > 0 && (
+          {filteredSurahs.length > 0 && (
             <div className="mt-2 grid grid-cols-2 gap-1.5">
               {filteredSurahs.map((surah) => (
                 <button
