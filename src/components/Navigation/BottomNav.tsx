@@ -77,7 +77,12 @@ export default function BottomNav() {
                 } ${isCollapsed ? "gap-0 text-lg" : "gap-1 text-sm"}`
               }
             >
-              <span className={`relative z-10 leading-none transition-all duration-300 ${isCollapsed ? "scale-110" : "scale-100 text-base"}`}>
+              <span
+                aria-hidden={!isCollapsed}
+                className={`relative z-10 leading-none transition-all duration-300 ${
+                  isCollapsed ? "max-h-6 scale-110 opacity-100" : "max-h-0 scale-75 opacity-0"
+                }`}
+              >
                 {item.icon}
               </span>
               <span
