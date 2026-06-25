@@ -23,18 +23,34 @@ export default function BottomNav() {
     if (!scrollElement) return;
 
     let lastScrollTop = scrollElement.scrollTop;
+    let expandTimer: ReturnType<typeof window.setTimeout> | undefined;
 
     const handleScroll = () => {
       const currentScrollTop = scrollElement.scrollTop;
       const isScrollingDown = currentScrollTop > lastScrollTop && currentScrollTop > 24;
+      const isScrollingUp = currentScrollTop < lastScrollTop;
       const isNearTop = currentScrollTop < 12;
 
-      setIsCollapsed(isScrollingDown && !isNearTop);
+      if (expandTimer) window.clearTimeout(expandTimer);
+
+      if (isScrollingDown && !isNearTop) {
+        setIsCollapsed(true);
+      }
+
+      if (isScrollingUp || isNearTop) {
+        setIsCollapsed(false);
+      } else {
+        expandTimer = window.setTimeout(() => setIsCollapsed(false), 900);
+      }
+
       lastScrollTop = currentScrollTop;
     };
 
     scrollElement.addEventListener("scroll", handleScroll, { passive: true });
-    return () => scrollElement.removeEventListener("scroll", handleScroll);
+    return () => {
+      if (expandTimer) window.clearTimeout(expandTimer);
+      scrollElement.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   return (
