@@ -223,7 +223,7 @@ export default function PrayerTimes() {
         )}
         <p className="text-sm font-medium text-secondary-text">الصلاة القادمة</p>
         <p className="mt-1 text-3xl font-bold text-primary-text">{PRAYER_LABELS[nextPrayer.name]}</p>
-        <p className="mt-4 text-5xl font-bold tracking-tight text-action" dir="ltr">{countdown}</p>
+        <p className="mt-4 text-5xl font-bold tracking-tight text-action transition-all duration-300" dir="ltr">{countdown}</p>
         <p className="mt-2 text-sm text-secondary-text">متبقي على الأذان</p>
       </div>
 
@@ -239,7 +239,7 @@ export default function PrayerTimes() {
         })}
       </div>
 
-      <div className="relative z-10 mt-4 rounded-[24px] bg-mint-soft p-3 text-center">
+      <div className="relative z-10 mt-4 rounded-[24px] bg-mint-soft p-3 text-center transition-all duration-300">
         <p className="text-sm font-semibold text-primary-text">
           {currentIqamahPrayer
             ? `متبقي على الإقامة: ${iqamahCountdown}`
