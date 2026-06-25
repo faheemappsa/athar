@@ -56,12 +56,12 @@ export default function BottomNav() {
   return (
     <nav className="fixed inset-x-6 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 mx-auto max-w-[340px]">
       <div
-        className={`relative overflow-hidden rounded-full border border-white/60 bg-white/70 shadow-2xl shadow-black/10 ring-1 ring-action/10 backdrop-blur-2xl transition-all duration-300 supports-[backdrop-filter]:bg-white/55 ${
+        className={`relative overflow-hidden rounded-full border border-white/60 bg-white/70 shadow-xl shadow-black/5 ring-1 ring-action/10 backdrop-blur-2xl transition-all duration-300 supports-[backdrop-filter]:bg-white/55 ${
           isCollapsed ? "h-[58px] max-w-[250px] mx-auto" : "h-[72px] max-w-[340px]"
         }`}
       >
         <div
-          className={`absolute -translate-x-1/2 rounded-full bg-action/95 shadow-sm transition-all duration-300 ease-out ${
+          className={`absolute -translate-x-1/2 rounded-full bg-action/90 ring-1 ring-white/40 transition-all duration-300 ease-out ${
             isCollapsed ? "bottom-1.5 h-11 w-16" : "bottom-2 h-14 w-24"
           } ${getIndicatorPosition(location.pathname)}`}
         />
