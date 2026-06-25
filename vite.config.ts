@@ -7,13 +7,13 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['athar-icon.svg', 'favicon.svg', 'robots.txt'],
+      includeAssets: ['athar-icon.svg', 'og-image.svg', 'robots.txt'],
       manifest: {
         name: 'أثر | وقف خيري عن مسلّم عوده البويني رحمه الله',
         short_name: 'أثر',
         description: 'رفيق يومي للأذكار وورد القرآن ومشاركة الأثر.',
-        theme_color: '#38A47C',
-        background_color: '#EAF6F3',
+        theme_color: '#48AD8D',
+        background_color: '#48AD8D',
         display: 'standalone',
         orientation: 'portrait-primary',
         start_url: '/?source=pwa',
