@@ -39,6 +39,43 @@ const formatCountdown = (secondsTotal: number) => {
   return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 };
 
+const getHijriParts = () => {
+  const parts = new Intl.DateTimeFormat("en-TN-u-ca-islamic-umalqura", {
+    day: "numeric",
+    month: "numeric",
+  }).formatToParts(new Date());
+
+  return {
+    day: Number(parts.find((part) => part.type === "day")?.value || 0),
+    month: Number(parts.find((part) => part.type === "month")?.value || 0),
+  };
+};
+
+const getFaithOccasion = () => {
+  const now = new Date();
+  const { day, month } = getHijriParts();
+  const isFriday = now.getDay() === 5;
+
+  if (month === 9) {
+    if (day >= 21) return "🌙 العشر الأواخر • أكثر من الدعاء والقرآن";
+    return "🌙 رمضان مبارك • أيام خير وبركة";
+  }
+
+  if (month === 10 && day === 1) return "🎉 عيد الفطر • تقبل الله طاعتكم";
+
+  if (month === 12) {
+    if (day === 9) return "🕋 يوم عرفة • اغتنم الدعاء";
+    if (day === 10) return "🎉 عيد الأضحى • تقبل الله منكم";
+    if (day >= 1 && day <= 10) return "🕋 عشر ذي الحجة • أيام عظيمة";
+  }
+
+  if (month === 1 && day === 10) return "🌙 عاشوراء • يوم عظيم للصيام والدعاء";
+  if ([13, 14, 15].includes(day)) return "🤍 الأيام البيض • فرصة جميلة للصيام";
+  if (isFriday) return "🕌 الجمعة • أكثر من الصلاة على النبي ﷺ";
+
+  return "";
+};
+
 const getHijriDate = () => {
   const now = new Date();
   const parts = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", {
@@ -66,6 +103,7 @@ export default function PrayerTimes() {
   const [loadError, setLoadError] = useState("");
 
   const hijriDate = useMemo(() => getHijriDate(), []);
+  const faithOccasion = useMemo(() => getFaithOccasion(), []);
 
   useEffect(() => {
     if (!location) return;
@@ -172,6 +210,11 @@ export default function PrayerTimes() {
       </div>
 
       <div className="relative z-10 mt-5 text-center">
+        {faithOccasion && (
+          <p className="mb-3 rounded-full bg-mint-soft px-4 py-2 text-xs font-bold leading-5 text-action">
+            {faithOccasion}
+          </p>
+        )}
         <p className="text-sm font-medium text-secondary-text">الصلاة القادمة</p>
         <p className="mt-1 text-3xl font-bold text-primary-text">{PRAYER_LABELS[nextPrayer.name]}</p>
         <p className="mt-4 text-5xl font-bold tracking-tight text-action" dir="ltr">{countdown}</p>
