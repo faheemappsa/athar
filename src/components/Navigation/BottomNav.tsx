@@ -18,9 +18,9 @@ export default function BottomNav() {
 
   return (
     <nav className="fixed inset-x-6 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 mx-auto max-w-[340px]">
-      <div className="relative h-[72px] overflow-hidden rounded-full bg-white shadow-2xl shadow-action/10 ring-1 ring-black/5">
+      <div className="relative h-[72px] overflow-hidden rounded-full border border-white/60 bg-white/70 shadow-2xl shadow-black/10 ring-1 ring-action/10 backdrop-blur-2xl supports-[backdrop-filter]:bg-white/55">
         <div
-          className={`absolute bottom-2 h-14 w-24 -translate-x-1/2 rounded-full bg-action transition-all duration-300 ease-out ${getIndicatorPosition(
+          className={`absolute bottom-2 h-14 w-24 -translate-x-1/2 rounded-full bg-action/95 shadow-sm transition-all duration-300 ease-out ${getIndicatorPosition(
             location.pathname
           )}`}
         />
