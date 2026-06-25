@@ -41,7 +41,6 @@ export default function BottomNav() {
     if (!scrollElement) return;
 
     let lastScrollTop = scrollElement.scrollTop;
-    let expandTimer: ReturnType<typeof window.setTimeout> | undefined;
 
     const handleScroll = () => {
       const currentScrollTop = scrollElement.scrollTop;
@@ -49,26 +48,19 @@ export default function BottomNav() {
       const isScrollingUp = currentScrollTop < lastScrollTop;
       const isNearTop = currentScrollTop < 12;
 
-      if (expandTimer) window.clearTimeout(expandTimer);
-
       if (isScrollingDown && !isNearTop) {
         setIsCollapsed(true);
       }
 
       if (isScrollingUp || isNearTop) {
         setIsCollapsed(false);
-      } else {
-        expandTimer = window.setTimeout(() => setIsCollapsed(false), 900);
       }
 
       lastScrollTop = currentScrollTop;
     };
 
     scrollElement.addEventListener("scroll", handleScroll, { passive: true });
-    return () => {
-      if (expandTimer) window.clearTimeout(expandTimer);
-      scrollElement.removeEventListener("scroll", handleScroll);
-    };
+    return () => scrollElement.removeEventListener("scroll", handleScroll);
   }, []);
 
   const expandTemporarily = () => {
