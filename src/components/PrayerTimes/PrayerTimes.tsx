@@ -25,6 +25,11 @@ type PrayerRow = {
   iqamah: Date;
 };
 
+type FaithOccasion = {
+  title: string;
+  hint: string;
+};
+
 const formatTime = (date: Date) =>
   new Intl.DateTimeFormat("ar-SA", {
     hour: "numeric",
@@ -51,29 +56,29 @@ const getHijriParts = () => {
   };
 };
 
-const getFaithOccasion = () => {
+const getFaithOccasion = (): FaithOccasion | null => {
   const now = new Date();
   const { day, month } = getHijriParts();
   const isFriday = now.getDay() === 5;
 
   if (month === 9) {
-    if (day >= 21) return "🌙 العشر الأواخر • أكثر من الدعاء والقرآن";
-    return "🌙 رمضان مبارك • أيام خير وبركة";
+    if (day >= 21) return { title: "🌙 العشر الأواخر", hint: "أكثر من الدعاء والقرآن" };
+    return { title: "🌙 رمضان مبارك", hint: "أيام خير وبركة" };
   }
 
-  if (month === 10 && day === 1) return "🎉 عيد الفطر • تقبل الله طاعتكم";
+  if (month === 10 && day === 1) return { title: "🎉 عيد الفطر", hint: "تقبل الله طاعتكم" };
 
   if (month === 12) {
-    if (day === 9) return "🕋 يوم عرفة • اغتنم الدعاء";
-    if (day === 10) return "🎉 عيد الأضحى • تقبل الله منكم";
-    if (day >= 1 && day <= 10) return "🕋 عشر ذي الحجة • أيام عظيمة";
+    if (day === 9) return { title: "🕋 يوم عرفة", hint: "اغتنم الدعاء" };
+    if (day === 10) return { title: "🎉 عيد الأضحى", hint: "تقبل الله منكم" };
+    if (day >= 1 && day <= 10) return { title: "🕋 عشر ذي الحجة", hint: "أيام عظيمة" };
   }
 
-  if (month === 1 && day === 10) return "🌙 عاشوراء • يوم عظيم للصيام والدعاء";
-  if ([13, 14, 15].includes(day)) return "🤍 الأيام البيض • فرصة جميلة للصيام";
-  if (isFriday) return "🕌 الجمعة • أكثر من الصلاة على النبي ﷺ";
+  if (month === 1 && day === 10) return { title: "🌙 عاشوراء", hint: "اغتنم الصيام والدعاء" };
+  if ([13, 14, 15].includes(day)) return { title: "🤍 الأيام البيض", hint: "فرصة جميلة للصيام" };
+  if (isFriday) return { title: "🕌 يوم الجمعة", hint: "أكثر من الصلاة على النبي ﷺ" };
 
-  return "";
+  return null;
 };
 
 const getHijriDate = () => {
@@ -211,9 +216,10 @@ export default function PrayerTimes() {
 
       <div className="relative z-10 mt-5 text-center">
         {faithOccasion && (
-          <p className="mb-3 rounded-full bg-mint-soft px-4 py-2 text-xs font-bold leading-5 text-action">
-            {faithOccasion}
-          </p>
+          <div className="mx-auto mb-3 max-w-[260px] rounded-[22px] bg-mint-soft px-4 py-2.5 text-center ring-1 ring-action/10">
+            <p className="text-xs font-bold text-action">{faithOccasion.title}</p>
+            <p className="mt-0.5 text-[11px] font-semibold leading-5 text-secondary-text">{faithOccasion.hint}</p>
+          </div>
         )}
         <p className="text-sm font-medium text-secondary-text">الصلاة القادمة</p>
         <p className="mt-1 text-3xl font-bold text-primary-text">{PRAYER_LABELS[nextPrayer.name]}</p>
