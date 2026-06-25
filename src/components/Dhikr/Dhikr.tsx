@@ -245,11 +245,11 @@ export default function Dhikr() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className={`w-full overflow-hidden rounded-card bg-white shadow-xl transition-all duration-300 hover:shadow-2xl ${focusMode ? "p-4" : "p-5"}`}
+      className={`w-full overflow-hidden rounded-card bg-white shadow-xl transition-all duration-300 hover:shadow-2xl ${focusMode ? "min-h-[calc(100vh-8rem)] p-4" : "p-5"}`}
     >
       <div
-        className={`overflow-hidden transition-all duration-300 ${
-          focusMode ? "mb-0 max-h-0 -translate-y-3 opacity-0" : "mb-4 max-h-16 translate-y-0 opacity-100"
+        className={`overflow-hidden transition-all duration-500 ease-out ${
+          focusMode ? "mb-0 max-h-0 -translate-y-2 opacity-0" : "mb-4 max-h-16 translate-y-0 opacity-100"
         }`}
       >
         <div className="flex items-center justify-between rounded-full border border-white/70 bg-primary-bg/70 px-4 py-2.5 text-sm font-bold text-secondary-text shadow-sm backdrop-blur">
@@ -276,14 +276,14 @@ export default function Dhikr() {
       <button
         onClick={handleTap}
         disabled={isComplete}
-        className="group mt-6 block w-full outline-none disabled:cursor-default"
+        className={`group block w-full outline-none transition-all duration-300 disabled:cursor-default ${focusMode ? "mt-5" : "mt-6"}`}
         aria-label="اضغط للتسبيح"
       >
         <motion.div
           key={`ring-${pulseKey}`}
           animate={feedback === "success" ? { scale: [1, 0.975, 1.012, 1] } : feedback === "complete" ? { scale: [1, 1.035, 1] } : { scale: 1 }}
           transition={{ duration: feedback === "complete" ? 0.55 : 0.22, ease: "easeOut" }}
-          className="relative mx-auto grid h-60 w-60 place-items-center rounded-full"
+          className={`relative mx-auto grid place-items-center rounded-full transition-all duration-300 ${focusMode ? "h-64 w-64" : "h-60 w-60"}`}
         >
           <div
             className="absolute inset-0 rounded-full transition-all duration-300"
