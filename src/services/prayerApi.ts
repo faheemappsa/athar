@@ -13,6 +13,16 @@ type PrayerTimesCache = {
 
 const getTodayKey = () => new Date().toLocaleDateString("en-GB").replace(/\//g, "-");
 
+const buildPrayerUrl = (date: string, latitude: number, longitude: number) => {
+  const params = new URLSearchParams({
+    latitude: String(latitude),
+    longitude: String(longitude),
+    method: "4",
+  });
+
+  return `${BASE_URL}/timings/${date}?${params.toString()}`;
+};
+
 const readCachedPrayerTimes = (): PrayerTimesCache | null => {
   try {
     const value = localStorage.getItem(CACHE_KEY);
@@ -31,16 +41,31 @@ const savePrayerTimes = (cache: PrayerTimesCache) => {
   } catch {}
 };
 
+const refreshPrayerTimes = (date: string, latitude: number, longitude: number) => {
+  axios
+    .get(buildPrayerUrl(date, latitude, longitude))
+    .then((response) => {
+      const timings = response.data.data.timings;
+      savePrayerTimes({ date, latitude, longitude, timings, updatedAt: Date.now() });
+    })
+    .catch(() => {});
+};
+
 export const getPrayerTimes = async (latitude: number, longitude: number) => {
   const date = getTodayKey();
+  const cached = readCachedPrayerTimes();
+
+  if (cached?.date === date && cached.timings) {
+    refreshPrayerTimes(date, latitude, longitude);
+    return cached.timings;
+  }
 
   try {
-    const response = await axios.get(`${BASE_URL}/timings/${date}?latitude=${latitude}&longitude=${longitude}&method=4`);
+    const response = await axios.get(buildPrayerUrl(date, latitude, longitude));
     const timings = response.data.data.timings;
     savePrayerTimes({ date, latitude, longitude, timings, updatedAt: Date.now() });
     return timings;
   } catch (error) {
-    const cached = readCachedPrayerTimes();
     if (cached?.timings) return cached.timings;
     throw error;
   }
