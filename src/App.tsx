@@ -12,6 +12,7 @@ import InstallPrompt from "./components/Shared/InstallPrompt";
 import ScrollMemory from "./components/Shared/ScrollMemory";
 import AppIntro from "./components/Shared/AppIntro";
 import ConnectionBanner from "./components/Shared/ConnectionBanner";
+import AppUpdatePrompt from "./components/Shared/AppUpdatePrompt";
 import { trackEvent } from "./utils/analytics";
 
 const AnalyticsPageView = () => {
@@ -35,6 +36,7 @@ export default function App() {
         <div className="fixed inset-0 w-full overflow-hidden bg-primary-bg font-arabic">
           <AppIntro />
           <InstallPrompt />
+          <AppUpdatePrompt />
           <ScrollMemory />
           <main id="app-scroll" className="app-scroll h-full w-full overflow-y-auto px-4 pb-28 pt-6">
             <div className="mx-auto w-full max-w-md">
