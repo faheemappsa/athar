@@ -17,10 +17,10 @@ export default function BottomNav() {
   const location = useLocation();
 
   return (
-    <nav className="fixed inset-x-4 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-50 mx-auto max-w-sm">
-      <div className="relative h-20 overflow-hidden rounded-[34px] bg-white shadow-xl shadow-action/10">
+    <nav className="fixed inset-x-6 bottom-[max(1rem,env(safe-area-inset-bottom))] z-50 mx-auto max-w-[340px]">
+      <div className="relative h-[72px] overflow-hidden rounded-full bg-white shadow-2xl shadow-action/10 ring-1 ring-black/5">
         <div
-          className={`absolute bottom-0 h-16 w-28 -translate-x-1/2 rounded-t-[80px] bg-action transition-all duration-300 ease-out ${getIndicatorPosition(
+          className={`absolute bottom-2 h-14 w-24 -translate-x-1/2 rounded-full bg-action transition-all duration-300 ease-out ${getIndicatorPosition(
             location.pathname
           )}`}
         />
@@ -32,11 +32,11 @@ export default function BottomNav() {
               onClick={() => trackEvent(item.event, { from: location.pathname, to: item.to })}
               className={({ isActive }) =>
                 `flex h-full items-center justify-center rounded-full text-sm font-bold transition-all duration-300 ${
-                  isActive ? "-translate-y-2 text-white" : "translate-y-0 text-secondary-text"
+                  isActive ? "text-white" : "text-secondary-text"
                 }`
               }
             >
-              <span className="relative z-10 whitespace-nowrap leading-none drop-shadow-sm">{item.label}</span>
+              <span className="relative z-10 whitespace-nowrap leading-none">{item.label}</span>
             </NavLink>
           ))}
         </div>
