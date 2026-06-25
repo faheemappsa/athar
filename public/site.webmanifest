@@ -8,8 +8,8 @@
   "orientation": "portrait-primary",
   "dir": "rtl",
   "lang": "ar-SA",
-  "background_color": "#EAF6F3",
-  "theme_color": "#38A47C",
+  "background_color": "#48AD8D",
+  "theme_color": "#48AD8D",
   "categories": ["lifestyle", "books", "education"],
   "icons": [
     {
