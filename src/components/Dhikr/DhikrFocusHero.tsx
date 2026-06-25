@@ -16,8 +16,8 @@ export default function DhikrFocusHero() {
 
   return (
     <div
-      className={`overflow-hidden transition-all duration-300 ${
-        focusMode ? "mb-0 max-h-0 -translate-y-5 opacity-0" : "mb-0 max-h-[180px] translate-y-0 opacity-100"
+      className={`overflow-hidden transition-all duration-500 ease-out ${
+        focusMode ? "mb-0 max-h-0 -translate-y-4 opacity-0" : "mb-0 max-h-[180px] translate-y-0 opacity-100"
       }`}
     >
       <AppHero title="الأذكار" subtitle="تجربة يومية خفيفة وهادئة" />
