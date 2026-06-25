@@ -1,7 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="أثر">
-  <rect width="512" height="512" rx="128" fill="#EAF6F3"/>
-  <circle cx="256" cy="256" r="190" fill="#F8FFFD" stroke="#38A47C" stroke-width="18"/>
-  <path d="M258 142c42 54 78 108 78 160 0 48-34 82-80 82s-80-34-80-82c0-52 38-106 82-160Z" fill="#38A47C"/>
-  <path d="M258 183c24 39 43 76 43 111 0 30-18 52-45 52s-45-22-45-52c0-35 21-72 47-111Z" fill="#EAF6F3" opacity="0.88"/>
-  <text x="256" y="438" text-anchor="middle" font-family="Arial, sans-serif" font-size="58" font-weight="700" fill="#244A3F">أثر</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="أثر">
+  <rect width="1024" height="1024" fill="#48AD8D"/>
+  <g fill="none" stroke="#BFE4D6" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" opacity="0.96">
+    <path d="M485 843c38-92 26-180-29-269-43-70-66-150-79-248-8-63-54-112-93-134 46 4 83 31 113 78 59 29 101 90 126 181 0-92 0-181-61-251 62 37 93 111 121 229 21 88 42 138 2 247 66-124 125-178 188-246 15-16 35-14 30 9-20 88-96 170-190 224-70 40-101 92-128 180Z"/>
+    <path d="M284 192c42 17 74 45 113 78"/>
+    <path d="M397 270c39 52 86 86 126 181"/>
+    <path d="M462 200c39 84 51 168 61 251"/>
+    <path d="M527 485c19 67 18 128 0 191"/>
+    <path d="M773 430c-40 104-104 169-188 246"/>
+    <path d="M615 661c61-46 112-100 158-231"/>
+    <path d="M456 574c32 49 55 96 71 151" opacity="0.82"/>
+    <path d="M397 270c-2 78 10 156 38 231" opacity="0.82"/>
+  </g>
 </svg>
