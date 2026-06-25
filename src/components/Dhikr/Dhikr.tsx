@@ -49,6 +49,10 @@ const saveCompletionDay = () => {
   }
 };
 
+const broadcastDhikrFocus = (active: boolean) => {
+  window.dispatchEvent(new CustomEvent("athar-focus-mode", { detail: { path: "/dhikr", active } }));
+};
+
 export default function Dhikr() {
   const { location } = useSavedLocation();
   const [category, setCategory] = useState<DhikrCategory>(getFallbackCategory);
@@ -59,9 +63,36 @@ export default function Dhikr() {
   const [loaded, setLoaded] = useState(false);
   const [pulseKey, setPulseKey] = useState(0);
   const [completionDays, setCompletionDays] = useState<string[]>([]);
+  const [focusMode, setFocusMode] = useState(false);
+
+  const enterFocusMode = () => {
+    setFocusMode(true);
+    broadcastDhikrFocus(true);
+  };
+
+  const exitFocusMode = () => {
+    setFocusMode(false);
+    broadcastDhikrFocus(false);
+  };
 
   useEffect(() => {
     setCompletionDays(readCompletionDays());
+  }, []);
+
+  useEffect(() => {
+    const scrollElement = document.getElementById("app-scroll");
+    if (!scrollElement) return;
+
+    const handleScroll = () => {
+      if (scrollElement.scrollTop > 28) enterFocusMode();
+      if (scrollElement.scrollTop < 10) exitFocusMode();
+    };
+
+    scrollElement.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      broadcastDhikrFocus(false);
+      scrollElement.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   useEffect(() => {
@@ -146,6 +177,7 @@ export default function Dhikr() {
   };
 
   const goToNextDhikr = () => {
+    enterFocusMode();
     if (currentIndex + 1 < dhikrList.length) {
       setCurrentIndex(currentIndex + 1);
       setCount(0);
@@ -160,6 +192,7 @@ export default function Dhikr() {
   };
 
   const handleTap = () => {
+    enterFocusMode();
     if (!current || isComplete) return;
     try {
       navigator.vibrate?.(8);
@@ -186,6 +219,7 @@ export default function Dhikr() {
   };
 
   const resetProgress = () => {
+    exitFocusMode();
     localStorage.removeItem(progressKey);
     setCurrentIndex(0);
     setCount(0);
@@ -211,11 +245,17 @@ export default function Dhikr() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className="w-full overflow-hidden rounded-card bg-white p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+      className={`w-full overflow-hidden rounded-card bg-white shadow-xl transition-all duration-300 hover:shadow-2xl ${focusMode ? "p-4" : "p-5"}`}
     >
-      <div className="mb-4 flex items-center justify-between rounded-full bg-primary-bg px-4 py-3 text-sm font-bold text-secondary-text">
-        <span className="text-action">{categoryInfo.emoji} {categoryInfo.title}</span>
-        <span>{PERIOD_LABEL[category]}</span>
+      <div
+        className={`overflow-hidden transition-all duration-300 ${
+          focusMode ? "mb-0 max-h-0 -translate-y-3 opacity-0" : "mb-4 max-h-16 translate-y-0 opacity-100"
+        }`}
+      >
+        <div className="flex items-center justify-between rounded-full border border-white/70 bg-primary-bg/70 px-4 py-2.5 text-sm font-bold text-secondary-text shadow-sm backdrop-blur">
+          <span className="text-action">{categoryInfo.emoji} {categoryInfo.title}</span>
+          <span>{PERIOD_LABEL[category]}</span>
+        </div>
       </div>
 
       <div className="mb-4 h-3 w-full overflow-hidden rounded-full bg-primary-bg">
