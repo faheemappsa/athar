@@ -94,7 +94,7 @@ export default function BottomNav() {
             collapsed ? "bottom-1.5 h-11 w-16" : "bottom-2 h-14 w-24"
           } ${isFocusMode ? "left-1/2" : getIndicatorPosition(location.pathname)}`}
         />
-        <div className="relative z-10 grid h-full grid-cols-3 items-center px-2">
+        <div className={`relative z-10 grid h-full items-center px-2 ${isFocusMode ? "grid-cols-1" : "grid-cols-3"}`}>
           {items.map((item) => {
             const isHiddenByFocus = isFocusMode && item.to !== location.pathname;
             return (
@@ -105,7 +105,7 @@ export default function BottomNav() {
                 className={({ isActive }) =>
                   `flex h-full flex-col items-center justify-center rounded-full font-bold transition-all duration-300 ${
                     isActive ? "text-white" : "text-secondary-text"
-                  } ${collapsed ? "gap-0 text-lg" : "gap-1 text-sm"} ${isHiddenByFocus ? "pointer-events-none scale-75 opacity-0" : "opacity-100"}`
+                  } ${collapsed ? "gap-0 text-lg" : "gap-1 text-sm"} ${isHiddenByFocus ? "hidden" : "opacity-100"}`
                 }
               >
                 <span
