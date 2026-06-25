@@ -95,7 +95,7 @@ const getHijriDate = () => {
   const month = parts.find((part) => part.type === "month")?.value || "";
   const year = parts.find((part) => part.type === "year")?.value || "";
 
-  return `${weekday}، ${year}/${day} ${month}`;
+  return `${weekday}، ${day} ${month} ${year}`;
 };
 
 export default function PrayerTimes() {
