@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { appMotion } from "../../config/motion";
 import type { DhikrCategory } from "../../data/adhkar";
 import {
   DHIKR_COMPLETION_VERSE,
@@ -14,12 +15,13 @@ type DhikrCompletionCardProps = {
 
 export default function DhikrCompletionCard({ category, identityCopy, completionCount }: DhikrCompletionCardProps) {
   const completionMessage = getDhikrCompletionMessage(category, completionCount);
+  const motionPreset = appMotion.completionCard;
 
   return (
     <motion.section
-      initial={{ opacity: 0, y: 16, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.45, ease: "easeOut" }}
+      initial={motionPreset.initial}
+      animate={motionPreset.animate}
+      transition={motionPreset.transition}
       className="mt-4 overflow-hidden rounded-[30px] border border-action/10 bg-mint-soft p-5 text-center shadow-inner shadow-white/50"
       aria-label="بطاقة إتمام الأذكار"
     >
