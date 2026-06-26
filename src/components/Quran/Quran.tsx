@@ -128,14 +128,14 @@ export default function Quran({ focusMode = false }: QuranProps) {
         )}
       </div>
 
-      <div className={`mt-3 overflow-hidden rounded-[28px] bg-white shadow-sm ring-1 ring-black/5 transition-all duration-500 ease-out ${focusMode ? "max-h-16 p-1.5" : "max-h-72 p-2"}`}>
-        <div className={`overflow-hidden rounded-[24px] bg-primary-bg/40 transition-all duration-300 ${focusMode ? "mb-0 max-h-0 p-0 opacity-0" : "mb-2 max-h-32 p-2 opacity-100"}`}>
+      <div className={`mt-3 overflow-hidden rounded-[28px] bg-white/90 shadow-sm ring-1 ring-[#C8A84E]/10 transition-all duration-500 ease-out ${focusMode ? "max-h-16 p-1.5" : "max-h-72 p-2"}`}>
+        <div className={`overflow-hidden rounded-[24px] bg-[#A8D5C2]/15 transition-all duration-300 ${focusMode ? "mb-0 max-h-0 p-0 opacity-0" : "mb-2 max-h-32 p-2 opacity-100"}`}>
           <input
             type="search"
             value={surahSearch}
             onChange={(event) => setSurahSearch(event.target.value)}
             placeholder="ابحث باسم السورة"
-            className="h-11 w-full rounded-full border border-secondary-text/20 bg-white px-4 text-center text-sm font-bold text-primary-text placeholder:text-secondary-text/70 focus:border-action focus:outline-none"
+            className="h-11 w-full rounded-full border border-[#A8D5C2]/45 bg-white px-4 text-center text-sm font-bold text-primary-text placeholder:text-secondary-text/70 focus:border-action focus:outline-none"
           />
           {filteredSurahs.length > 0 && (
             <div className="mt-2 grid grid-cols-2 gap-1.5">
@@ -143,7 +143,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
                 <button
                   key={surah.name}
                   onClick={() => handleSurahPick(surah)}
-                  className="rounded-full bg-white px-3 py-2 text-xs font-bold text-primary-text shadow-sm transition hover:text-action"
+                  className="rounded-full bg-white px-3 py-2 text-xs font-bold text-primary-text shadow-sm ring-1 ring-[#C8A84E]/10 transition hover:text-action"
                 >
                   {surah.name}
                 </button>
@@ -156,7 +156,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
           <button
             onClick={() => goToPage(page - 1)}
             disabled={page <= 1}
-            className="rounded-full bg-action px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full bg-action px-4 py-3 text-sm font-bold text-white shadow-md shadow-action/15 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             السابق
           </button>
@@ -169,11 +169,11 @@ export default function Quran({ focusMode = false }: QuranProps) {
               value={inputPage}
               onChange={(event) => setInputPage(event.target.value)}
               placeholder={focusMode ? `${page}` : "صفحة"}
-              className={`h-12 rounded-full border border-secondary-text/30 bg-primary-bg/40 px-2 text-center text-sm font-semibold text-primary-text focus:border-action focus:bg-white focus:outline-none ${focusMode ? "w-[54px]" : "w-[68px]"}`}
+              className={`h-12 rounded-full border border-[#A8D5C2]/45 bg-[#A8D5C2]/15 px-2 text-center text-sm font-semibold text-primary-text focus:border-action focus:bg-white focus:outline-none ${focusMode ? "w-[54px]" : "w-[68px]"}`}
             />
             <button
               onClick={handleJump}
-              className="h-12 rounded-full bg-action px-4 text-sm font-bold text-white shadow-sm transition hover:opacity-90"
+              className="h-12 rounded-full bg-action px-4 text-sm font-bold text-white shadow-md shadow-action/15 transition hover:opacity-90"
             >
               اذهب
             </button>
@@ -182,7 +182,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
           <button
             onClick={() => goToPage(page + 1)}
             disabled={page >= TOTAL_PAGES}
-            className="rounded-full bg-action px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full bg-action px-4 py-3 text-sm font-bold text-white shadow-md shadow-action/15 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             التالي
           </button>
