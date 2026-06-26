@@ -8,9 +8,11 @@ type QuranPageResponse = { data?: { ayahs?: QuranAyah[] } };
 type SurahOption = { name: string; page: number };
 type QuranProps = { focusMode?: boolean };
 type QuranAyahView = { text: string; numberInSurah: number; surahName: string; surahNumber: number };
+type ReadingPosition = { page: number; surahName: string; updatedAt: string };
 
 const TOTAL_PAGES = 604;
 const QURAN_CACHE_KEY = "athar-quran-page-cache";
+const QURAN_READING_POSITION_KEY = "athar-quran-reading-position";
 const SURAHS_DATA = "الفاتحة:1|البقرة:2|آل عمران:50|النساء:77|المائدة:106|الأنعام:128|الأعراف:151|الأنفال:177|التوبة:187|يونس:208|هود:221|يوسف:235|الرعد:249|إبراهيم:255|الحجر:262|النحل:267|الإسراء:282|الكهف:293|مريم:305|طه:312|الأنبياء:322|الحج:332|المؤمنون:342|النور:350|الفرقان:359|الشعراء:367|النمل:377|القصص:385|العنكبوت:396|الروم:404|لقمان:411|السجدة:415|الأحزاب:418|سبأ:428|فاطر:434|يس:440|الصافات:446|ص:453|الزمر:458|غافر:467|فصلت:477|الشورى:483|الزخرف:489|الدخان:496|الجاثية:499|الأحقاف:502|محمد:507|الفتح:511|الحجرات:515|ق:518|الذاريات:520|الطور:523|النجم:526|القمر:528|الرحمن:531|الواقعة:534|الحديد:537|المجادلة:542|الحشر:545|الممتحنة:549|الصف:551|الجمعة:553|المنافقون:554|التغابن:556|الطلاق:558|التحريم:560|الملك:562|القلم:564|الحاقة:566|المعارج:568|نوح:570|الجن:572|المزمل:574|المدثر:575|القيامة:577|الإنسان:578|المرسلات:580|النبأ:582|النازعات:583|عبس:585|التكوير:586|الانفطار:587|المطففين:587|الانشقاق:589|البروج:590|الطارق:591|الأعلى:591|الغاشية:592|الفجر:593|البلد:594|الشمس:595|الليل:595|الضحى:596|الشرح:596|التين:597|العلق:597|القدر:598|البينة:598|الزلزلة:599|العاديات:599|القارعة:600|التكاثر:600|العصر:601|الهمزة:601|الفيل:601|قريش:602|الماعون:602|الكوثر:602|الكافرون:603|النصر:603|المسد:603|الإخلاص:604|الفلق:604|الناس:604";
 const SURAHS: SurahOption[] = SURAHS_DATA.split("|").map((item) => {
   const [name, page] = item.split(":");
@@ -38,6 +40,18 @@ const readQuranCache = (): Record<string, QuranAyahView[]> => {
   }
 };
 
+const readSavedPosition = (): ReadingPosition | null => {
+  try {
+    const value = localStorage.getItem(QURAN_READING_POSITION_KEY);
+    if (!value) return null;
+    const parsed = JSON.parse(value) as ReadingPosition;
+    if (!parsed || typeof parsed.page !== "number") return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
 const saveQuranPage = (pageNumber: number, ayahs: QuranAyahView[]) => {
   try {
     const cache = readQuranCache();
@@ -47,21 +61,29 @@ const saveQuranPage = (pageNumber: number, ayahs: QuranAyahView[]) => {
   } catch {}
 };
 
+const saveReadingPosition = (position: ReadingPosition) => {
+  try {
+    localStorage.setItem(QURAN_READING_POSITION_KEY, JSON.stringify(position));
+  } catch {}
+};
+
 const readQuranPage = (pageNumber: number) => readQuranCache()[String(pageNumber)] || [];
 
 const shouldShowBasmala = (ayah: QuranAyahView) =>
   ayah.numberInSurah === 1 && ayah.surahNumber !== 1 && ayah.surahNumber !== 9;
 
 export default function Quran({ focusMode = false }: QuranProps) {
-  const [page, setPage] = useLocalStorage<number>("quran-page", 1);
+  const savedPosition = useMemo(() => readSavedPosition(), []);
+  const [page, setPage] = useLocalStorage<number>("quran-page", savedPosition?.page || 1);
   const [inputPage, setInputPage] = useState("");
   const [surahSearch, setSurahSearch] = useState("");
-  const [activeSurahName, setActiveSurahName] = useState("");
+  const [activeSurahName, setActiveSurahName] = useState(savedPosition?.surahName || "");
   const [pageAyahs, setPageAyahs] = useState<QuranAyahView[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [isHeaderOpen, setIsHeaderOpen] = useState(false);
   const readerRef = useRef<HTMLDivElement | null>(null);
+  const pointerStartRef = useRef<{ x: number; y: number; at: number } | null>(null);
 
   const filteredSurahs = useMemo(() => {
     const query = surahSearch.trim();
@@ -88,6 +110,10 @@ export default function Quran({ focusMode = false }: QuranProps) {
   }, [visibleAyahs]);
 
   const currentSurahName = visibleAyahs[0]?.surahName || activeSurahName || pageAyahs[0]?.surahName || "المصحف";
+
+  useEffect(() => {
+    saveReadingPosition({ page, surahName: currentSurahName, updatedAt: new Date().toISOString() });
+  }, [page, currentSurahName]);
 
   useEffect(() => {
     readerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
@@ -142,6 +168,26 @@ export default function Quran({ focusMode = false }: QuranProps) {
   const handleSurahPick = (surah: SurahOption) => {
     setSurahSearch(surah.name);
     goToPage(surah.page, surah.name);
+  };
+
+  const handleReaderTap = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (isHeaderOpen) {
+      setIsHeaderOpen(false);
+      return;
+    }
+
+    const start = pointerStartRef.current;
+    pointerStartRef.current = null;
+    if (!start) return;
+
+    const deltaX = Math.abs(event.clientX - start.x);
+    const deltaY = Math.abs(event.clientY - start.y);
+    const elapsed = Date.now() - start.at;
+    if (deltaX > 12 || deltaY > 12 || elapsed > 450) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const isLeftSide = event.clientX < rect.left + rect.width / 2;
+    goToPage(isLeftSide ? page + 1 : page - 1);
   };
 
   return (
@@ -226,9 +272,10 @@ export default function Quran({ focusMode = false }: QuranProps) {
             ref={readerRef}
             className={`quran-text overflow-y-auto px-3 pb-4 pt-3 text-center text-[#12100D] transition-all duration-300 ${focusMode ? "max-h-[calc(100vh-9.5rem)] min-h-[calc(100vh-9.5rem)] text-[24px] leading-[2.85]" : "max-h-[72vh] min-h-[560px] text-[23px] leading-[2.76]"}`}
             style={{ fontFamily: '"Traditional Arabic", "Amiri", "Scheherazade New", serif' }}
-            onClick={() => {
-              if (isHeaderOpen) setIsHeaderOpen(false);
+            onPointerDown={(event) => {
+              pointerStartRef.current = { x: event.clientX, y: event.clientY, at: Date.now() };
             }}
+            onPointerUp={handleReaderTap}
           >
             <div className="space-y-6">
               {ayahGroups.map((group) => {
