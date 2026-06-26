@@ -1,0 +1,20 @@
+.app-shell[data-section='home'] .bg-mint-soft {
+  background-color: rgba(168, 213, 194, 0.18) !important;
+}
+
+.app-shell[data-section='home'] .rounded-card .bg-mint-soft {
+  opacity: 0.72;
+}
+
+.app-shell[data-section='home'] .rounded-card {
+  position: relative;
+}
+
+.app-shell[data-section='home'] .rounded-card::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0));
+}
