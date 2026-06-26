@@ -5,6 +5,7 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 type QuranAyah = { text: string; numberInSurah: number };
 type QuranPageResponse = { data?: { ayahs?: QuranAyah[] } };
 type SurahOption = { name: string; page: number };
+type QuranProps = { focusMode?: boolean };
 
 const TOTAL_PAGES = 604;
 const QURAN_CACHE_KEY = "athar-quran-page-cache";
@@ -36,7 +37,7 @@ const saveQuranPage = (pageNumber: number, text: string) => {
 
 const readQuranPage = (pageNumber: number) => readQuranCache()[String(pageNumber)] || "";
 
-export default function Quran() {
+export default function Quran({ focusMode = false }: QuranProps) {
   const [page, setPage] = useLocalStorage<number>("quran-page", 1);
   const [inputPage, setInputPage] = useState("");
   const [surahSearch, setSurahSearch] = useState("");
@@ -106,27 +107,29 @@ export default function Quran() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.3 }}
-      className="w-full overflow-hidden rounded-card bg-white p-3 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+      className={`w-full overflow-hidden rounded-card bg-white shadow-xl transition-all duration-300 hover:shadow-2xl ${focusMode ? "p-2" : "p-3 hover:-translate-y-1"}`}
     >
-      <div className="mb-3 flex items-center justify-between px-1">
-        <h2 className="text-lg font-bold text-primary-text">المصحف</h2>
-        <span className="rounded-full bg-primary-bg px-3 py-1.5 text-xs font-bold text-secondary-text">
-          الصفحة {page}
-        </span>
+      <div className={`overflow-hidden transition-all duration-500 ease-out ${focusMode ? "mb-0 max-h-0 -translate-y-2 opacity-0" : "mb-3 max-h-14 translate-y-0 opacity-100"}`}>
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-lg font-bold text-primary-text">المصحف</h2>
+          <span className="rounded-full bg-primary-bg px-3 py-1.5 text-xs font-bold text-secondary-text">
+            الصفحة {page}
+          </span>
+        </div>
       </div>
 
-      <div className="relative overflow-hidden rounded-[30px] bg-[#FBF7EC] p-2.5 shadow-inner ring-1 ring-black/5">
+      <div className={`relative overflow-hidden bg-[#FBF7EC] shadow-inner ring-1 ring-black/5 transition-all duration-300 ${focusMode ? "rounded-[28px] p-1.5" : "rounded-[30px] p-2.5"}`}>
         {isLoading ? (
-          <div className="grid min-h-[470px] place-items-center rounded-[24px] bg-[#FDFBF7] text-sm font-semibold text-secondary-text">
+          <div className={`grid place-items-center rounded-[24px] bg-[#FDFBF7] text-sm font-semibold text-secondary-text ${focusMode ? "min-h-[calc(100vh-11.5rem)]" : "min-h-[470px]"}`}>
             جاري تحميل الآيات...
           </div>
         ) : hasError ? (
-          <div className="grid min-h-[470px] place-items-center rounded-[24px] bg-[#FDFBF7] px-5 text-center text-sm font-semibold leading-7 text-secondary-text">
+          <div className={`grid place-items-center rounded-[24px] bg-[#FDFBF7] px-5 text-center text-sm font-semibold leading-7 text-secondary-text ${focusMode ? "min-h-[calc(100vh-11.5rem)]" : "min-h-[470px]"}`}>
             افتح هذه الصفحة مرة واحدة عند توفر الاتصال لتبقى محفوظة لاحقًا.
           </div>
         ) : (
           <div
-            className="max-h-[64vh] min-h-[470px] overflow-y-auto rounded-[24px] bg-[#FDFBF7] px-5 py-6 text-center text-[20px] leading-[2.45] text-[#1E1B18] shadow-sm"
+            className={`overflow-y-auto rounded-[24px] bg-[#FDFBF7] text-center text-[#1E1B18] shadow-sm transition-all duration-300 ${focusMode ? "max-h-[calc(100vh-11.5rem)] min-h-[calc(100vh-11.5rem)] px-4 py-5 text-[21px] leading-[2.55]" : "max-h-[64vh] min-h-[470px] px-5 py-6 text-[20px] leading-[2.45]"}`}
             style={{ fontFamily: '"Traditional Arabic", "Amiri", "Scheherazade New", serif' }}
           >
             {pageText}
@@ -134,8 +137,8 @@ export default function Quran() {
         )}
       </div>
 
-      <div className="mt-3 rounded-[28px] bg-white p-2 shadow-sm ring-1 ring-black/5">
-        <div className="mb-2 rounded-[24px] bg-primary-bg/40 p-2">
+      <div className={`mt-3 overflow-hidden rounded-[28px] bg-white shadow-sm ring-1 ring-black/5 transition-all duration-500 ease-out ${focusMode ? "max-h-16 p-1.5" : "max-h-72 p-2"}`}>
+        <div className={`overflow-hidden rounded-[24px] bg-primary-bg/40 transition-all duration-300 ${focusMode ? "mb-0 max-h-0 p-0 opacity-0" : "mb-2 max-h-32 p-2 opacity-100"}`}>
           <input
             type="search"
             value={surahSearch}
@@ -174,8 +177,8 @@ export default function Quran() {
               max={TOTAL_PAGES}
               value={inputPage}
               onChange={(event) => setInputPage(event.target.value)}
-              placeholder="صفحة"
-              className="h-12 w-[68px] rounded-full border border-secondary-text/30 bg-primary-bg/40 px-2 text-center text-sm font-semibold text-primary-text focus:border-action focus:bg-white focus:outline-none"
+              placeholder={focusMode ? `${page}` : "صفحة"}
+              className={`h-12 rounded-full border border-secondary-text/30 bg-primary-bg/40 px-2 text-center text-sm font-semibold text-primary-text focus:border-action focus:bg-white focus:outline-none ${focusMode ? "w-[54px]" : "w-[68px]"}`}
             />
             <button
               onClick={handleJump}
