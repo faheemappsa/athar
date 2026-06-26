@@ -216,9 +216,6 @@ export default function Dhikr() {
   const handleTap = () => {
     enterFocusMode();
     if (!current || isComplete) return;
-    try {
-      navigator.vibrate?.(8);
-    } catch {}
 
     const newCount = Math.min(count + 1, safeCount);
     setCount(newCount);
