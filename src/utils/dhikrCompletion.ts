@@ -18,12 +18,16 @@ const resolveCompletionTier = (completionCount: number): CompletionTier => {
   return "start";
 };
 
+const IDENTITY_BY_TIER: Record<CompletionTier, (completionCount: number) => string> = {
+  devoted: () => "أسبوع من المواظبة",
+  steady: (completionCount) => `${completionCount} أيام من الوصل`,
+  returning: () => "عدت اليوم إلى الذكر",
+  start: () => "عدت اليوم إلى الذكر",
+};
+
 export const getDhikrCompletionIdentity = (completionCount: number) => {
   const tier = resolveCompletionTier(completionCount);
-
-  if (tier === "devoted") return "أسبوع من المواظبة";
-  if (tier === "steady") return `${completionCount} أيام من الوصل`;
-  return "عدت اليوم إلى الذكر";
+  return IDENTITY_BY_TIER[tier](completionCount);
 };
 
 const COMPLETION_MESSAGES: CompletionMessageRule[] = [
@@ -67,11 +71,15 @@ const COMPLETION_MESSAGES: CompletionMessageRule[] = [
   },
 ];
 
-export const getDhikrCompletionMessage = (category: DhikrCategory, completionCount: number) => {
-  const tier = resolveCompletionTier(completionCount);
+const findMessageRule = (tier: CompletionTier, category: DhikrCategory) => {
   const exactRule = COMPLETION_MESSAGES.find((rule) => rule.tier === tier && rule.category === category);
   const tierRule = COMPLETION_MESSAGES.find((rule) => rule.tier === tier && !rule.category);
   const fallbackRule = COMPLETION_MESSAGES.find((rule) => rule.tier === "returning" && rule.category === category);
 
-  return exactRule?.message || tierRule?.message || fallbackRule?.message || "غدًا نلتقي على ذكرٍ جديد.";
+  return exactRule || tierRule || fallbackRule;
+};
+
+export const getDhikrCompletionMessage = (category: DhikrCategory, completionCount: number) => {
+  const tier = resolveCompletionTier(completionCount);
+  return findMessageRule(tier, category)?.message || "غدًا نلتقي على ذكرٍ جديد.";
 };
