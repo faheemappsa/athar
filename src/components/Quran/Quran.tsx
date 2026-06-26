@@ -109,15 +109,6 @@ export default function Quran({ focusMode = false }: QuranProps) {
       transition={{ duration: 0.4, delay: 0.3 }}
       className={`w-full overflow-hidden rounded-card bg-white shadow-xl transition-all duration-300 hover:shadow-2xl ${focusMode ? "p-2" : "p-3 hover:-translate-y-1"}`}
     >
-      <div className={`overflow-hidden transition-all duration-500 ease-out ${focusMode ? "mb-0 max-h-0 -translate-y-2 opacity-0" : "mb-3 max-h-14 translate-y-0 opacity-100"}`}>
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-lg font-bold text-primary-text">المصحف</h2>
-          <span className="rounded-full bg-primary-bg px-3 py-1.5 text-xs font-bold text-secondary-text">
-            الصفحة {page}
-          </span>
-        </div>
-      </div>
-
       <div className={`relative overflow-hidden bg-[#FBF7EC] shadow-inner ring-1 ring-black/5 transition-all duration-300 ${focusMode ? "rounded-[28px] p-1.5" : "rounded-[30px] p-2.5"}`}>
         {isLoading ? (
           <div className={`grid place-items-center rounded-[24px] bg-[#FDFBF7] text-sm font-semibold text-secondary-text ${focusMode ? "min-h-[calc(100vh-11.5rem)]" : "min-h-[470px]"}`}>
