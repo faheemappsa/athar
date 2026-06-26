@@ -5,24 +5,24 @@ type FooterProps = {
 export default function Footer({ showWaqf = false }: FooterProps) {
   const whatsappLink = "https://wa.me/966556445919";
   return (
-    <footer className="mt-6 space-y-3 border-t border-secondary-text/20 py-5 text-center text-xs text-secondary-text">
+    <footer className="mt-6 space-y-3 border-t border-[#A8D5C2]/30 py-5 text-center text-xs text-secondary-text">
       {showWaqf && (
         <div className="space-y-1 leading-relaxed">
           <p className="font-extrabold text-primary-text">وقف خيري عن مسلّم عوده البويني رحمه الله</p>
-          <p>لعلنا نكون منهم.. ( و ولد صالح يدعوا له )</p>
+          <p className="text-secondary-text">لعلنا نكون منهم.. ( و ولد صالح يدعوا له )</p>
         </div>
       )}
 
-      <p className="flex flex-wrap items-center justify-center gap-1 pt-2">
+      <p className="flex flex-wrap items-center justify-center gap-1 pt-2 text-secondary-text/90">
         <span>تطوير أستديو التجربة</span>
-        <span className="mx-1 text-secondary-text/40">|</span>
+        <span className="mx-1 text-secondary-text/30">|</span>
         <span>للاستفسار</span>
         <a
           href={whatsappLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center text-action transition hover:text-action/80"
-          aria-label="واتساب"
+          className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#A8D5C2]/20 text-action transition hover:text-action/80"
+          aria-label="التواصل عبر واتساب"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
