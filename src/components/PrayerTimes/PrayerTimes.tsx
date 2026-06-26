@@ -207,7 +207,7 @@ export default function PrayerTimes() {
       initial={surfaceMotion.initial}
       animate={surfaceMotion.animate}
       transition={surfaceMotion.transition}
-      className="relative w-full overflow-hidden rounded-card bg-white p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+      className="relative w-full overflow-hidden rounded-card bg-white p-6 shadow-xl transition-all duration-300 hover:shadow-2xl"
     >
       <div className="absolute -left-12 -top-12 h-28 w-28 rounded-full bg-mint-soft opacity-70 blur-[1px]" />
       <div className="absolute right-8 top-2 h-20 w-32 rounded-full bg-white/35 blur-2xl" />
