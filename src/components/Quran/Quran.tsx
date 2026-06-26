@@ -107,20 +107,20 @@ export default function Quran({ focusMode = false }: QuranProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.3 }}
-      className={`w-full overflow-hidden rounded-card bg-white shadow-xl transition-all duration-300 hover:shadow-2xl ${focusMode ? "p-2" : "p-3 hover:-translate-y-1"}`}
+      className={`w-full overflow-hidden rounded-card border border-white/70 bg-[#FBFCFA] shadow-[0_22px_48px_rgba(33,73,63,0.08)] transition-all duration-300 hover:shadow-2xl ${focusMode ? "p-2" : "p-3 hover:-translate-y-1"}`}
     >
-      <div className={`relative overflow-hidden bg-[#FBF7EC] shadow-inner ring-1 ring-black/5 transition-all duration-300 ${focusMode ? "rounded-[28px] p-1.5" : "rounded-[30px] p-2.5"}`}>
+      <div className={`relative overflow-hidden bg-[#F6F0E5] shadow-inner ring-1 ring-[#C8A84E]/10 transition-all duration-300 ${focusMode ? "rounded-[28px] p-1.5" : "rounded-[30px] p-2.5"}`}>
         {isLoading ? (
-          <div className={`grid place-items-center rounded-[24px] bg-[#FDFBF7] text-sm font-semibold text-secondary-text ${focusMode ? "min-h-[calc(100vh-11.5rem)]" : "min-h-[470px]"}`}>
+          <div className={`grid place-items-center rounded-[24px] bg-[#FEFCF7] text-sm font-semibold text-secondary-text ${focusMode ? "min-h-[calc(100vh-11.5rem)]" : "min-h-[470px]"}`}>
             جاري تحميل الآيات...
           </div>
         ) : hasError ? (
-          <div className={`grid place-items-center rounded-[24px] bg-[#FDFBF7] px-5 text-center text-sm font-semibold leading-7 text-secondary-text ${focusMode ? "min-h-[calc(100vh-11.5rem)]" : "min-h-[470px]"}`}>
+          <div className={`grid place-items-center rounded-[24px] bg-[#FEFCF7] px-5 text-center text-sm font-semibold leading-7 text-secondary-text ${focusMode ? "min-h-[calc(100vh-11.5rem)]" : "min-h-[470px]"}`}>
             افتح هذه الصفحة مرة واحدة عند توفر الاتصال لتبقى محفوظة لاحقًا.
           </div>
         ) : (
           <div
-            className={`overflow-y-auto rounded-[24px] bg-[#FDFBF7] text-center text-[#1E1B18] shadow-sm transition-all duration-300 ${focusMode ? "max-h-[calc(100vh-11.5rem)] min-h-[calc(100vh-11.5rem)] px-4 py-5 text-[21px] leading-[2.55]" : "max-h-[64vh] min-h-[470px] px-5 py-6 text-[20px] leading-[2.45]"}`}
+            className={`quran-text overflow-y-auto rounded-[24px] bg-[#FEFCF7] text-center text-[#21493F] shadow-sm ring-1 ring-[#C8A84E]/10 transition-all duration-300 ${focusMode ? "max-h-[calc(100vh-11.5rem)] min-h-[calc(100vh-11.5rem)] px-4 py-5 text-[21px] leading-[2.55]" : "max-h-[64vh] min-h-[470px] px-5 py-6 text-[20px] leading-[2.45]"}`}
             style={{ fontFamily: '"Traditional Arabic", "Amiri", "Scheherazade New", serif' }}
           >
             {pageText}
