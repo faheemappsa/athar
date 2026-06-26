@@ -148,6 +148,12 @@ video {
   display: none;
 }
 
+.app-shell[data-section='dhikr'] .rounded-card.bg-white {
+  background: var(--athar-surface) !important;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: 0 22px 48px rgba(33, 73, 63, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.88) !important;
+}
+
 button[aria-label='اضغط للتسبيح'] {
   width: fit-content !important;
   margin-inline: auto !important;
