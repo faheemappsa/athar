@@ -33,12 +33,12 @@ export default function App() {
     <ErrorBoundary>
       <BrowserRouter>
         <AnalyticsPageView />
-        <div className="fixed inset-0 w-full overflow-hidden bg-primary-bg font-arabic">
+        <div className="app-shell">
           <AppIntro />
           <InstallPrompt />
           <AppUpdatePrompt />
           <ScrollMemory />
-          <main id="app-scroll" className="app-scroll h-full w-full overflow-y-auto px-4 pb-28 pt-6">
+          <main id="app-scroll" className="app-scroll">
             <div className="mx-auto w-full max-w-md">
               <ConnectionBanner />
               <Routes>
