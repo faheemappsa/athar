@@ -3,15 +3,13 @@ import { NavLink, useLocation } from "react-router-dom";
 import { navSections } from "../../config/sections";
 import { trackEvent } from "../../utils/analytics";
 
-const items = navSections
-  .filter((section) => section.nav)
-  .map((section) => ({
-    to: section.path,
-    label: section.nav!.label,
-    icon: section.nav!.icon,
-    event: section.nav!.event,
-    indicator: section.nav!.indicator,
-  }));
+const items = navSections.map((section) => ({
+  to: section.path,
+  label: section.nav.label,
+  icon: section.nav.icon,
+  event: section.nav.event,
+  indicator: section.nav.indicator,
+}));
 
 const homeItem = items.find((item) => item.to === "/") || items[0];
 
