@@ -178,6 +178,7 @@ export default function PrayerTimes() {
           onClick={requestLocation}
           disabled={status === "loading"}
           className="mt-5 rounded-full bg-action px-6 py-3 font-bold text-white shadow-md disabled:opacity-70"
+          aria-label="تحديد موقعي لحساب مواقيت الصلاة"
         >
           {status === "loading" ? "جاري التحديد..." : "تحديد موقعي"}
         </button>
@@ -214,7 +215,7 @@ export default function PrayerTimes() {
         <div className="text-right">
           <p className="text-sm font-bold text-action">{hijriDate}</p>
         </div>
-        <button onClick={requestLocation} className="grid h-12 w-12 shrink-0 place-items-center rounded-[20px] bg-mint-soft text-xl text-action shadow-sm shadow-action/5">⌖</button>
+        <button onClick={requestLocation} className="grid h-12 w-12 shrink-0 place-items-center rounded-[20px] bg-mint-soft text-xl text-action shadow-sm shadow-action/5" aria-label="تحديث موقعي لحساب مواقيت الصلاة">⌖</button>
       </div>
 
       <div className="relative z-10 mt-5 text-center">
