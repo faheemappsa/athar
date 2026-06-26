@@ -18,6 +18,14 @@ const resolveCompletionTier = (completionCount: number): CompletionTier => {
   return "start";
 };
 
+export const getDhikrCompletionIdentity = (completionCount: number) => {
+  const tier = resolveCompletionTier(completionCount);
+
+  if (tier === "devoted") return "أسبوع من المواظبة";
+  if (tier === "steady") return `${completionCount} أيام من الوصل`;
+  return "عدت اليوم إلى الذكر";
+};
+
 const COMPLETION_MESSAGES: CompletionMessageRule[] = [
   {
     tier: "devoted",
