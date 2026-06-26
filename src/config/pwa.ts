@@ -1,3 +1,10 @@
+type PwaRouteRequest = {
+  request: {
+    mode: string;
+    destination: string;
+  };
+};
+
 export const pwaAssets = ['athar-icon.svg', 'og-image.svg', 'robots.txt'] as const;
 
 export const pwaManifest = {
@@ -24,7 +31,7 @@ export const pwaManifest = {
 
 export const pwaRuntimeCaching = [
   {
-    urlPattern: ({ request }: any) => request.mode === 'navigate',
+    urlPattern: ({ request }: PwaRouteRequest) => request.mode === 'navigate',
     handler: 'NetworkFirst',
     options: {
       cacheName: 'athar-pages',
@@ -32,14 +39,14 @@ export const pwaRuntimeCaching = [
     },
   },
   {
-    urlPattern: ({ request }: any) => ['script', 'style', 'worker'].includes(request.destination),
+    urlPattern: ({ request }: PwaRouteRequest) => ['script', 'style', 'worker'].includes(request.destination),
     handler: 'StaleWhileRevalidate',
     options: {
       cacheName: 'athar-assets',
     },
   },
   {
-    urlPattern: ({ request }: any) => ['image', 'font'].includes(request.destination),
+    urlPattern: ({ request }: PwaRouteRequest) => ['image', 'font'].includes(request.destination),
     handler: 'CacheFirst',
     options: {
       cacheName: 'athar-media',
