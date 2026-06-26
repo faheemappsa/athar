@@ -4,10 +4,10 @@
 
 html {
   height: 100%;
-  overflow-x: hidden;
+  overflow: hidden;
   background-color: #EAF6F3;
   scroll-behavior: smooth;
-  overscroll-behavior-y: none;
+  overscroll-behavior: none;
 }
 
 body {
@@ -15,8 +15,8 @@ body {
   margin: 0;
   padding: 0;
   direction: rtl;
-  overflow-x: hidden;
-  overscroll-behavior-y: none;
+  overflow: hidden;
+  overscroll-behavior: none;
   background-color: #EAF6F3;
   color: #244A3F;
   font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
@@ -28,7 +28,7 @@ body {
 #root {
   min-height: 100vh;
   min-height: 100dvh;
-  overflow-x: hidden;
+  overflow: hidden;
   background-color: #EAF6F3;
   isolation: isolate;
 }
@@ -56,6 +56,11 @@ a:active,
   filter: brightness(0.98);
 }
 
+[data-no-active-scale]:active {
+  transform: none;
+  filter: none;
+}
+
 .haptic-tap {
   transition: transform 140ms ease, filter 140ms ease;
 }
@@ -67,10 +72,23 @@ video {
   max-width: 100%;
 }
 
+.app-shell {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
 .app-scroll {
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
+  overscroll-behavior: contain;
   scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.app-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 .quran-text {
