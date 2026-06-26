@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ADHKAR, CATEGORY_LABELS, type DhikrCategory, type DhikrMode } from "../../data/adhkar";
 import { useSavedLocation } from "../../hooks/useSavedLocation";
 import { getPrayerTimes } from "../../services/prayerApi";
+import DhikrCompletionCard from "./DhikrCompletionCard";
 
 const getFallbackCategory = (): DhikrCategory => {
   const hour = new Date().getHours();
@@ -336,12 +337,7 @@ export default function Dhikr() {
       </div>
 
       {isFinalDhikr && isComplete && (
-        <div className="mt-4 overflow-hidden rounded-[28px] bg-mint-soft p-5 text-center">
-          <p className="text-2xl">🌿</p>
-          <p className="mt-2 text-lg font-extrabold text-primary-text">من أهل الذكر</p>
-          <p className="mt-1 text-sm font-semibold text-secondary-text">{identityCopy}</p>
-          <p className="mt-3 text-sm leading-relaxed text-secondary-text">غدًا نلتقي على ذكرٍ جديد.</p>
-        </div>
+        <DhikrCompletionCard category={category} identityCopy={identityCopy} completionCount={completionCount} />
       )}
     </motion.div>
   );
