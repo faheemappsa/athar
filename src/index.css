@@ -154,6 +154,25 @@ video {
   box-shadow: 0 22px 48px rgba(33, 73, 63, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.88) !important;
 }
 
+.app-shell[data-section='dhikr'] .text-primary-text {
+  color: var(--athar-title) !important;
+}
+
+.app-shell[data-section='dhikr'] .text-secondary-text {
+  color: var(--athar-muted) !important;
+}
+
+.app-shell[data-section='dhikr'] .text-action {
+  color: var(--athar-green) !important;
+}
+
+.app-shell[data-section='dhikr'] p.leading-loose {
+  color: var(--athar-title) !important;
+  font-weight: 650;
+  line-height: 2.05 !important;
+  letter-spacing: -0.01em;
+}
+
 button[aria-label='اضغط للتسبيح'] {
   width: fit-content !important;
   margin-inline: auto !important;
