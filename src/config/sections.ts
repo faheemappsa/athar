@@ -2,17 +2,21 @@ export type AppSectionKey = 'home' | 'dhikr' | 'quran' | 'radio';
 
 export type AppSectionContext = 'daily' | 'worship' | 'recitation' | 'listening';
 
+export type AppSectionNav = {
+  label: string;
+  icon: string;
+  event: string;
+  indicator: string;
+};
+
 export type AppSectionMode = {
   key: AppSectionKey;
   path: string;
   context: AppSectionContext;
-  nav?: {
-    label: string;
-    icon: string;
-    event: string;
-    indicator: string;
-  };
+  nav?: AppSectionNav;
 };
+
+export type AppNavSection = AppSectionMode & { nav: AppSectionNav };
 
 export const appSections: AppSectionMode[] = [
   {
@@ -55,6 +59,8 @@ export const appSections: AppSectionMode[] = [
   },
 ];
 
-export const navSections = appSections.filter((section) => section.nav);
+const hasNavigation = (section: AppSectionMode): section is AppNavSection => Boolean(section.nav);
+
+export const navSections = appSections.filter(hasNavigation);
 
 export const getSectionByPath = (path: string) => appSections.find((section) => section.path === path) || appSections[0];
