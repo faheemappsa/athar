@@ -208,12 +208,13 @@ export default function PrayerTimes() {
       transition={surfaceMotion.transition}
       className="relative w-full overflow-hidden rounded-card bg-white p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
-      <div className="absolute -left-12 -top-12 h-28 w-28 rounded-full bg-mint-soft" />
+      <div className="absolute -left-12 -top-12 h-28 w-28 rounded-full bg-mint-soft opacity-70 blur-[1px]" />
+      <div className="absolute right-8 top-2 h-20 w-32 rounded-full bg-white/35 blur-2xl" />
       <div className="relative z-10 flex items-start justify-between gap-4">
         <div className="text-right">
           <p className="text-sm font-bold text-action">{hijriDate}</p>
         </div>
-        <button onClick={requestLocation} className="grid h-12 w-12 shrink-0 place-items-center rounded-[20px] bg-mint-soft text-xl text-action">⌖</button>
+        <button onClick={requestLocation} className="grid h-12 w-12 shrink-0 place-items-center rounded-[20px] bg-mint-soft text-xl text-action shadow-sm shadow-action/5">⌖</button>
       </div>
 
       <div className="relative z-10 mt-5 text-center">
@@ -233,7 +234,7 @@ export default function PrayerTimes() {
         {prayerRows.map((prayer) => {
           const active = prayer.name === activePrayerName;
           return (
-            <div key={prayer.name} className={`rounded-[18px] px-1 py-2 text-center ${active ? "bg-white shadow-sm" : ""}`}>
+            <div key={prayer.name} className={`rounded-[18px] px-1 py-2 text-center ${active ? "bg-white/90 shadow-sm shadow-action/5" : ""}`}>
               <p className={`text-xs font-bold ${active ? "text-action" : "text-secondary-text"}`}>{PRAYER_LABELS[prayer.name]}</p>
               <p className="mt-1 text-[11px] font-semibold text-primary-text">{formatTime(prayer.adhan)}</p>
             </div>
