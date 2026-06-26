@@ -14,6 +14,7 @@
   --app-shell-bottom: calc(7rem + var(--safe-bottom));
   --context-accent: #48AD8D;
   --context-surface: rgba(255, 255, 255, 0.35);
+  --context-glow: rgba(72, 173, 141, 0.16);
 }
 
 html {
@@ -97,16 +98,28 @@ video {
   font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
 }
 
+.app-shell[data-context='daily'] {
+  --context-accent: #48AD8D;
+  --context-surface: rgba(255, 255, 255, 0.35);
+  --context-glow: rgba(72, 173, 141, 0.16);
+}
+
 .app-shell[data-context='worship'] {
   --context-accent: #48AD8D;
+  --context-surface: rgba(255, 255, 255, 0.38);
+  --context-glow: rgba(72, 173, 141, 0.18);
 }
 
 .app-shell[data-context='recitation'] {
   --context-accent: #2F7F68;
+  --context-surface: rgba(255, 255, 255, 0.32);
+  --context-glow: rgba(47, 127, 104, 0.16);
 }
 
 .app-shell[data-context='listening'] {
   --context-accent: #5C8D82;
+  --context-surface: rgba(255, 255, 255, 0.3);
+  --context-glow: rgba(92, 141, 130, 0.15);
 }
 
 .app-scroll {
