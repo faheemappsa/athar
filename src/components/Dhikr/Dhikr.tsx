@@ -5,6 +5,7 @@ import { MORNING_EXTRA_ADHKAR } from "../../data/adhkarMorningExtra";
 import { SLEEP_ADHKAR_EXTRA } from "../../data/sleepAdhkarExtra";
 import { useSavedLocation } from "../../hooks/useSavedLocation";
 import { getPrayerTimes } from "../../services/prayerApi";
+import { getDhikrCompletionIdentity } from "../../utils/dhikrCompletion";
 import DhikrCompletionCard from "./DhikrCompletionCard";
 import DhikrSessionHeader from "./DhikrSessionHeader";
 
@@ -185,7 +186,7 @@ export default function Dhikr() {
   const totalProgress = dhikrList.length > 0 ? ((currentIndex + count / safeCount) / dhikrList.length) * 100 : 0;
   const categoryInfo = CATEGORY_LABELS[category];
   const completionCount = completionDays.length;
-  const identityCopy = completionCount >= 7 ? "أسبوع من المواظبة" : completionCount >= 3 ? `${completionCount} أيام من الوصل` : "عدت اليوم إلى الذكر";
+  const identityCopy = getDhikrCompletionIdentity(completionCount);
 
   const recordSessionCompletion = () => {
     const next = saveCompletionDay();
