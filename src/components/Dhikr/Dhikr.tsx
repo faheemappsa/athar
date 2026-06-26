@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ADHKAR, CATEGORY_LABELS, type DhikrCategory, type DhikrMode } from "../../data/adhkar";
+import { MORNING_EXTRA_ADHKAR } from "../../data/adhkarMorningExtra";
 import { useSavedLocation } from "../../hooks/useSavedLocation";
 import { getPrayerTimes } from "../../services/prayerApi";
 import DhikrCompletionCard from "./DhikrCompletionCard";
@@ -47,6 +48,17 @@ const saveCompletionDay = () => {
 
 const broadcastDhikrFocus = (active: boolean) => {
   window.dispatchEvent(new CustomEvent("athar-focus-mode", { detail: { path: "/dhikr", active } }));
+};
+
+const getDhikrList = (category: DhikrCategory) => {
+  const baseList = ADHKAR[category] || ADHKAR.morning;
+
+  if (category !== "morning") return baseList;
+
+  const existingIds = new Set(baseList.map((item) => item.id));
+  const additions = MORNING_EXTRA_ADHKAR.filter((item) => !existingIds.has(item.id));
+
+  return [...baseList, ...additions];
 };
 
 export default function Dhikr() {
@@ -128,7 +140,7 @@ export default function Dhikr() {
     };
   }, [location]);
 
-  const dhikrList = useMemo(() => ADHKAR[category] || ADHKAR.morning, [category]);
+  const dhikrList = useMemo(() => getDhikrList(category), [category]);
 
   const progressKey = `athar-dhikr-${category}-${mode}`;
 
