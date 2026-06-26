@@ -2,10 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 
-type QuranAyah = { text: string; numberInSurah: number };
+type QuranSurah = { number: number; name: string };
+type QuranAyah = { text: string; numberInSurah: number; surah?: QuranSurah };
 type QuranPageResponse = { data?: { ayahs?: QuranAyah[] } };
 type SurahOption = { name: string; page: number };
 type QuranProps = { focusMode?: boolean };
+type QuranAyahView = { text: string; numberInSurah: number; surahName: string; surahNumber: number };
 
 const TOTAL_PAGES = 604;
 const QURAN_CACHE_KEY = "athar-quran-page-cache";
@@ -15,33 +17,48 @@ const SURAHS: SurahOption[] = SURAHS_DATA.split("|").map((item) => {
   return { name, page: Number(page) };
 });
 
-const readQuranCache = (): Record<string, string> => {
+const normalizeAyah = (ayah: QuranAyah): QuranAyahView => ({
+  text: ayah.text,
+  numberInSurah: ayah.numberInSurah,
+  surahName: ayah.surah?.name || "",
+  surahNumber: ayah.surah?.number || 0,
+});
+
+const readQuranCache = (): Record<string, QuranAyahView[]> => {
   try {
     const value = localStorage.getItem(QURAN_CACHE_KEY);
     if (!value) return {};
     const parsed = JSON.parse(value);
-    return parsed && typeof parsed === "object" ? parsed : {};
+    if (!parsed || typeof parsed !== "object") return {};
+
+    return Object.fromEntries(
+      Object.entries(parsed).filter(([, ayahs]) => Array.isArray(ayahs)) as [string, QuranAyahView[]][]
+    );
   } catch {
     return {};
   }
 };
 
-const saveQuranPage = (pageNumber: number, text: string) => {
+const saveQuranPage = (pageNumber: number, ayahs: QuranAyahView[]) => {
   try {
     const cache = readQuranCache();
-    cache[String(pageNumber)] = text;
+    cache[String(pageNumber)] = ayahs;
     const entries = Object.entries(cache).slice(-120);
     localStorage.setItem(QURAN_CACHE_KEY, JSON.stringify(Object.fromEntries(entries)));
   } catch {}
 };
 
-const readQuranPage = (pageNumber: number) => readQuranCache()[String(pageNumber)] || "";
+const readQuranPage = (pageNumber: number) => readQuranCache()[String(pageNumber)] || [];
+
+const shouldShowBasmala = (ayah: QuranAyahView) =>
+  ayah.numberInSurah === 1 && ayah.surahNumber !== 1 && ayah.surahNumber !== 9;
 
 export default function Quran({ focusMode = false }: QuranProps) {
   const [page, setPage] = useLocalStorage<number>("quran-page", 1);
   const [inputPage, setInputPage] = useState("");
   const [surahSearch, setSurahSearch] = useState("");
-  const [pageText, setPageText] = useState("");
+  const [activeSurahName, setActiveSurahName] = useState("");
+  const [pageAyahs, setPageAyahs] = useState<QuranAyahView[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
@@ -51,29 +68,46 @@ export default function Quran({ focusMode = false }: QuranProps) {
     return SURAHS.filter((surah) => surah.name.includes(query)).slice(0, 8);
   }, [surahSearch]);
 
+  const visibleAyahs = useMemo(() => {
+    if (!activeSurahName) return pageAyahs;
+    const firstSurahAyah = pageAyahs.findIndex((ayah) => ayah.surahName === activeSurahName);
+    return firstSurahAyah >= 0 ? pageAyahs.slice(firstSurahAyah) : pageAyahs;
+  }, [activeSurahName, pageAyahs]);
+
+  const ayahGroups = useMemo(() => {
+    return visibleAyahs.reduce<QuranAyahView[][]>((groups, ayah) => {
+      const lastGroup = groups[groups.length - 1];
+      if (!lastGroup || lastGroup[0]?.surahName !== ayah.surahName) {
+        groups.push([ayah]);
+      } else {
+        lastGroup.push(ayah);
+      }
+      return groups;
+    }, []);
+  }, [visibleAyahs]);
+
   useEffect(() => {
     let isMounted = true;
-    const cachedText = readQuranPage(page);
+    const cachedAyahs = readQuranPage(page);
 
-    setIsLoading(!cachedText);
+    setIsLoading(cachedAyahs.length === 0);
     setHasError(false);
-    if (cachedText) setPageText(cachedText);
+    if (cachedAyahs.length > 0) setPageAyahs(cachedAyahs);
 
     fetch(`https://api.alquran.cloud/v1/page/${page}/quran-uthmani`)
       .then((response) => response.json())
       .then((data: QuranPageResponse) => {
         if (!isMounted) return;
-        const ayahs = data.data?.ayahs || [];
-        const text = ayahs.map((ayah) => `${ayah.text} ﴿${ayah.numberInSurah}﴾`).join(" ");
-        setPageText(text);
-        saveQuranPage(page, text);
+        const ayahs = (data.data?.ayahs || []).map(normalizeAyah);
+        setPageAyahs(ayahs);
+        saveQuranPage(page, ayahs);
         setIsLoading(false);
       })
       .catch(() => {
         if (!isMounted) return;
-        const fallbackText = readQuranPage(page);
-        if (fallbackText) {
-          setPageText(fallbackText);
+        const fallbackAyahs = readQuranPage(page);
+        if (fallbackAyahs.length > 0) {
+          setPageAyahs(fallbackAyahs);
           setHasError(false);
         } else {
           setHasError(true);
@@ -86,9 +120,10 @@ export default function Quran({ focusMode = false }: QuranProps) {
     };
   }, [page]);
 
-  const goToPage = (nextPage: number) => {
+  const goToPage = (nextPage: number, surahName = "") => {
     if (nextPage < 1 || nextPage > TOTAL_PAGES) return;
     setPage(nextPage);
+    setActiveSurahName(surahName);
     setInputPage("");
   };
 
@@ -99,7 +134,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
 
   const handleSurahPick = (surah: SurahOption) => {
     setSurahSearch(surah.name);
-    goToPage(surah.page);
+    goToPage(surah.page, surah.name);
   };
 
   return (
@@ -120,10 +155,34 @@ export default function Quran({ focusMode = false }: QuranProps) {
           </div>
         ) : (
           <div
-            className={`quran-text overflow-y-auto rounded-[24px] bg-[#FEFCF7] text-center text-[#21493F] shadow-sm ring-1 ring-[#C8A84E]/10 transition-all duration-300 ${focusMode ? "max-h-[calc(100vh-11.5rem)] min-h-[calc(100vh-11.5rem)] px-4 py-5 text-[21px] leading-[2.55]" : "max-h-[64vh] min-h-[470px] px-5 py-6 text-[20px] leading-[2.45]"}`}
+            className={`quran-text overflow-y-auto rounded-[24px] bg-[#FEFCF7] text-center text-[#21493F] shadow-sm ring-1 ring-[#C8A84E]/10 transition-all duration-300 ${focusMode ? "max-h-[calc(100vh-11.5rem)] min-h-[calc(100vh-11.5rem)] px-4 py-5 text-[23px] leading-[2.75]" : "max-h-[64vh] min-h-[470px] px-5 py-6 text-[22px] leading-[2.65]"}`}
             style={{ fontFamily: '"Traditional Arabic", "Amiri", "Scheherazade New", serif' }}
           >
-            {pageText}
+            <div className="space-y-6">
+              {ayahGroups.map((group) => {
+                const firstAyah = group[0];
+                return (
+                  <section key={`${firstAyah.surahName}-${firstAyah.numberInSurah}`} className="space-y-3">
+                    <div className="mx-auto w-fit rounded-full bg-[#A8D5C2]/18 px-5 py-1.5 text-sm font-bold text-[#21493F] ring-1 ring-[#C8A84E]/15">
+                      سورة {firstAyah.surahName}
+                    </div>
+                    {shouldShowBasmala(firstAyah) && (
+                      <p className="text-[20px] font-bold text-[#2E7D61]">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+                    )}
+                    <p className="text-pretty">
+                      {group.map((ayah) => (
+                        <span key={`${ayah.surahNumber}-${ayah.numberInSurah}`} className="inline">
+                          {ayah.text}{" "}
+                          <span className="mx-1 inline-flex h-7 min-w-7 items-center justify-center rounded-full bg-[#A8D5C2]/18 px-2 align-middle text-[13px] font-bold leading-none text-[#2E7D61] ring-1 ring-[#C8A84E]/15">
+                            {ayah.numberInSurah}
+                          </span>{" "}
+                        </span>
+                      ))}
+                    </p>
+                  </section>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
