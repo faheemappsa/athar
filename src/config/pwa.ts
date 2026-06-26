@@ -1,9 +1,9 @@
 export const pwaAssets = ['athar-icon.svg', 'og-image.svg', 'robots.txt'] as const;
 
 export const pwaManifest = {
-  name: 'Athar',
-  short_name: 'Athar',
-  description: 'Daily dhikr and Quran companion.',
+  name: 'أثر',
+  short_name: 'أثر',
+  description: 'رفيق يومي للأذكار وورد القرآن.',
   theme_color: '#48AD8D',
   background_color: '#48AD8D',
   display: 'standalone',
