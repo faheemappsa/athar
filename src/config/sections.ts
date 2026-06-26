@@ -6,7 +6,6 @@ export type AppSectionNav = {
   label: string;
   icon: string;
   event: string;
-  indicator: string;
 };
 
 export type AppSectionMode = {
@@ -25,9 +24,8 @@ export const appSections: AppSectionMode[] = [
     context: 'daily',
     nav: {
       label: 'الرئيسية',
-      icon: '⌂',
+      icon: '🏠',
       event: 'nav_home',
-      indicator: 'left-1/2',
     },
   },
   {
@@ -38,7 +36,6 @@ export const appSections: AppSectionMode[] = [
       label: 'الأذكار',
       icon: '📿',
       event: 'nav_dhikr',
-      indicator: 'left-[16.66%]',
     },
   },
   {
@@ -49,7 +46,6 @@ export const appSections: AppSectionMode[] = [
       label: 'المصحف',
       icon: '📖',
       event: 'nav_quran',
-      indicator: 'left-[83.33%]',
     },
   },
   {
