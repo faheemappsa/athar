@@ -83,6 +83,8 @@ export default function Dhikr() {
   const [completionDays, setCompletionDays] = useState<string[]>([]);
   const [focusMode, setFocusMode] = useState(false);
   const surfaceMotion = appMotion.surface;
+  const counterMotion = appMotion.dhikrCounter;
+  const pulseMotion = appMotion.dhikrPulse;
 
   const enterFocusMode = () => {
     setFocusMode(true);
@@ -299,8 +301,8 @@ export default function Dhikr() {
           >
             <motion.div
               key={`ring-${pulseKey}`}
-              animate={feedback === "success" ? { scale: [1, 0.975, 1.012, 1] } : feedback === "complete" ? { scale: [1, 1.035, 1] } : { scale: 1 }}
-              transition={{ duration: feedback === "complete" ? 0.55 : 0.22, ease: "easeOut" }}
+              animate={feedback === "success" ? counterMotion.success : feedback === "complete" ? counterMotion.complete : counterMotion.idle}
+              transition={feedback === "complete" ? counterMotion.completeTransition : counterMotion.successTransition}
               className={`relative mx-auto grid place-items-center rounded-full transition-all duration-300 ${focusMode ? "h-[clamp(14rem,38dvh,17rem)] w-[clamp(14rem,38dvh,17rem)]" : "h-60 w-60"}`}
             >
               <div
@@ -314,9 +316,9 @@ export default function Dhikr() {
 
               <motion.div
                 key={`pulse-${pulseKey}`}
-                initial={{ opacity: 0.42, scale: 0.78 }}
-                animate={{ opacity: 0, scale: 1.28 }}
-                transition={{ duration: 0.42, ease: "easeOut" }}
+                initial={pulseMotion.initial}
+                animate={pulseMotion.animate}
+                transition={pulseMotion.transition}
                 className="absolute inset-2 rounded-full border border-action/30"
               />
 
