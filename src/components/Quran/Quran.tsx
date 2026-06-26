@@ -107,7 +107,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.3 }}
-      className={`w-full overflow-hidden rounded-card border border-white/70 bg-[#FBFCFA] shadow-[0_22px_48px_rgba(33,73,63,0.08)] transition-all duration-300 hover:shadow-2xl ${focusMode ? "p-2" : "p-3 hover:-translate-y-1"}`}
+      className={`w-full overflow-hidden rounded-card border border-white/70 bg-[#FBFCFA] shadow-[0_22px_48px_rgba(33,73,63,0.08)] transition-all duration-300 hover:shadow-2xl ${focusMode ? "p-2" : "p-3"}`}
     >
       <div className={`relative overflow-hidden bg-[#F6F0E5] shadow-inner ring-1 ring-[#C8A84E]/10 transition-all duration-300 ${focusMode ? "rounded-[28px] p-1.5" : "rounded-[30px] p-2.5"}`}>
         {isLoading ? (
