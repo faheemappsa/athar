@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { appMotion } from "../../config/motion";
 import { useSavedLocation } from "../../hooks/useSavedLocation";
 import { getPrayerTimes } from "../../services/prayerApi";
 
@@ -106,6 +107,7 @@ export default function PrayerTimes() {
   const [countdown, setCountdown] = useState<string>("0:00:00");
   const [iqamahCountdown, setIqamahCountdown] = useState<string>("0:00:00");
   const [loadError, setLoadError] = useState("");
+  const surfaceMotion = appMotion.surface;
 
   const hijriDate = useMemo(() => getHijriDate(), []);
   const faithOccasion = useMemo(() => getFaithOccasion(), []);
@@ -165,9 +167,9 @@ export default function PrayerTimes() {
   if (!location) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: 0.1 }}
+        initial={surfaceMotion.initial}
+        animate={surfaceMotion.animate}
+        transition={surfaceMotion.transition}
         className="w-full rounded-card bg-white p-6 text-center shadow-xl"
       >
         <p className="text-lg font-bold text-primary-text">مواقيت الصلاة</p>
@@ -187,9 +189,9 @@ export default function PrayerTimes() {
   if (!timings || !nextPrayer) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: 0.1 }}
+        initial={surfaceMotion.initial}
+        animate={surfaceMotion.animate}
+        transition={surfaceMotion.transition}
         className="w-full rounded-card bg-white p-6 text-center text-secondary-text shadow-xl"
       >
         {loadError || "جاري تحميل المواقيت..."}
@@ -201,9 +203,9 @@ export default function PrayerTimes() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: 0.1 }}
+      initial={surfaceMotion.initial}
+      animate={surfaceMotion.animate}
+      transition={surfaceMotion.transition}
       className="relative w-full overflow-hidden rounded-card bg-white p-6 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
       <div className="absolute -left-12 -top-12 h-28 w-28 rounded-full bg-mint-soft" />
