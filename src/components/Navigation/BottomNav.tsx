@@ -1,17 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import { navSections } from "../../config/sections";
 import { trackEvent } from "../../utils/analytics";
 
-const items = [
-  { to: "/quran", label: "المصحف", icon: "📖", event: "nav_quran" },
-  { to: "/", label: "الرئيسية", icon: "⌂", event: "nav_home" },
-  { to: "/dhikr", label: "الأذكار", icon: "📿", event: "nav_dhikr" },
-];
+const items = navSections
+  .filter((section) => section.nav)
+  .map((section) => ({
+    to: section.path,
+    label: section.nav!.label,
+    icon: section.nav!.icon,
+    event: section.nav!.event,
+    indicator: section.nav!.indicator,
+  }));
+
+const homeItem = items.find((item) => item.to === "/") || items[0];
 
 const getIndicatorPosition = (pathname: string) => {
-  if (pathname === "/quran") return "left-[83.33%]";
-  if (pathname === "/dhikr") return "left-[16.66%]";
-  return "left-1/2";
+  return items.find((item) => item.to === pathname)?.indicator || homeItem.indicator;
 };
 
 export default function BottomNav() {
@@ -20,7 +25,7 @@ export default function BottomNav() {
   const [focusPath, setFocusPath] = useState<string | null>(null);
   const isFocusMode = focusPath === location.pathname;
   const collapsed = isCollapsed || isFocusMode;
-  const activeItem = useMemo(() => items.find((item) => item.to === location.pathname) || items[1], [location.pathname]);
+  const activeItem = useMemo(() => items.find((item) => item.to === location.pathname) || homeItem, [location.pathname]);
 
   useEffect(() => {
     const handleFocusMode = (event: Event) => {
