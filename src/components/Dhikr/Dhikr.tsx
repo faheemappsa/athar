@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ADHKAR, CATEGORY_LABELS, type DhikrCategory, type DhikrMode } from "../../data/adhkar";
 import { MORNING_EXTRA_ADHKAR } from "../../data/adhkarMorningExtra";
+import { SLEEP_ADHKAR_EXTRA } from "../../data/sleepAdhkarExtra";
 import { useSavedLocation } from "../../hooks/useSavedLocation";
 import { getPrayerTimes } from "../../services/prayerApi";
 import DhikrCompletionCard from "./DhikrCompletionCard";
@@ -53,12 +54,19 @@ const broadcastDhikrFocus = (active: boolean) => {
 const getDhikrList = (category: DhikrCategory) => {
   const baseList = ADHKAR[category] || ADHKAR.morning;
 
-  if (category !== "morning") return baseList;
+  if (category === "morning") {
+    const existingIds = new Set(baseList.map((item) => item.id));
+    const additions = MORNING_EXTRA_ADHKAR.filter((item) => !existingIds.has(item.id));
+    return [...baseList, ...additions];
+  }
 
-  const existingIds = new Set(baseList.map((item) => item.id));
-  const additions = MORNING_EXTRA_ADHKAR.filter((item) => !existingIds.has(item.id));
+  if (category === "sleep") {
+    const existingIds = new Set(baseList.map((item) => item.id));
+    const additions = SLEEP_ADHKAR_EXTRA.filter((item) => !existingIds.has(item.id));
+    return [...baseList, ...additions];
+  }
 
-  return [...baseList, ...additions];
+  return baseList;
 };
 
 export default function Dhikr() {
