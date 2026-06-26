@@ -72,11 +72,12 @@ export default function BottomNav() {
     >
       <div
         onClick={expandNav}
-        className={`relative overflow-hidden border border-white/45 bg-[var(--context-surface)] shadow-[0_18px_40px_rgba(30,27,24,0.12)] ring-1 ring-white/35 backdrop-blur-2xl transition-all duration-500 ease-out ${
+        className={`relative overflow-hidden border border-white/55 bg-[var(--context-surface)] shadow-[0_22px_52px_rgba(30,27,24,0.10),inset_0_1px_0_rgba(255,255,255,0.72)] ring-1 ring-white/45 backdrop-blur-[26px] transition-all duration-500 ease-out ${
           isCollapsed ? "grid h-[58px] w-[58px] cursor-pointer place-items-center rounded-[24px]" : "h-[68px] w-full rounded-[32px]"
         }`}
       >
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/45 via-white/15 to-white/5" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/58 via-white/18 to-white/6" />
+        <div className="pointer-events-none absolute inset-x-5 top-1 h-px bg-white/75" />
 
         {isCollapsed ? (
           <span
