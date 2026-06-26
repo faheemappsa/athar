@@ -155,16 +155,25 @@ video {
   box-shadow: 0 22px 48px rgba(33, 73, 63, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.88) !important;
 }
 
+.app-shell[data-section='home'] .text-primary-text,
 .app-shell[data-section='dhikr'] .text-primary-text {
   color: var(--athar-title) !important;
 }
 
+.app-shell[data-section='home'] .text-secondary-text,
 .app-shell[data-section='dhikr'] .text-secondary-text {
   color: var(--athar-muted) !important;
 }
 
+.app-shell[data-section='home'] .text-action,
 .app-shell[data-section='dhikr'] .text-action {
   color: var(--athar-green) !important;
+}
+
+.app-shell[data-section='home'] .tracking-tight.text-action {
+  color: var(--athar-green) !important;
+  letter-spacing: -0.035em;
+  text-shadow: 0 10px 34px rgba(46, 125, 97, 0.10);
 }
 
 .app-shell[data-section='dhikr'] p.leading-loose {
