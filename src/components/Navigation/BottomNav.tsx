@@ -72,14 +72,18 @@ export default function BottomNav() {
     >
       <div
         onClick={expandNav}
-        className={`relative overflow-hidden border border-white/45 bg-white/30 shadow-[0_18px_40px_rgba(30,27,24,0.12)] ring-1 ring-white/35 backdrop-blur-2xl transition-all duration-500 ease-out supports-[backdrop-filter]:bg-white/22 ${
+        className={`relative overflow-hidden border border-white/45 bg-[var(--context-surface)] shadow-[0_18px_40px_rgba(30,27,24,0.12)] ring-1 ring-white/35 backdrop-blur-2xl transition-all duration-500 ease-out ${
           isCollapsed ? "grid h-[58px] w-[58px] cursor-pointer place-items-center rounded-[24px]" : "h-[68px] w-full rounded-[32px]"
         }`}
       >
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/45 via-white/15 to-white/5" />
 
         {isCollapsed ? (
-          <span className="relative z-10 grid h-11 w-11 place-items-center rounded-[18px] bg-action/85 text-2xl leading-none text-white shadow-[0_10px_24px_rgba(72,173,141,0.24)]" aria-label={activeItem.label}>
+          <span
+            className="relative z-10 grid h-11 w-11 place-items-center rounded-[18px] text-2xl leading-none text-white"
+            style={{ backgroundColor: "var(--context-accent)", boxShadow: "0 10px 24px var(--context-glow)" }}
+            aria-label={activeItem.label}
+          >
             {activeItem.icon}
           </span>
         ) : (
@@ -91,7 +95,7 @@ export default function BottomNav() {
                 onClick={() => trackEvent(item.event, { from: location.pathname, to: item.to })}
                 className={({ isActive }) =>
                   `flex h-full items-center justify-center rounded-full text-sm font-bold leading-none transition-colors duration-300 ${
-                    isActive ? "text-action" : "text-primary-text/70 hover:text-primary-text"
+                    isActive ? "text-[var(--context-accent)]" : "text-primary-text/70 hover:text-primary-text"
                   }`
                 }
               >
