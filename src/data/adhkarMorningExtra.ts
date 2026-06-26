@@ -1,4 +1,16 @@
-import type { DhikrItem } from "./adhkar";
+import { ADHKAR, type DhikrItem } from "./adhkar";
+import { EVENING_EXTRA_ADHKAR } from "./adhkarEveningExtra";
+import { SLEEP_EXTRA_ADHKAR } from "./adhkarSleepExtra";
+
+const appendUnique = (target: DhikrItem[], additions: DhikrItem[]) => {
+  const existingIds = new Set(target.map((item) => item.id));
+  additions.forEach((item) => {
+    if (!existingIds.has(item.id)) {
+      target.push(item);
+      existingIds.add(item.id);
+    }
+  });
+};
 
 // المرحلة 1: إضافات أذكار الصباح من حصن المسلم.
 // أبقيناها في ملف مستقل حتى تكون المراجعة والرجوع أسهل قبل دمجها النهائي في adhkar.ts.
@@ -67,3 +79,6 @@ export const MORNING_EXTRA_ADHKAR: DhikrItem[] = [
     text: "أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ",
   },
 ];
+
+appendUnique(ADHKAR.evening, EVENING_EXTRA_ADHKAR);
+appendUnique(ADHKAR.sleep, SLEEP_EXTRA_ADHKAR);
