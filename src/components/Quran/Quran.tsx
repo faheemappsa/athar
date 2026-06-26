@@ -60,6 +60,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
   const [pageAyahs, setPageAyahs] = useState<QuranAyahView[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [isHeaderOpen, setIsHeaderOpen] = useState(false);
   const readerRef = useRef<HTMLDivElement | null>(null);
 
   const filteredSurahs = useMemo(() => {
@@ -130,6 +131,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
     setPage(nextPage);
     setActiveSurahName(surahName);
     setInputPage("");
+    setIsHeaderOpen(false);
   };
 
   const handleJump = () => {
@@ -147,35 +149,94 @@ export default function Quran({ focusMode = false }: QuranProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.3 }}
-      className={`w-full overflow-hidden rounded-[32px] border border-[#C8A84E]/18 bg-[#F7F0E4] shadow-[0_22px_48px_rgba(33,73,63,0.08)] ${focusMode ? "p-1.5" : "p-2"}`}
+      className={`w-full overflow-hidden rounded-[26px] border border-[#C8A84E]/12 bg-[#F7F0E4] shadow-[0_18px_38px_rgba(33,73,63,0.07)] ${focusMode ? "p-1" : "p-1.5"}`}
     >
-      <div className="rounded-[28px] border border-[#C8A84E]/20 bg-[#FEFCF7] shadow-inner">
-        <div className="mx-3 mt-3 flex items-center justify-between rounded-[18px] border border-[#C8A84E]/25 bg-[#F8F0E3] px-4 py-2 text-[#21493F]">
-          <span className="text-sm font-bold">سورة {currentSurahName}</span>
-          <span className="text-xs font-semibold text-[#8EA29A]">صفحة {page} من {TOTAL_PAGES}</span>
+      <div className="overflow-hidden rounded-[23px] border border-[#C8A84E]/14 bg-[#FEFCF7] shadow-inner">
+        <div className="sticky top-0 z-20 bg-[#FEFCF7]/92 px-2 pt-2 backdrop-blur-xl">
+          <button
+            type="button"
+            onClick={() => setIsHeaderOpen((value) => !value)}
+            className="mx-auto flex min-h-10 w-fit items-center justify-center rounded-full border border-[#C8A84E]/18 bg-[#F8F0E3]/95 px-5 text-sm font-extrabold text-[#21493F] shadow-sm transition active:scale-[0.98]"
+            aria-expanded={isHeaderOpen}
+            aria-label="فتح خيارات المصحف"
+          >
+            سورة {currentSurahName}
+            <span className="mr-2 text-[11px] text-[#8EA29A]">{isHeaderOpen ? "▲" : "▼"}</span>
+          </button>
+
+          <div className={`overflow-hidden transition-all duration-300 ${isHeaderOpen && !focusMode ? "mt-2 max-h-56 opacity-100" : "max-h-0 opacity-0"}`}>
+            <div className="rounded-[22px] border border-[#C8A84E]/14 bg-[#FBFCFA] p-2 shadow-sm">
+              <input
+                type="search"
+                value={surahSearch}
+                onChange={(event) => setSurahSearch(event.target.value)}
+                placeholder="ابحث باسم السورة"
+                className="h-11 w-full rounded-full border border-[#A8D5C2]/45 bg-white px-4 text-center text-sm font-bold text-primary-text placeholder:text-secondary-text/70 focus:border-action focus:outline-none"
+                aria-label="البحث باسم السورة"
+              />
+
+              {filteredSurahs.length > 0 && (
+                <div className="mt-2 grid grid-cols-2 gap-1.5">
+                  {filteredSurahs.map((surah) => (
+                    <button
+                      key={surah.name}
+                      onClick={() => handleSurahPick(surah)}
+                      className="rounded-full bg-white px-3 py-2 text-xs font-bold text-primary-text shadow-sm ring-1 ring-[#C8A84E]/10 transition hover:text-action"
+                      aria-label={`الانتقال إلى سورة ${surah.name}`}
+                    >
+                      {surah.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-2 flex items-center justify-center gap-2">
+                <input
+                  type="number"
+                  min="1"
+                  max={TOTAL_PAGES}
+                  value={inputPage}
+                  onChange={(event) => setInputPage(event.target.value)}
+                  placeholder="رقم الصفحة"
+                  className="h-11 w-28 rounded-full border border-[#C8A84E]/20 bg-[#F8F0E3] px-2 text-center text-sm font-semibold text-primary-text focus:border-action focus:bg-white focus:outline-none"
+                  aria-label="رقم صفحة المصحف"
+                />
+                <button
+                  onClick={handleJump}
+                  className="h-11 rounded-full bg-action px-5 text-sm font-bold text-white shadow-md shadow-action/15 transition hover:opacity-90"
+                  aria-label="الانتقال إلى صفحة محددة من المصحف"
+                >
+                  اذهب
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
         {isLoading ? (
-          <div className={`grid place-items-center text-sm font-semibold text-secondary-text ${focusMode ? "min-h-[calc(100vh-10.5rem)]" : "min-h-[520px]"}`}>
+          <div className={`grid place-items-center text-sm font-semibold text-secondary-text ${focusMode ? "min-h-[calc(100vh-9.5rem)]" : "min-h-[560px]"}`}>
             جاري تحميل الآيات...
           </div>
         ) : hasError ? (
-          <div className={`grid place-items-center px-5 text-center text-sm font-semibold leading-7 text-secondary-text ${focusMode ? "min-h-[calc(100vh-10.5rem)]" : "min-h-[520px]"}`}>
+          <div className={`grid place-items-center px-5 text-center text-sm font-semibold leading-7 text-secondary-text ${focusMode ? "min-h-[calc(100vh-9.5rem)]" : "min-h-[560px]"}`}>
             افتح هذه الصفحة مرة واحدة عند توفر الاتصال لتبقى محفوظة لاحقًا.
           </div>
         ) : (
           <div
             ref={readerRef}
-            className={`quran-text overflow-y-auto px-4 py-5 text-center text-[#111111] transition-all duration-300 ${focusMode ? "max-h-[calc(100vh-10.5rem)] min-h-[calc(100vh-10.5rem)] text-[24px] leading-[2.85]" : "max-h-[67vh] min-h-[520px] text-[23px] leading-[2.75]"}`}
+            className={`quran-text overflow-y-auto px-3 pb-4 pt-3 text-center text-[#12100D] transition-all duration-300 ${focusMode ? "max-h-[calc(100vh-9.5rem)] min-h-[calc(100vh-9.5rem)] text-[24px] leading-[2.85]" : "max-h-[72vh] min-h-[560px] text-[23px] leading-[2.76]"}`}
             style={{ fontFamily: '"Traditional Arabic", "Amiri", "Scheherazade New", serif' }}
+            onClick={() => {
+              if (isHeaderOpen) setIsHeaderOpen(false);
+            }}
           >
-            <div className="space-y-7">
+            <div className="space-y-6">
               {ayahGroups.map((group) => {
                 const firstAyah = group[0];
                 return (
                   <section key={`${firstAyah.surahName}-${firstAyah.numberInSurah}`} className="space-y-3">
                     {firstAyah.numberInSurah === 1 && (
-                      <div className="mx-auto w-full max-w-[320px] rounded-[18px] border border-[#C8A84E]/25 bg-[#F8F0E3] px-5 py-2 text-[16px] font-bold text-[#21493F]">
+                      <div className="mx-auto w-full max-w-[280px] rounded-[16px] border border-[#C8A84E]/18 bg-[#F8F0E3]/80 px-5 py-1.5 text-[15px] font-bold text-[#21493F]">
                         سورة {firstAyah.surahName}
                       </div>
                     )}
@@ -186,7 +247,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
                       {group.map((ayah) => (
                         <span key={`${ayah.surahNumber}-${ayah.numberInSurah}`} className="inline">
                           {ayah.text}{" "}
-                          <span className="mx-1 inline-flex h-7 min-w-7 items-center justify-center rounded-full border border-[#C8A84E]/25 bg-[#F8F0E3] px-2 align-middle text-[12px] font-bold leading-none text-[#8B7141]">
+                          <span className="mx-0.5 inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[#C8A84E]/18 bg-[#F8F0E3]/80 px-1.5 align-middle text-[11px] font-bold leading-none text-[#8B7141]">
                             {ayah.numberInSurah}
                           </span>{" "}
                         </span>
@@ -199,71 +260,28 @@ export default function Quran({ focusMode = false }: QuranProps) {
           </div>
         )}
 
-        <div className={`mx-3 mb-3 rounded-[22px] border border-[#C8A84E]/15 bg-[#FBFCFA]/90 p-2 shadow-sm ${focusMode ? "mt-1" : "mt-2"}`}>
-          <div className={`overflow-hidden rounded-[18px] bg-[#A8D5C2]/12 transition-all duration-300 ${focusMode ? "mb-0 max-h-0 p-0 opacity-0" : "mb-2 max-h-32 p-2 opacity-100"}`}>
-            <input
-              type="search"
-              value={surahSearch}
-              onChange={(event) => setSurahSearch(event.target.value)}
-              placeholder="ابحث باسم السورة"
-              className="h-11 w-full rounded-full border border-[#A8D5C2]/45 bg-white px-4 text-center text-sm font-bold text-primary-text placeholder:text-secondary-text/70 focus:border-action focus:outline-none"
-              aria-label="البحث باسم السورة"
-            />
-            {filteredSurahs.length > 0 && (
-              <div className="mt-2 grid grid-cols-2 gap-1.5">
-                {filteredSurahs.map((surah) => (
-                  <button
-                    key={surah.name}
-                    onClick={() => handleSurahPick(surah)}
-                    className="rounded-full bg-white px-3 py-2 text-xs font-bold text-primary-text shadow-sm ring-1 ring-[#C8A84E]/10 transition hover:text-action"
-                    aria-label={`الانتقال إلى سورة ${surah.name}`}
-                  >
-                    {surah.name}
-                  </button>
-                ))}
-              </div>
-            )}
+        <div className="mx-2 mb-2 grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-[20px] border border-[#C8A84E]/10 bg-[#FBFCFA]/86 p-1.5 shadow-sm">
+          <button
+            onClick={() => goToPage(page - 1)}
+            disabled={page <= 1}
+            className="rounded-full border border-[#C8A84E]/16 bg-[#F8F0E3]/90 px-4 py-2.5 text-sm font-bold text-[#21493F] shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="الانتقال إلى الصفحة السابقة من المصحف"
+          >
+            السابق
+          </button>
+
+          <div className="rounded-full bg-[#A8D5C2]/12 px-3 py-2 text-xs font-bold text-[#8EA29A]">
+            {page}
           </div>
 
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-            <button
-              onClick={() => goToPage(page - 1)}
-              disabled={page <= 1}
-              className="rounded-full border border-[#C8A84E]/20 bg-[#F8F0E3] px-4 py-3 text-sm font-bold text-[#21493F] shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-              aria-label="الانتقال إلى الصفحة السابقة من المصحف"
-            >
-              السابق
-            </button>
-
-            <div className="flex items-center justify-center gap-1.5">
-              <input
-                type="number"
-                min="1"
-                max={TOTAL_PAGES}
-                value={inputPage}
-                onChange={(event) => setInputPage(event.target.value)}
-                placeholder={focusMode ? `${page}` : "صفحة"}
-                className={`h-12 rounded-full border border-[#C8A84E]/20 bg-[#F8F0E3] px-2 text-center text-sm font-semibold text-primary-text focus:border-action focus:bg-white focus:outline-none ${focusMode ? "w-[54px]" : "w-[68px]"}`}
-                aria-label="رقم صفحة المصحف"
-              />
-              <button
-                onClick={handleJump}
-                className="h-12 rounded-full bg-action px-4 text-sm font-bold text-white shadow-md shadow-action/15 transition hover:opacity-90"
-                aria-label="الانتقال إلى صفحة محددة من المصحف"
-              >
-                اذهب
-              </button>
-            </div>
-
-            <button
-              onClick={() => goToPage(page + 1)}
-              disabled={page >= TOTAL_PAGES}
-              className="rounded-full border border-[#C8A84E]/20 bg-[#F8F0E3] px-4 py-3 text-sm font-bold text-[#21493F] shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-              aria-label="الانتقال إلى الصفحة التالية من المصحف"
-            >
-              التالي
-            </button>
-          </div>
+          <button
+            onClick={() => goToPage(page + 1)}
+            disabled={page >= TOTAL_PAGES}
+            className="rounded-full border border-[#C8A84E]/16 bg-[#F8F0E3]/90 px-4 py-2.5 text-sm font-bold text-[#21493F] shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="الانتقال إلى الصفحة التالية من المصحف"
+          >
+            التالي
+          </button>
         </div>
       </div>
     </motion.div>
