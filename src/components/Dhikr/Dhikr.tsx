@@ -85,6 +85,7 @@ export default function Dhikr() {
   const surfaceMotion = appMotion.surface;
   const counterMotion = appMotion.dhikrCounter;
   const pulseMotion = appMotion.dhikrPulse;
+  const glowMotion = appMotion.dhikrCompleteGlow;
 
   const enterFocusMode = () => {
     setFocusMode(true);
@@ -324,9 +325,9 @@ export default function Dhikr() {
 
               {feedback === "complete" && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.75 }}
-                  animate={{ opacity: [0, 0.55, 0], scale: [0.75, 1.2, 1.42] }}
-                  transition={{ duration: 0.85, ease: "easeOut" }}
+                  initial={glowMotion.initial}
+                  animate={glowMotion.animate}
+                  transition={glowMotion.transition}
                   className="absolute inset-0 rounded-full bg-action/20 blur-md"
                 />
               )}
