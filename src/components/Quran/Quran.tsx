@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 
@@ -61,6 +61,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
   const [pageAyahs, setPageAyahs] = useState<QuranAyahView[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const readerRef = useRef<HTMLDivElement | null>(null);
 
   const filteredSurahs = useMemo(() => {
     const query = surahSearch.trim();
@@ -85,6 +86,10 @@ export default function Quran({ focusMode = false }: QuranProps) {
       return groups;
     }, []);
   }, [visibleAyahs]);
+
+  useEffect(() => {
+    readerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page, activeSurahName]);
 
   useEffect(() => {
     let isMounted = true;
@@ -155,6 +160,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
           </div>
         ) : (
           <div
+            ref={readerRef}
             className={`quran-text overflow-y-auto rounded-[24px] bg-[#FEFCF7] text-center text-[#21493F] shadow-sm ring-1 ring-[#C8A84E]/10 transition-all duration-300 ${focusMode ? "max-h-[calc(100vh-11.5rem)] min-h-[calc(100vh-11.5rem)] px-4 py-5 text-[23px] leading-[2.75]" : "max-h-[64vh] min-h-[470px] px-5 py-6 text-[22px] leading-[2.65]"}`}
             style={{ fontFamily: '"Traditional Arabic", "Amiri", "Scheherazade New", serif' }}
           >
