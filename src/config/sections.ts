@@ -19,6 +19,16 @@ export type AppNavSection = AppSectionMode & { nav: AppSectionNav };
 
 export const appSections: AppSectionMode[] = [
   {
+    key: 'quran',
+    path: '/quran',
+    context: 'recitation',
+    nav: {
+      label: 'المصحف',
+      icon: '📖',
+      event: 'nav_quran',
+    },
+  },
+  {
     key: 'home',
     path: '/',
     context: 'daily',
@@ -39,16 +49,6 @@ export const appSections: AppSectionMode[] = [
     },
   },
   {
-    key: 'quran',
-    path: '/quran',
-    context: 'recitation',
-    nav: {
-      label: 'المصحف',
-      icon: '📖',
-      event: 'nav_quran',
-    },
-  },
-  {
     key: 'radio',
     path: '/radio',
     context: 'listening',
@@ -59,4 +59,4 @@ const hasNavigation = (section: AppSectionMode): section is AppNavSection => Boo
 
 export const navSections = appSections.filter(hasNavigation);
 
-export const getSectionByPath = (path: string) => appSections.find((section) => section.path === path) || appSections[0];
+export const getSectionByPath = (path: string) => appSections.find((section) => section.path === path) || appSections[1] || appSections[0];
