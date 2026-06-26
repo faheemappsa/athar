@@ -27,6 +27,11 @@ export const appMotion = {
     animate: { opacity: 0, scale: 1.28 },
     transition: { duration: 0.42, ease: 'easeOut' },
   },
+  dhikrCompleteGlow: {
+    initial: { opacity: 0, scale: 0.75 },
+    animate: { opacity: [0, 0.55, 0], scale: [0.75, 1.2, 1.42] },
+    transition: { duration: 0.85, ease: 'easeOut' },
+  },
   tap: {
     scale: 0.97,
     brightness: 0.98,
