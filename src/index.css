@@ -146,6 +146,11 @@ button[aria-label='اضغط للتسبيح'] {
   margin-inline: auto !important;
 }
 
+button[aria-label='اضغط للتسبيح'] > div {
+  width: min(13.5rem, 58vw) !important;
+  height: min(13.5rem, 58vw) !important;
+}
+
 .quran-text {
   overflow-wrap: anywhere;
   -webkit-overflow-scrolling: touch;
