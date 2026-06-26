@@ -22,6 +22,16 @@ const SURAHS: SurahOption[] = SURAHS_DATA.split("|").map((item) => {
 
 const normalizeSurahName = (name: string) => name.replace(/^سورة\s+/u, "").trim();
 
+const normalizeArabicText = (text: string) =>
+  text
+    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, "")
+    .replace(/[إأآٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ة/g, "ه")
+    .replace(/[^\u0621-\u064A\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
 const normalizeAyah = (ayah: QuranAyah): QuranAyahView => ({
   text: ayah.text,
   numberInSurah: ayah.numberInSurah,
@@ -34,7 +44,14 @@ const shouldShowBasmala = (ayah: QuranAyahView) =>
 
 const stripBasmalaFromAyah = (ayah: QuranAyahView) => {
   if (!shouldShowBasmala(ayah)) return ayah.text;
-  return ayah.text.replace(BASMALA_TEXT, "").trim();
+  const normalizedAyah = normalizeArabicText(ayah.text);
+  const normalizedBasmala = normalizeArabicText(BASMALA_TEXT);
+  if (!normalizedAyah.startsWith(normalizedBasmala)) return ayah.text;
+
+  const basmalaEnd = ayah.text.search(/الرَّحِيمِ|الرَّحِيمِ|ٱلرَّحِيمِ|ٱلرَّحِيمِ|الرحيم|ٱلرحيم/u);
+  if (basmalaEnd === -1) return ayah.text;
+  const remaining = ayah.text.slice(basmalaEnd).replace(/^(الرَّحِيمِ|الرَّحِيمِ|ٱلرَّحِيمِ|ٱلرَّحِيمِ|الرحيم|ٱلرحيم)/u, "").trim();
+  return remaining;
 };
 
 const readQuranCache = (): Record<string, QuranAyahView[]> => {
@@ -209,7 +226,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: 0.2 }}
-      className={`flex w-full overflow-hidden rounded-[30px] border border-[#C8A84E]/12 bg-[#F7F0E4] shadow-[0_18px_38px_rgba(33,73,63,0.07)] ${focusMode ? "h-[calc(100svh-8.5rem)] p-1" : "h-[72svh] min-h-[570px] p-1.5"}`}
+      className={`flex w-full overflow-hidden rounded-[30px] border border-[#C8A84E]/12 bg-[#F7F0E4] shadow-[0_18px_38px_rgba(33,73,63,0.07)] ${focusMode ? "h-[calc(100svh-8.5rem)] p-1" : "h-[74svh] min-h-[585px] p-1.5"}`}
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[25px] border border-[#C8A84E]/14 bg-[#FEFCF7] shadow-inner">
         <div className="z-20 bg-[#FEFCF7]/94 px-2 pt-2 backdrop-blur-xl">
@@ -274,7 +291,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
         </div>
 
         {isLoading ? (
-          <div className="grid flex-1 place-items-center text-sm font-semibold text-secondary-text">جاري تحميل الآيات...</div>
+          <div className="grid flex-1 place-items-center text-lg font-bold text-secondary-text">جاري تحميل الآيات...</div>
         ) : hasError ? (
           <div className="grid flex-1 place-items-center px-5 text-center text-sm font-semibold leading-7 text-secondary-text">
             افتح هذه الصفحة مرة واحدة عند توفر الاتصال لتبقى محفوظة لاحقًا.
@@ -282,8 +299,8 @@ export default function Quran({ focusMode = false }: QuranProps) {
         ) : (
           <div
             ref={readerRef}
-            className={`quran-text min-h-0 flex-1 overflow-y-auto px-3 pb-5 pt-3 text-center text-[#12100D] transition-all duration-300 ${focusMode ? "text-[24px] leading-[2.85]" : "text-[23px] leading-[2.76]"}`}
-            style={{ fontFamily: '"Traditional Arabic", "Amiri", "Scheherazade New", serif' }}
+            className={`quran-text min-h-0 flex-1 overflow-y-auto px-3 pb-5 pt-3 text-center font-semibold text-[#12100D] transition-all duration-300 ${focusMode ? "text-[26px] leading-[2.55]" : "text-[25px] leading-[2.42]"}`}
+            style={{ fontFamily: '"IBM Plex Sans Arabic", "Cairo", sans-serif' }}
             onPointerDown={(event) => {
               pointerStartRef.current = { x: event.clientX, y: event.clientY, at: Date.now() };
             }}
@@ -300,7 +317,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
                       </div>
                     )}
                     {shouldShowBasmala(firstAyah) && (
-                      <p className="text-[21px] font-bold text-[#21493F]">{BASMALA_TEXT}</p>
+                      <p className="text-[23px] font-extrabold text-[#21493F]">{BASMALA_TEXT}</p>
                     )}
                     <p className="text-pretty">
                       {group.map((ayah) => {
