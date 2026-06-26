@@ -12,6 +12,8 @@
   --app-shell-inline: max(1rem, var(--safe-left)) max(1rem, var(--safe-right));
   --app-shell-top: max(1.5rem, var(--safe-top));
   --app-shell-bottom: calc(7rem + var(--safe-bottom));
+  --context-accent: #48AD8D;
+  --context-surface: rgba(255, 255, 255, 0.35);
 }
 
 html {
@@ -93,6 +95,18 @@ video {
   overflow: hidden;
   background-color: var(--app-bg);
   font-family: 'IBM Plex Sans Arabic', 'Cairo', sans-serif;
+}
+
+.app-shell[data-context='worship'] {
+  --context-accent: #48AD8D;
+}
+
+.app-shell[data-context='recitation'] {
+  --context-accent: #2F7F68;
+}
+
+.app-shell[data-context='listening'] {
+  --context-accent: #5C8D82;
 }
 
 .app-scroll {
