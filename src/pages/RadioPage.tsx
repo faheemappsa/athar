@@ -9,21 +9,6 @@ export default function RadioPage() {
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
-        className="relative overflow-hidden rounded-card bg-action p-5 text-white shadow-xl"
-      >
-        <div className="relative z-10">
-          <p className="text-sm text-white/75">المشغل الرسمي</p>
-          <h2 className="mt-1 text-2xl font-bold">📻 إذاعة نداء الإسلام</h2>
-          <p className="mt-2 text-sm text-white/80">اضغط تشغيل من داخل نافذة الإذاعة.</p>
-        </div>
-        <div className="absolute -bottom-10 left-0 h-20 w-2/3 rounded-tr-[90px] bg-white/20" />
-        <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/10" />
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, delay: 0.1 }}
         className="overflow-hidden rounded-card bg-white p-3 shadow-xl"
       >
         <div className="overflow-hidden rounded-[28px] bg-primary-bg">
