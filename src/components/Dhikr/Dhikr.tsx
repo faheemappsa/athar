@@ -246,7 +246,7 @@ export default function Dhikr() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className={`w-full overflow-hidden rounded-card bg-white shadow-xl transition-all duration-300 hover:shadow-2xl ${focusMode ? "min-h-[calc(100vh-8rem)] p-4" : "p-5"}`}
+      className={`w-full overflow-hidden rounded-card bg-white shadow-xl transition-all duration-300 hover:shadow-2xl ${focusMode ? "flex min-h-[calc(100vh-8rem)] flex-col p-4" : "p-5"}`}
     >
       <div
         className={`overflow-hidden transition-all duration-500 ease-out ${
@@ -259,86 +259,94 @@ export default function Dhikr() {
         </div>
       </div>
 
-      <div className="mb-4 h-3 w-full overflow-hidden rounded-full bg-primary-bg">
-        <div className="h-full rounded-full bg-action transition-all duration-300" style={{ width: `${Math.min(100, totalProgress)}%` }} />
-      </div>
+      <div className={focusMode ? "flex min-h-[calc(100vh-11rem)] flex-col" : ""}>
+        <div className={focusMode ? "shrink-0" : ""}>
+          <div className="mb-4 h-3 w-full overflow-hidden rounded-full bg-primary-bg">
+            <div className="h-full rounded-full bg-action transition-all duration-300" style={{ width: `${Math.min(100, totalProgress)}%` }} />
+          </div>
 
-      <div className="mb-4 flex items-center justify-between text-sm text-secondary-text">
-        <span>{currentIndex + 1} من {dhikrList.length}</span>
-        <span>{current.title}</span>
-      </div>
+          <div className="mb-4 flex items-center justify-between text-sm text-secondary-text">
+            <span>{currentIndex + 1} من {dhikrList.length}</span>
+            <span>{current.title}</span>
+          </div>
+        </div>
 
-      <p className="break-words text-xl font-semibold leading-loose text-primary-text">{current.text}</p>
-      <div className="mt-3 flex items-center justify-between text-sm text-secondary-text">
-        <span>التكرار: {safeCount}</span>
-        <span className="font-bold text-action">المتبقي: {remainingCount}</span>
-      </div>
+        <div className={focusMode ? "flex flex-1 flex-col justify-center" : ""}>
+          <p className={`break-words font-semibold leading-loose text-primary-text ${focusMode ? "max-h-[28vh] overflow-y-auto text-center text-[1.35rem]" : "text-xl"}`}>{current.text}</p>
+          <div className="mt-3 flex items-center justify-between text-sm text-secondary-text">
+            <span>التكرار: {safeCount}</span>
+            <span className="font-bold text-action">المتبقي: {remainingCount}</span>
+          </div>
 
-      <button
-        onClick={handleTap}
-        disabled={isComplete}
-        className={`group block w-full outline-none transition-all duration-300 disabled:cursor-default ${focusMode ? "mt-5" : "mt-6"}`}
-        aria-label="اضغط للتسبيح"
-      >
-        <motion.div
-          key={`ring-${pulseKey}`}
-          animate={feedback === "success" ? { scale: [1, 0.975, 1.012, 1] } : feedback === "complete" ? { scale: [1, 1.035, 1] } : { scale: 1 }}
-          transition={{ duration: feedback === "complete" ? 0.55 : 0.22, ease: "easeOut" }}
-          className={`relative mx-auto grid place-items-center rounded-full transition-all duration-300 ${focusMode ? "h-64 w-64" : "h-60 w-60"}`}
-        >
-          <div
-            className="absolute inset-0 rounded-full transition-all duration-300"
-            style={{
-              background: `conic-gradient(#38A47C ${itemProgress}%, rgba(56,164,124,0.12) ${itemProgress}%)`,
-            }}
-          />
-          <div className="absolute inset-[10px] rounded-full bg-white shadow-xl shadow-action/10" />
-          <div className="absolute inset-[22px] rounded-full bg-primary-bg/80" />
-
-          <motion.div
-            key={`pulse-${pulseKey}`}
-            initial={{ opacity: 0.42, scale: 0.78 }}
-            animate={{ opacity: 0, scale: 1.28 }}
-            transition={{ duration: 0.42, ease: "easeOut" }}
-            className="absolute inset-2 rounded-full border border-action/30"
-          />
-
-          {feedback === "complete" && (
+          <button
+            onClick={handleTap}
+            disabled={isComplete}
+            className={`group block w-full outline-none transition-all duration-300 disabled:cursor-default ${focusMode ? "mt-8" : "mt-6"}`}
+            aria-label="اضغط للتسبيح"
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.75 }}
-              animate={{ opacity: [0, 0.55, 0], scale: [0.75, 1.2, 1.42] }}
-              transition={{ duration: 0.85, ease: "easeOut" }}
-              className="absolute inset-0 rounded-full bg-action/20 blur-md"
-            />
+              key={`ring-${pulseKey}`}
+              animate={feedback === "success" ? { scale: [1, 0.975, 1.012, 1] } : feedback === "complete" ? { scale: [1, 1.035, 1] } : { scale: 1 }}
+              transition={{ duration: feedback === "complete" ? 0.55 : 0.22, ease: "easeOut" }}
+              className={`relative mx-auto grid place-items-center rounded-full transition-all duration-300 ${focusMode ? "h-[17rem] w-[17rem]" : "h-60 w-60"}`}
+            >
+              <div
+                className="absolute inset-0 rounded-full transition-all duration-300"
+                style={{
+                  background: `conic-gradient(#38A47C ${itemProgress}%, rgba(56,164,124,0.12) ${itemProgress}%)`,
+                }}
+              />
+              <div className="absolute inset-[10px] rounded-full bg-white shadow-xl shadow-action/10" />
+              <div className="absolute inset-[22px] rounded-full bg-primary-bg/80" />
+
+              <motion.div
+                key={`pulse-${pulseKey}`}
+                initial={{ opacity: 0.42, scale: 0.78 }}
+                animate={{ opacity: 0, scale: 1.28 }}
+                transition={{ duration: 0.42, ease: "easeOut" }}
+                className="absolute inset-2 rounded-full border border-action/30"
+              />
+
+              {feedback === "complete" && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.75 }}
+                  animate={{ opacity: [0, 0.55, 0], scale: [0.75, 1.2, 1.42] }}
+                  transition={{ duration: 0.85, ease: "easeOut" }}
+                  className="absolute inset-0 rounded-full bg-action/20 blur-md"
+                />
+              )}
+
+              <div className="relative z-10 text-center">
+                <p className="text-5xl font-extrabold leading-none text-action">{count}</p>
+                <p className="mt-2 text-sm font-bold text-secondary-text">من {safeCount}</p>
+                <p className="mt-4 text-sm font-semibold text-primary-text">
+                  {feedback === "complete" ? "تم الذكر" : feedback === "success" ? "" : "اضغط للتسبيح"}
+                </p>
+              </div>
+            </motion.div>
+          </button>
+        </div>
+
+        <div className={focusMode ? "shrink-0 pt-3" : ""}>
+          {!isComplete && (
+            <button onClick={goToNextDhikr} className="mx-auto mt-3 block rounded-full px-5 py-2 text-sm font-bold text-secondary-text transition hover:bg-primary-bg">
+              الذكر التالي ←
+            </button>
           )}
 
-          <div className="relative z-10 text-center">
-            <p className="text-5xl font-extrabold leading-none text-action">{count}</p>
-            <p className="mt-2 text-sm font-bold text-secondary-text">من {safeCount}</p>
-            <p className="mt-4 text-sm font-semibold text-primary-text">
-              {feedback === "complete" ? "تم الذكر" : feedback === "success" ? "" : "اضغط للتسبيح"}
-            </p>
+          <p className="mt-3 text-center text-xs text-secondary-text">تقدمك محفوظ تلقائياً</p>
+
+          <div className="mt-4 flex justify-center">
+            <button onClick={resetProgress} className="rounded-full bg-primary-bg px-6 py-3 text-sm font-semibold text-secondary-text">
+              إعادة الأذكار
+            </button>
           </div>
-        </motion.div>
-      </button>
 
-      {!isComplete && (
-        <button onClick={goToNextDhikr} className="mx-auto mt-3 block rounded-full px-5 py-2 text-sm font-bold text-secondary-text transition hover:bg-primary-bg">
-          الذكر التالي ←
-        </button>
-      )}
-
-      <p className="mt-3 text-center text-xs text-secondary-text">تقدمك محفوظ تلقائياً</p>
-
-      <div className="mt-4 flex justify-center">
-        <button onClick={resetProgress} className="rounded-full bg-primary-bg px-6 py-3 text-sm font-semibold text-secondary-text">
-          إعادة الأذكار
-        </button>
+          {isFinalDhikr && isComplete && (
+            <DhikrCompletionCard category={category} identityCopy={identityCopy} completionCount={completionCount} />
+          )}
+        </div>
       </div>
-
-      {isFinalDhikr && isComplete && (
-        <DhikrCompletionCard category={category} identityCopy={identityCopy} completionCount={completionCount} />
-      )}
     </motion.div>
   );
 }
