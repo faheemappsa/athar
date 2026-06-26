@@ -223,10 +223,10 @@ export default function Quran({ focusMode = false }: QuranProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: 0.2 }}
-      className={`flex w-full overflow-hidden rounded-[30px] border border-[#C8A84E]/12 bg-[#F7F0E4] shadow-[0_18px_38px_rgba(33,73,63,0.07)] ${focusMode ? "h-[calc(100svh-8.5rem)] p-1" : "h-[74svh] min-h-[585px] p-1.5"}`}
+      transition={{ duration: 0.3, delay: 0.15 }}
+      className={`flex w-full overflow-hidden rounded-[30px] border border-[#C8A84E]/12 bg-[#F7F0E4] shadow-[0_18px_38px_rgba(33,73,63,0.07)] ${focusMode ? "h-[calc(100svh-8rem)] p-1" : "h-[calc(100svh-10rem)] min-h-[650px] p-1.5"}`}
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[25px] border border-[#C8A84E]/14 bg-[#FEFCF7] shadow-inner">
         <div className="z-20 bg-[#FEFCF7]/94 px-2 pt-2 backdrop-blur-xl">
@@ -299,7 +299,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
         ) : (
           <div
             ref={readerRef}
-            className={`quran-text min-h-0 flex-1 overflow-y-auto px-3 pb-5 pt-3 text-center font-semibold text-[#12100D] transition-all duration-300 ${focusMode ? "text-[26px] leading-[2.55]" : "text-[25px] leading-[2.42]"}`}
+            className={`quran-text min-h-0 flex-1 overflow-y-auto px-3 pb-5 pt-3 text-center font-semibold text-[#12100D] transition-all duration-300 ${focusMode ? "text-[24px] leading-[2.5]" : "text-[23px] leading-[2.38]"}`}
             style={{ fontFamily: '"IBM Plex Sans Arabic", "Cairo", sans-serif' }}
             onPointerDown={(event) => {
               pointerStartRef.current = { x: event.clientX, y: event.clientY, at: Date.now() };
@@ -317,7 +317,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
                       </div>
                     )}
                     {shouldShowBasmala(firstAyah) && (
-                      <p className="text-[23px] font-extrabold text-[#21493F]">{BASMALA_TEXT}</p>
+                      <p className="text-[22px] font-extrabold text-[#21493F]">{BASMALA_TEXT}</p>
                     )}
                     <p className="text-pretty">
                       {group.map((ayah) => {
