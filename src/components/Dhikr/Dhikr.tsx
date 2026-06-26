@@ -297,7 +297,7 @@ export default function Dhikr() {
           <button
             onClick={handleTap}
             disabled={isComplete}
-            className={`group block w-full outline-none transition-all duration-300 disabled:cursor-default ${focusMode ? "mt-7" : "mt-6"}`}
+            className={`group mx-auto block w-fit outline-none transition-all duration-300 disabled:cursor-default ${focusMode ? "mt-7" : "mt-6"}`}
             aria-label="اضغط للتسبيح"
           >
             <motion.div
