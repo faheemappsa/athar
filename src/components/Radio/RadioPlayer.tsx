@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { appMotion } from "../../config/motion";
 
 export default function RadioPlayer() {
+  const surfaceMotion = appMotion.surface;
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.15 }}
+      initial={surfaceMotion.initial}
+      animate={surfaceMotion.animate}
+      transition={surfaceMotion.transition}
       className="flex w-full items-center justify-between gap-3 rounded-card bg-white p-5 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
     >
       <div className="min-w-0">
