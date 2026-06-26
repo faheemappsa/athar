@@ -13,6 +13,7 @@ import ScrollMemory from "./components/Shared/ScrollMemory";
 import AppIntro from "./components/Shared/AppIntro";
 import ConnectionBanner from "./components/Shared/ConnectionBanner";
 import AppUpdatePrompt from "./components/Shared/AppUpdatePrompt";
+import { useActiveSection } from "./hooks/useActiveSection";
 import { trackEvent } from "./utils/analytics";
 
 const AnalyticsPageView = () => {
@@ -28,29 +29,37 @@ const AnalyticsPageView = () => {
   return null;
 };
 
+const AppShell = () => {
+  const section = useActiveSection();
+
+  return (
+    <div className="app-shell" data-section={section.key} data-context={section.context}>
+      <AppIntro />
+      <InstallPrompt />
+      <AppUpdatePrompt />
+      <ScrollMemory />
+      <main id="app-scroll" className="app-scroll">
+        <div className="mx-auto w-full max-w-md">
+          <ConnectionBanner />
+          <Routes>
+            <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
+            <Route path="/dhikr" element={<PageTransition><DhikrPage /></PageTransition>} />
+            <Route path="/quran" element={<PageTransition><QuranPage /></PageTransition>} />
+            <Route path="/radio" element={<PageTransition><RadioPage /></PageTransition>} />
+          </Routes>
+        </div>
+      </main>
+      <BottomNav />
+    </div>
+  );
+};
+
 export default function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
         <AnalyticsPageView />
-        <div className="app-shell">
-          <AppIntro />
-          <InstallPrompt />
-          <AppUpdatePrompt />
-          <ScrollMemory />
-          <main id="app-scroll" className="app-scroll">
-            <div className="mx-auto w-full max-w-md">
-              <ConnectionBanner />
-              <Routes>
-                <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
-                <Route path="/dhikr" element={<PageTransition><DhikrPage /></PageTransition>} />
-                <Route path="/quran" element={<PageTransition><QuranPage /></PageTransition>} />
-                <Route path="/radio" element={<PageTransition><RadioPage /></PageTransition>} />
-              </Routes>
-            </div>
-          </main>
-          <BottomNav />
-        </div>
+        <AppShell />
       </BrowserRouter>
     </ErrorBoundary>
   );
