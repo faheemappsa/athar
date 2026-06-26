@@ -15,6 +15,13 @@
   --context-accent: #48AD8D;
   --context-surface: rgba(255, 255, 255, 0.35);
   --context-glow: rgba(72, 173, 141, 0.16);
+  --athar-surface: #FBFCFA;
+  --athar-title: #21493F;
+  --athar-body: #4F655D;
+  --athar-muted: #8EA29A;
+  --athar-green: #2E7D61;
+  --athar-green-soft: #A8D5C2;
+  --athar-gold: #C8A84E;
 }
 
 html {
@@ -105,9 +112,9 @@ video {
 }
 
 .app-shell[data-context='worship'] {
-  --context-accent: #48AD8D;
-  --context-surface: rgba(255, 255, 255, 0.38);
-  --context-glow: rgba(72, 173, 141, 0.18);
+  --context-accent: #2E7D61;
+  --context-surface: rgba(251, 252, 250, 0.72);
+  --context-glow: rgba(168, 213, 194, 0.22);
 }
 
 .app-shell[data-context='recitation'] {
