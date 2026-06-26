@@ -173,6 +173,19 @@ video {
   letter-spacing: -0.01em;
 }
 
+.app-shell[data-section='dhikr'] .bg-primary-bg {
+  background-color: rgba(168, 213, 194, 0.18) !important;
+}
+
+.app-shell[data-section='dhikr'] button.bg-primary-bg {
+  border: 1px solid rgba(168, 213, 194, 0.36);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+.app-shell[data-section='dhikr'] button.hover\:bg-primary-bg:hover {
+  background-color: rgba(168, 213, 194, 0.22) !important;
+}
+
 button[aria-label='اضغط للتسبيح'] {
   width: fit-content !important;
   margin-inline: auto !important;
