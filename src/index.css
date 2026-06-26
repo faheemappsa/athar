@@ -176,15 +176,23 @@ video {
   text-shadow: 0 10px 34px rgba(46, 125, 97, 0.10);
 }
 
+.app-shell[data-section='home'] .bg-primary-bg,
+.app-shell[data-section='home'] .bg-mint-soft,
+.app-shell[data-section='dhikr'] .bg-primary-bg {
+  background-color: rgba(168, 213, 194, 0.18) !important;
+}
+
+.app-shell[data-section='home'] button.bg-action,
+.app-shell[data-section='home'] a.bg-action {
+  background: linear-gradient(180deg, #43A67D 0%, #2E7D61 100%) !important;
+  box-shadow: 0 14px 28px rgba(46, 125, 97, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.24) !important;
+}
+
 .app-shell[data-section='dhikr'] p.leading-loose {
   color: var(--athar-title) !important;
   font-weight: 650;
   line-height: 2.05 !important;
   letter-spacing: -0.01em;
-}
-
-.app-shell[data-section='dhikr'] .bg-primary-bg {
-  background-color: rgba(168, 213, 194, 0.18) !important;
 }
 
 .app-shell[data-section='dhikr'] button.bg-primary-bg {
