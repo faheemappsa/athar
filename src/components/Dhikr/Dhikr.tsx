@@ -4,6 +4,7 @@ import { ADHKAR, CATEGORY_LABELS, type DhikrCategory, type DhikrMode } from "../
 import { useSavedLocation } from "../../hooks/useSavedLocation";
 import { getPrayerTimes } from "../../services/prayerApi";
 import DhikrCompletionCard from "./DhikrCompletionCard";
+import DhikrSessionHeader from "./DhikrSessionHeader";
 
 const getFallbackCategory = (): DhikrCategory => {
   const hour = new Date().getHours();
@@ -18,12 +19,6 @@ const parseTime = (time: string) => {
   const date = new Date();
   date.setHours(hours || 0, minutes || 0, 0, 0);
   return date;
-};
-
-const PERIOD_LABEL: Record<DhikrCategory, string> = {
-  morning: "وقت الصباح",
-  evening: "وقت المساء",
-  sleep: "وقت السكينة",
 };
 
 const CONTINUITY_KEY = "athar-dhikr-completion-days";
@@ -246,49 +241,44 @@ export default function Dhikr() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className={`w-full overflow-hidden rounded-card bg-white shadow-xl transition-all duration-300 hover:shadow-2xl ${focusMode ? "flex min-h-[calc(100vh-8rem)] flex-col p-4" : "p-5"}`}
+      className={`w-full overflow-hidden rounded-card bg-white shadow-xl transition-all duration-300 hover:shadow-2xl ${focusMode ? "flex min-h-[calc(100dvh-10rem)] flex-col p-4" : "p-5"}`}
     >
-      <div
-        className={`overflow-hidden transition-all duration-500 ease-out ${
-          focusMode ? "mb-0 max-h-0 -translate-y-2 opacity-0" : "mb-4 max-h-16 translate-y-0 opacity-100"
-        }`}
-      >
-        <div className="flex items-center justify-between rounded-full border border-white/70 bg-primary-bg/70 px-4 py-2.5 text-sm font-bold text-secondary-text shadow-sm backdrop-blur">
-          <span className="text-action">{categoryInfo.emoji} {categoryInfo.title}</span>
-          <span>{PERIOD_LABEL[category]}</span>
+      <div className={focusMode ? "flex min-h-[calc(100dvh-12rem)] flex-col" : ""}>
+        <div className="shrink-0">
+          <DhikrSessionHeader
+            emoji={categoryInfo.emoji}
+            title={categoryInfo.title}
+            category={category}
+            currentIndex={currentIndex}
+            totalCount={dhikrList.length}
+            progress={totalProgress}
+          />
         </div>
-      </div>
 
-      <div className={focusMode ? "flex min-h-[calc(100vh-11rem)] flex-col" : ""}>
-        <div className={focusMode ? "shrink-0" : ""}>
-          <div className="mb-4 h-3 w-full overflow-hidden rounded-full bg-primary-bg">
-            <div className="h-full rounded-full bg-action transition-all duration-300" style={{ width: `${Math.min(100, totalProgress)}%` }} />
-          </div>
-
-          <div className="mb-4 flex items-center justify-between text-sm text-secondary-text">
-            <span>{currentIndex + 1} من {dhikrList.length}</span>
+        <div className={focusMode ? "mt-4 flex flex-1 flex-col justify-center" : "mt-4"}>
+          <div className="flex items-center justify-between text-sm text-secondary-text">
             <span>{current.title}</span>
+            <span className="font-bold text-action">المتبقي: {remainingCount}</span>
           </div>
-        </div>
 
-        <div className={focusMode ? "flex flex-1 flex-col justify-center" : ""}>
-          <p className={`break-words font-semibold leading-loose text-primary-text ${focusMode ? "max-h-[28vh] overflow-y-auto text-center text-[1.35rem]" : "text-xl"}`}>{current.text}</p>
+          <p className={`mt-4 break-words font-semibold leading-loose text-primary-text ${focusMode ? "max-h-[27dvh] overflow-y-auto text-center text-[1.35rem]" : "text-xl"}`}>{current.text}</p>
+
           <div className="mt-3 flex items-center justify-between text-sm text-secondary-text">
             <span>التكرار: {safeCount}</span>
-            <span className="font-bold text-action">المتبقي: {remainingCount}</span>
+            <span>{count} من {safeCount}</span>
           </div>
 
           <button
             onClick={handleTap}
             disabled={isComplete}
-            className={`group block w-full outline-none transition-all duration-300 disabled:cursor-default ${focusMode ? "mt-8" : "mt-6"}`}
+            className={`group block w-full outline-none transition-all duration-300 disabled:cursor-default ${focusMode ? "mt-7" : "mt-6"}`}
             aria-label="اضغط للتسبيح"
           >
             <motion.div
               key={`ring-${pulseKey}`}
               animate={feedback === "success" ? { scale: [1, 0.975, 1.012, 1] } : feedback === "complete" ? { scale: [1, 1.035, 1] } : { scale: 1 }}
               transition={{ duration: feedback === "complete" ? 0.55 : 0.22, ease: "easeOut" }}
-              className={`relative mx-auto grid place-items-center rounded-full transition-all duration-300 ${focusMode ? "h-[17rem] w-[17rem]" : "h-60 w-60"}`}
+              className={`relative mx-auto grid place-items-center rounded-full transition-all duration-300 ${focusMode ? "h-[clamp(14rem,38dvh,17rem)] w-[clamp(14rem,38dvh,17rem)]" : "h-60 w-60"}`}
             >
               <div
                 className="absolute inset-0 rounded-full transition-all duration-300"
