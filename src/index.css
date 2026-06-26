@@ -106,9 +106,9 @@ video {
 }
 
 .app-shell[data-context='daily'] {
-  --context-accent: #48AD8D;
-  --context-surface: rgba(255, 255, 255, 0.35);
-  --context-glow: rgba(72, 173, 141, 0.16);
+  --context-accent: #2E7D61;
+  --context-surface: rgba(251, 252, 250, 0.70);
+  --context-glow: rgba(168, 213, 194, 0.18);
 }
 
 .app-shell[data-context='worship'] {
@@ -148,6 +148,7 @@ video {
   display: none;
 }
 
+.app-shell[data-section='home'] .rounded-card.bg-white,
 .app-shell[data-section='dhikr'] .rounded-card.bg-white {
   background: var(--athar-surface) !important;
   border: 1px solid rgba(255, 255, 255, 0.72);
