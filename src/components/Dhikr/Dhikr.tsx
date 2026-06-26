@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { appMotion } from "../../config/motion";
 import { ADHKAR, CATEGORY_LABELS, type DhikrCategory, type DhikrMode } from "../../data/adhkar";
 import { MORNING_EXTRA_ADHKAR } from "../../data/adhkarMorningExtra";
 import { SLEEP_ADHKAR_EXTRA } from "../../data/sleepAdhkarExtra";
@@ -81,6 +82,7 @@ export default function Dhikr() {
   const [pulseKey, setPulseKey] = useState(0);
   const [completionDays, setCompletionDays] = useState<string[]>([]);
   const [focusMode, setFocusMode] = useState(false);
+  const surfaceMotion = appMotion.surface;
 
   const enterFocusMode = () => {
     setFocusMode(true);
@@ -247,9 +249,9 @@ export default function Dhikr() {
   if (!loaded || !current) {
     return (
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
+        initial={surfaceMotion.initial}
+        animate={surfaceMotion.animate}
+        transition={surfaceMotion.transition}
         className="w-full rounded-card bg-white p-6 text-center text-secondary-text shadow-xl"
       >
         جاري تجهيز الأذكار...
@@ -259,9 +261,9 @@ export default function Dhikr() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.2 }}
+      initial={surfaceMotion.initial}
+      animate={surfaceMotion.animate}
+      transition={surfaceMotion.transition}
       className={`w-full overflow-hidden rounded-card bg-white shadow-xl transition-all duration-300 hover:shadow-2xl ${focusMode ? "flex min-h-[calc(100dvh-10rem)] flex-col p-4" : "p-5"}`}
     >
       <div className={focusMode ? "flex min-h-[calc(100dvh-12rem)] flex-col" : ""}>
