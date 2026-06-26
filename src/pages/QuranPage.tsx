@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Quran from "../components/Quran/Quran";
-import Footer from "../components/Footer/Footer";
 
 const broadcastQuranFocus = (active: boolean) => {
   window.dispatchEvent(new CustomEvent("athar-focus-mode", { detail: { path: "/quran", active } }));
@@ -33,9 +32,8 @@ export default function QuranPage() {
   }, []);
 
   return (
-    <div className="space-y-5 transition-all duration-300">
+    <div className="transition-all duration-300">
       <Quran focusMode={focusMode} />
-      <Footer />
     </div>
   );
 }
