@@ -230,7 +230,7 @@ export default function Dhikr() {
           setCount(0);
           setFeedback("idle");
         }
-      }, 900);
+      }, 1150);
     } else {
       setFeedback("success");
       setTimeout(() => setFeedback("idle"), 180);
