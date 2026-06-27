@@ -20,15 +20,31 @@ const SURAHS: SurahOption[] = SURAHS_DATA.split("|").map((item) => {
   return { name, page: Number(page) };
 });
 
-const normalizeSurahName = (name: string) => name.replace(/^سورة\s+/u, "").trim();
+const stripArabicDiacritics = (text: string) => text.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, "");
 
-const normalizeArabicText = (text: string) =>
-  text
-    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, "")
+const getSurahKey = (name: string) =>
+  stripArabicDiacritics(name)
     .replace(/[إأآٱ]/g, "ا")
     .replace(/ى/g, "ي")
     .replace(/ة/g, "ه")
-    .replace(/[^\u0621-\u064A\s]/g, "")
+    .replace(/^سوره\s+/u, "")
+    .replace(/[^ء-ي\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const normalizeSurahName = (name: string) => {
+  const key = getSurahKey(name);
+  return SURAHS.find((surah) => getSurahKey(surah.name) === key)?.name || stripArabicDiacritics(name).replace(/^سورة\s+/u, "").trim();
+};
+
+const formatSurahTitle = (name: string) => `سورة ${normalizeSurahName(name)}`;
+
+const normalizeArabicText = (text: string) =>
+  stripArabicDiacritics(text)
+    .replace(/[إأآٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ة/g, "ه")
+    .replace(/[^ء-ي\s]/g, "")
     .replace(/\s+/g, " ")
     .trim();
 
@@ -129,21 +145,22 @@ export default function Quran({ focusMode = false }: QuranProps) {
   }, []);
 
   const filteredSurahs = useMemo(() => {
-    const query = surahSearch.trim();
+    const query = getSurahKey(surahSearch);
     if (!query) return [];
-    return SURAHS.filter((surah) => surah.name.includes(query)).slice(0, 8);
+    return SURAHS.filter((surah) => getSurahKey(surah.name).includes(query)).slice(0, 8);
   }, [surahSearch]);
 
   const visibleAyahs = useMemo(() => {
     if (!activeSurahName) return pageAyahs;
-    const firstSurahAyah = pageAyahs.findIndex((ayah) => ayah.surahName === activeSurahName);
+    const activeKey = getSurahKey(activeSurahName);
+    const firstSurahAyah = pageAyahs.findIndex((ayah) => getSurahKey(ayah.surahName) === activeKey);
     return firstSurahAyah >= 0 ? pageAyahs.slice(firstSurahAyah) : pageAyahs;
   }, [activeSurahName, pageAyahs]);
 
   const ayahGroups = useMemo(() => {
     return visibleAyahs.reduce<QuranAyahView[][]>((groups, ayah) => {
       const lastGroup = groups[groups.length - 1];
-      if (!lastGroup || lastGroup[0]?.surahName !== ayah.surahName) {
+      if (!lastGroup || getSurahKey(lastGroup[0]?.surahName || "") !== getSurahKey(ayah.surahName)) {
         groups.push([ayah]);
       } else {
         lastGroup.push(ayah);
@@ -217,8 +234,15 @@ export default function Quran({ focusMode = false }: QuranProps) {
   };
 
   const handleJump = () => {
-    const nextPage = Number(inputPage);
-    if (!Number.isNaN(nextPage)) goToPage(nextPage);
+    const pageQuery = inputPage.trim();
+    if (pageQuery) {
+      const nextPage = Number(pageQuery);
+      if (!Number.isNaN(nextPage)) goToPage(nextPage);
+      return;
+    }
+
+    const selectedSurah = SURAHS.find((surah) => getSurahKey(surah.name) === getSurahKey(surahSearch));
+    if (selectedSurah) handleSurahPick(selectedSurah);
   };
 
   const handleSurahPick = (surah: SurahOption) => {
@@ -262,7 +286,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
             aria-expanded={isHeaderOpen}
             aria-label="فتح خيارات المصحف"
           >
-            سورة {currentSurahName}
+            {formatSurahTitle(currentSurahName)}
             <span className="mr-2 text-[11px] text-[#8EA29A]">{isHeaderOpen ? "▲" : "▼"}</span>
           </button>
 
@@ -341,7 +365,7 @@ export default function Quran({ focusMode = false }: QuranProps) {
                       <section key={`${firstAyah.surahName}-${firstAyah.numberInSurah}`} className="space-y-3">
                         {firstAyah.numberInSurah === 1 && (
                           <div className="mx-auto w-full max-w-[260px] rounded-[16px] border border-[#C8A84E]/16 bg-[#F8F0E3]/72 px-5 py-1.5 text-[15px] font-bold text-[#21493F]">
-                            سورة {firstAyah.surahName}
+                            {formatSurahTitle(firstAyah.surahName)}
                           </div>
                         )}
                         {shouldShowBasmala(firstAyah) && (
