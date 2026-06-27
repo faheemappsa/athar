@@ -12,7 +12,7 @@
   width: 13rem;
   height: 13rem;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(168, 213, 194, 0.32), rgba(168, 213, 194, 0));
+  background: radial-gradient(circle, rgba(168, 213, 194, 0.28), rgba(168, 213, 194, 0));
   pointer-events: none;
 }
 
@@ -23,7 +23,7 @@
   width: 14rem;
   height: 14rem;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(200, 168, 78, 0.2), rgba(200, 168, 78, 0));
+  background: radial-gradient(circle, rgba(200, 168, 78, 0.18), rgba(200, 168, 78, 0));
   pointer-events: none;
 }
 
@@ -34,11 +34,11 @@
 
 [aria-label="تحديد القبلة"] .rounded-full.border.bg-\[\#F8F0E3\]\/72 {
   background:
-    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.98) 0 31%, rgba(251, 252, 250, 0.92) 32% 50%, rgba(168, 213, 194, 0.18) 51% 68%, rgba(200, 168, 78, 0.16) 100%) !important;
+    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.98) 0 29%, rgba(251, 252, 250, 0.94) 30% 48%, rgba(168, 213, 194, 0.16) 49% 68%, rgba(200, 168, 78, 0.16) 100%) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 -22px 42px rgba(33, 73, 63, 0.045),
-    0 24px 58px rgba(33, 73, 63, 0.12) !important;
+    inset 0 -18px 38px rgba(33, 73, 63, 0.04),
+    0 24px 58px rgba(33, 73, 63, 0.11) !important;
 }
 
 [aria-label="تحديد القبلة"] .rounded-full.border.bg-\[\#F8F0E3\]\/72::before,
@@ -50,71 +50,125 @@
 }
 
 [aria-label="تحديد القبلة"] .rounded-full.border.bg-\[\#F8F0E3\]\/72::before {
-  inset: 1.15rem;
+  inset: 1.1rem;
   border: 1px solid rgba(200, 168, 78, 0.18);
-  box-shadow: inset 0 0 28px rgba(200, 168, 78, 0.1);
+  box-shadow: inset 0 0 26px rgba(200, 168, 78, 0.09);
 }
 
 [aria-label="تحديد القبلة"] .rounded-full.border.bg-\[\#F8F0E3\]\/72::after {
-  inset: 3.85rem;
+  inset: 3.72rem;
   border: 1px dashed rgba(200, 168, 78, 0.34);
-  animation: athar-qibla-breathe 3.8s ease-in-out infinite;
+  animation: athar-qibla-breathe 4.6s ease-in-out infinite;
+}
+
+[aria-label="تحديد القبلة"] .absolute.top-4.text-sm.font-extrabold.text-\[\#21493F\] {
+  top: 1.05rem !important;
+  display: grid;
+  width: 3.85rem;
+  height: 3.85rem;
+  place-items: center;
+  border: 1px solid rgba(200, 168, 78, 0.38);
+  border-radius: 1.35rem;
+  background: #1e1b18;
+  color: transparent !important;
+  box-shadow:
+    0 16px 34px rgba(30, 27, 24, 0.18),
+    0 0 0 9px rgba(200, 168, 78, 0.07);
+}
+
+[aria-label="تحديد القبلة"] .absolute.top-4.text-sm.font-extrabold.text-\[\#21493F\]::before {
+  content: "";
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.42rem;
+  border: 1px solid rgba(200, 168, 78, 0.7);
+  background:
+    linear-gradient(180deg, rgba(200, 168, 78, 0.92), rgba(200, 168, 78, 0.92)) top 0.42rem center / 0.85rem 0.32rem no-repeat,
+    linear-gradient(180deg, #111, #17130f);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.04);
 }
 
 [aria-label="تحديد القبلة"] .origin-bottom.rounded-full {
-  width: 1.35rem !important;
-  height: 7.8rem !important;
-  border-radius: 999px 999px 45% 45% !important;
-  background: linear-gradient(180deg, #c8a84e 0%, #2e7d61 38%, #21493f 100%) !important;
+  width: 1.18rem !important;
+  height: 7.3rem !important;
+  border-radius: 999px 999px 48% 48% !important;
+  background: linear-gradient(180deg, #c8a84e 0%, #2e7d61 36%, #21493f 100%) !important;
   box-shadow:
-    0 18px 26px rgba(46, 125, 97, 0.26),
+    0 14px 22px rgba(46, 125, 97, 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 0.38),
-    inset 0 -16px 20px rgba(33, 73, 63, 0.22) !important;
+    inset 0 -14px 18px rgba(33, 73, 63, 0.2) !important;
+  transition: filter 280ms ease, box-shadow 280ms ease;
 }
 
 [aria-label="تحديد القبلة"] .origin-bottom.rounded-full::before {
   content: "";
   position: absolute;
   left: 50%;
-  top: -0.85rem;
-  width: 2.25rem;
-  height: 2.25rem;
+  top: -0.72rem;
+  width: 2rem;
+  height: 2rem;
   transform: translateX(-50%) rotate(45deg);
-  border-radius: 0.55rem 0.55rem 0.35rem 0.55rem;
+  border-radius: 0.5rem 0.5rem 0.32rem 0.5rem;
   background: linear-gradient(135deg, #fff7d6 0%, #c8a84e 44%, #2e7d61 100%);
-  box-shadow: 0 10px 24px rgba(200, 168, 78, 0.28);
+  box-shadow: 0 9px 20px rgba(200, 168, 78, 0.24);
 }
 
 [aria-label="تحديد القبلة"] .origin-bottom.rounded-full::after {
   content: "";
   position: absolute;
-  inset: 0.65rem 0.36rem 1.2rem;
+  inset: 0.58rem 0.31rem 1.08rem;
   border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.44), rgba(255, 255, 255, 0));
 }
 
 [aria-label="تحديد القبلة"] .bg-\[\#C8A84E\] {
   box-shadow:
     0 0 0 7px rgba(255, 255, 255, 0.74),
-    0 0 0 15px rgba(200, 168, 78, 0.13),
-    0 14px 28px rgba(200, 168, 78, 0.22) !important;
+    0 0 0 14px rgba(200, 168, 78, 0.11),
+    0 12px 24px rgba(200, 168, 78, 0.18) !important;
 }
 
 [aria-label="تحديد القبلة"] .text-\[\#2E7D61\] {
   color: #21493f !important;
+  animation: athar-qibla-arrival 1.9s ease-in-out infinite;
 }
 
 [aria-label="تحديد القبلة"] .text-\[\#2E7D61\]::before {
   content: "✨ ";
 }
 
+[aria-label="تحديد القبلة"] .text-\[\#2E7D61\] + .text-\[\#8EA29A\],
+[aria-label="تحديد القبلة"] .max-w-\[18rem\].text-\[11px\] {
+  display: none !important;
+}
+
+[aria-label="تحديد القبلة"] .text-\[\#8EA29A\].leading-\[1\.75rem\],
+[aria-label="تحديد القبلة"] .text-sm.font-extrabold.leading-7.text-\[\#8EA29A\] {
+  max-width: 13rem !important;
+  margin-top: 0.9rem !important;
+  font-size: 0.82rem !important;
+  line-height: 1.45rem !important;
+  color: rgba(79, 101, 93, 0.72) !important;
+}
+
 @keyframes athar-qibla-breathe {
   0%, 100% {
-    opacity: 0.42;
-    transform: scale(0.985);
+    opacity: 0.36;
+    transform: scale(0.99);
   }
   50% {
-    opacity: 0.9;
-    transform: scale(1.035);
+    opacity: 0.86;
+    transform: scale(1.025);
+  }
+}
+
+@keyframes athar-qibla-arrival {
+  0%, 100% {
+    text-shadow: 0 0 0 rgba(200, 168, 78, 0);
+    transform: translateY(0);
+  }
+  50% {
+    text-shadow: 0 10px 28px rgba(200, 168, 78, 0.28);
+    transform: translateY(-1px);
   }
 }
