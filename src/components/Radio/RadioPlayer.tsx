@@ -117,16 +117,21 @@ export default function RadioPlayer() {
                 <>
                   <div className={`relative mx-auto grid h-64 w-64 place-items-center rounded-full border bg-[#F8F0E3]/72 shadow-inner transition-all duration-300 ${alignedToQibla ? "border-[#C8A84E]/50 shadow-[0_0_42px_rgba(200,168,78,0.26)]" : "border-[#C8A84E]/18"}`}>
                     <div className="absolute inset-5 rounded-full border border-[#A8D5C2]/32 bg-[#FBFCFA]/82" />
+                    <div className="absolute inset-9 rounded-full border border-dashed border-[#C8A84E]/20" />
                     <div className="absolute top-4 text-sm font-extrabold text-[#21493F]">N</div>
                     <div className="absolute bottom-4 text-sm font-extrabold text-[#8EA29A]">S</div>
                     <div className="absolute left-5 text-sm font-extrabold text-[#8EA29A]">W</div>
                     <div className="absolute right-5 text-sm font-extrabold text-[#8EA29A]">E</div>
                     <motion.div
-                      className={`absolute left-1/2 top-1/2 h-[6.9rem] w-4 origin-bottom -translate-x-1/2 -translate-y-full rounded-full shadow-[0_12px_26px_rgba(46,125,97,0.22)] transition-colors duration-300 ${alignedToQibla ? "bg-[#1F6E52]" : "bg-[#2E7D61]"}`}
+                      className="absolute left-1/2 top-1/2 z-10 h-[7.35rem] w-12 origin-bottom -translate-x-1/2 -translate-y-full"
                       animate={{ rotate: qiblaRotation }}
                       transition={{ type: "spring", stiffness: alignedToQibla ? 150 : 100, damping: alignedToQibla ? 20 : 18 }}
-                    />
-                    <div className={`absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-[#FEFCF7] shadow-md transition-colors duration-300 ${alignedToQibla ? "bg-[#2E7D61]" : "bg-[#C8A84E]"}`} />
+                    >
+                      <div className={`absolute left-1/2 top-0 h-[5.9rem] w-4 -translate-x-1/2 rounded-full shadow-[0_18px_34px_rgba(46,125,97,0.22)] transition-colors duration-300 ${alignedToQibla ? "bg-[#1F6E52]" : "bg-[#2E7D61]"}`} />
+                      <div className={`absolute left-1/2 top-[-0.65rem] h-0 w-0 -translate-x-1/2 border-x-[1.05rem] border-b-[1.65rem] border-x-transparent drop-shadow-[0_10px_14px_rgba(46,125,97,0.22)] transition-colors duration-300 ${alignedToQibla ? "border-b-[#1F6E52]" : "border-b-[#2E7D61]"}`} />
+                      <div className="absolute left-1/2 top-6 h-16 w-1.5 -translate-x-1/2 rounded-full bg-white/32" />
+                    </motion.div>
+                    <div className={`absolute left-1/2 top-1/2 z-20 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-[#FEFCF7] shadow-md transition-colors duration-300 ${alignedToQibla ? "bg-[#2E7D61]" : "bg-[#C8A84E]"}`} />
                     <div className="relative z-10 mt-28 rounded-full bg-white/88 px-3 py-1 text-xs font-bold text-[#8EA29A]">
                       {qiblaBearing === null ? "حدّث موقعك أولًا" : `القبلة ${Math.round(qiblaBearing)}°`}
                     </div>
