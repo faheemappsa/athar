@@ -283,8 +283,84 @@ button[aria-label='اضغط للتسبيح'] > div > div:nth-child(3) {
   background: linear-gradient(145deg, rgba(251, 252, 250, 0.92), rgba(168, 213, 194, 0.16)) !important;
 }
 
+.quran-shell {
+  height: min(100%, calc(100dvh - 9.35rem));
+  min-height: 660px;
+}
+
+.quran-shell--focus {
+  height: calc(100dvh - 7.65rem);
+  min-height: 0;
+}
+
+.quran-reader-window {
+  position: relative;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+  isolation: isolate;
+}
+
 .quran-text {
+  height: 100%;
   overflow-wrap: anywhere;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  scrollbar-color: rgba(33, 73, 63, 0.18) transparent;
+  scrollbar-width: thin;
+}
+
+.quran-text::-webkit-scrollbar {
+  width: 3px;
+}
+
+.quran-text::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.quran-text::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(33, 73, 63, 0.18);
+}
+
+.quran-reader-window::after {
+  pointer-events: none;
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 3;
+  height: 3.5rem;
+  opacity: 0;
+  transform: translateY(0.4rem);
+  background: linear-gradient(180deg, rgba(254, 252, 247, 0), rgba(254, 252, 247, 0.96) 74%, #FEFCF7);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.quran-reader-window.is-overflowing::after {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.quran-page-content {
+  min-height: 100%;
+}
+
+.quran-page-content--short {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-height: 760px) {
+  .quran-shell {
+    min-height: 0;
+    height: calc(100dvh - 7.8rem);
+  }
+}
+
+@media (max-height: 700px) {
+  .quran-shell,
+  .quran-shell--focus {
+    height: calc(100dvh - 6.9rem);
+  }
 }
