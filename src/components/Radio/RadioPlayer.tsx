@@ -1,23 +1,12 @@
+import { Coordinates, Qibla } from "adhan";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { appMotion } from "../../config/motion";
 import { useSavedLocation } from "../../hooks/useSavedLocation";
 
-const KAABA = { lat: 21.4225, lng: 39.8262 };
-
-const toRad = (value: number) => (value * Math.PI) / 180;
-const toDeg = (value: number) => (value * 180) / Math.PI;
 const normalizeAngle = (value: number) => ((value % 360) + 360) % 360;
-
-const getQiblaBearing = (lat: number, lng: number) => {
-  const userLat = toRad(lat);
-  const deltaLng = toRad(KAABA.lng - lng);
-  const kaabaLat = toRad(KAABA.lat);
-  const y = Math.sin(deltaLng);
-  const x = Math.cos(userLat) * Math.tan(kaabaLat) - Math.sin(userLat) * Math.cos(deltaLng);
-  return normalizeAngle(toDeg(Math.atan2(y, x)));
-};
+const getQiblaBearing = (lat: number, lng: number) => normalizeAngle(Qibla(new Coordinates(lat, lng)));
 
 export default function RadioPlayer() {
   const surfaceMotion = appMotion.surface;
