@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { appMotion } from "../../config/motion";
 import { ADHKAR, CATEGORY_LABELS, type DhikrCategory, type DhikrMode } from "../../data/adhkar";
@@ -82,10 +82,23 @@ export default function Dhikr() {
   const [pulseKey, setPulseKey] = useState(0);
   const [completionDays, setCompletionDays] = useState<string[]>([]);
   const [focusMode, setFocusMode] = useState(false);
+  const [textOverflow, setTextOverflow] = useState(false);
+  const [textAtEnd, setTextAtEnd] = useState(true);
+  const dhikrTextRef = useRef<HTMLParagraphElement>(null);
   const surfaceMotion = appMotion.surface;
   const counterMotion = appMotion.dhikrCounter;
   const pulseMotion = appMotion.dhikrPulse;
   const glowMotion = appMotion.dhikrCompleteGlow;
+
+  const syncTextScrollState = () => {
+    const element = dhikrTextRef.current;
+    if (!element) return;
+
+    const hasOverflow = element.scrollHeight > element.clientHeight + 4;
+    const isAtEnd = !hasOverflow || element.scrollTop + element.clientHeight >= element.scrollHeight - 8;
+    setTextOverflow(hasOverflow);
+    setTextAtEnd(isAtEnd);
+  };
 
   const enterFocusMode = () => {
     setFocusMode(true);
@@ -193,6 +206,22 @@ export default function Dhikr() {
   const completionCount = completionDays.length;
   const identityCopy = getDhikrCompletionIdentity(completionCount);
 
+  useEffect(() => {
+    const element = dhikrTextRef.current;
+    if (!element) return;
+
+    element.scrollTop = 0;
+    setTextAtEnd(true);
+
+    const frame = window.requestAnimationFrame(syncTextScrollState);
+    return () => window.cancelAnimationFrame(frame);
+  }, [current?.id, current?.text, focusMode]);
+
+  useEffect(() => {
+    window.addEventListener("resize", syncTextScrollState);
+    return () => window.removeEventListener("resize", syncTextScrollState);
+  }, []);
+
   const recordSessionCompletion = () => {
     const next = saveCompletionDay();
     setCompletionDays(next);
@@ -284,7 +313,15 @@ export default function Dhikr() {
             <span className="font-bold text-action">المتبقي: {remainingCount}</span>
           </div>
 
-          <p className={`mt-4 break-words font-semibold leading-loose text-primary-text ${focusMode ? "max-h-[27dvh] overflow-y-auto text-center text-[1.35rem]" : "text-xl"}`}>{current.text}</p>
+          <div className={`dhikr-text-window mt-4 ${focusMode ? "dhikr-text-window--focus" : ""} ${textOverflow && !textAtEnd ? "is-overflowing" : ""}`}>
+            <p
+              ref={dhikrTextRef}
+              onScroll={syncTextScrollState}
+              className={`dhikr-text-scroll break-words font-semibold leading-loose text-primary-text ${focusMode ? "text-center text-[1.35rem]" : "text-xl"}`}
+            >
+              {current.text}
+            </p>
+          </div>
 
           <div className="mt-3 flex items-center justify-between text-sm text-secondary-text">
             <span>التكرار: {safeCount}</span>
