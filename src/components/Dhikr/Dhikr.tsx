@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { appMotion } from "../../config/motion";
 import { ADHKAR, CATEGORY_LABELS, type DhikrCategory, type DhikrMode } from "../../data/adhkar";
@@ -90,7 +90,7 @@ export default function Dhikr() {
   const pulseMotion = appMotion.dhikrPulse;
   const glowMotion = appMotion.dhikrCompleteGlow;
 
-  const syncTextScrollState = () => {
+  const syncTextScrollState = useCallback(() => {
     const element = dhikrTextRef.current;
     if (!element) return;
 
@@ -98,7 +98,7 @@ export default function Dhikr() {
     const isAtEnd = !hasOverflow || element.scrollTop + element.clientHeight >= element.scrollHeight - 8;
     setTextOverflow(hasOverflow);
     setTextAtEnd(isAtEnd);
-  };
+  }, []);
 
   const enterFocusMode = () => {
     setFocusMode(true);
@@ -215,12 +215,12 @@ export default function Dhikr() {
 
     const frame = window.requestAnimationFrame(syncTextScrollState);
     return () => window.cancelAnimationFrame(frame);
-  }, [current?.id, current?.text, focusMode]);
+  }, [current?.id, current?.text, focusMode, syncTextScrollState]);
 
   useEffect(() => {
     window.addEventListener("resize", syncTextScrollState);
     return () => window.removeEventListener("resize", syncTextScrollState);
-  }, []);
+  }, [syncTextScrollState]);
 
   const recordSessionCompletion = () => {
     const next = saveCompletionDay();
