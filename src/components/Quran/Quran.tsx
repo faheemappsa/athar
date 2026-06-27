@@ -1,4 +1,4 @@
-import { type PointerEvent, useEffect, useMemo, useRef, useState } from "react";
+import { type PointerEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 
@@ -113,8 +113,20 @@ export default function Quran({ focusMode = false }: QuranProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [isHeaderOpen, setIsHeaderOpen] = useState(false);
+  const [readerOverflow, setReaderOverflow] = useState(false);
+  const [readerAtEnd, setReaderAtEnd] = useState(true);
   const readerRef = useRef<HTMLDivElement | null>(null);
   const pointerStartRef = useRef<{ x: number; y: number; at: number } | null>(null);
+
+  const syncReaderScrollState = useCallback(() => {
+    const element = readerRef.current;
+    if (!element) return;
+
+    const hasOverflow = element.scrollHeight > element.clientHeight + 6;
+    const isAtEnd = !hasOverflow || element.scrollTop + element.clientHeight >= element.scrollHeight - 10;
+    setReaderOverflow(hasOverflow);
+    setReaderAtEnd(isAtEnd);
+  }, []);
 
   const filteredSurahs = useMemo(() => {
     const query = surahSearch.trim();
@@ -141,14 +153,27 @@ export default function Quran({ focusMode = false }: QuranProps) {
   }, [visibleAyahs]);
 
   const currentSurahName = visibleAyahs[0]?.surahName || activeSurahName || pageAyahs[0]?.surahName || "المصحف";
+  const isShortPage = visibleAyahs.length > 0 && visibleAyahs.length <= 7;
 
   useEffect(() => {
     saveReadingPosition({ page, surahName: currentSurahName, updatedAt: new Date().toISOString() });
   }, [page, currentSurahName]);
 
   useEffect(() => {
-    readerRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  }, [page, activeSurahName]);
+    const element = readerRef.current;
+    if (!element) return;
+
+    element.scrollTo({ top: 0, behavior: "smooth" });
+    setReaderAtEnd(true);
+
+    const frame = window.requestAnimationFrame(syncReaderScrollState);
+    return () => window.cancelAnimationFrame(frame);
+  }, [page, activeSurahName, visibleAyahs.length, focusMode, syncReaderScrollState]);
+
+  useEffect(() => {
+    window.addEventListener("resize", syncReaderScrollState);
+    return () => window.removeEventListener("resize", syncReaderScrollState);
+  }, [syncReaderScrollState]);
 
   useEffect(() => {
     let isMounted = true;
@@ -226,10 +251,10 @@ export default function Quran({ focusMode = false }: QuranProps) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: 0.15 }}
-      className={`flex w-full overflow-hidden rounded-[30px] border border-[#C8A84E]/12 bg-[#F7F0E4] shadow-[0_18px_38px_rgba(33,73,63,0.07)] ${focusMode ? "h-[calc(100svh-8rem)] p-1" : "h-[calc(100svh-10rem)] min-h-[650px] p-1.5"}`}
+      className={`quran-shell flex w-full overflow-hidden rounded-[30px] border border-[#C8A84E]/12 bg-[#F7F0E4] p-1 shadow-[0_18px_38px_rgba(33,73,63,0.07)] ${focusMode ? "quran-shell--focus" : "p-1.5"}`}
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[25px] border border-[#C8A84E]/14 bg-[#FEFCF7] shadow-inner">
-        <div className="z-20 bg-[#FEFCF7]/94 px-2 pt-2 backdrop-blur-xl">
+        <div className="z-20 shrink-0 bg-[#FEFCF7]/94 px-2 pt-2 backdrop-blur-xl">
           <button
             type="button"
             onClick={() => setIsHeaderOpen((value) => !value)}
@@ -297,49 +322,54 @@ export default function Quran({ focusMode = false }: QuranProps) {
             افتح هذه الصفحة مرة واحدة عند توفر الاتصال لتبقى محفوظة لاحقًا.
           </div>
         ) : (
-          <div
-            ref={readerRef}
-            className={`quran-text min-h-0 flex-1 overflow-y-auto px-3 pb-5 pt-3 text-center font-semibold text-[#12100D] transition-all duration-300 ${focusMode ? "text-[24px] leading-[2.5]" : "text-[23px] leading-[2.38]"}`}
-            style={{ fontFamily: '"IBM Plex Sans Arabic", "Cairo", sans-serif' }}
-            onPointerDown={(event) => {
-              pointerStartRef.current = { x: event.clientX, y: event.clientY, at: Date.now() };
-            }}
-            onPointerUp={handleReaderTap}
-          >
-            <div className="space-y-5">
-              {ayahGroups.map((group) => {
-                const firstAyah = group[0];
-                return (
-                  <section key={`${firstAyah.surahName}-${firstAyah.numberInSurah}`} className="space-y-3">
-                    {firstAyah.numberInSurah === 1 && (
-                      <div className="mx-auto w-full max-w-[260px] rounded-[16px] border border-[#C8A84E]/16 bg-[#F8F0E3]/72 px-5 py-1.5 text-[15px] font-bold text-[#21493F]">
-                        سورة {firstAyah.surahName}
-                      </div>
-                    )}
-                    {shouldShowBasmala(firstAyah) && (
-                      <p className="text-[22px] font-extrabold text-[#21493F]">{BASMALA_TEXT}</p>
-                    )}
-                    <p className="text-pretty">
-                      {group.map((ayah) => {
-                        const ayahText = stripBasmalaFromAyah(ayah);
-                        return (
-                          <span key={`${ayah.surahNumber}-${ayah.numberInSurah}`} className="inline">
-                            {ayahText}{ayahText ? " " : ""}
-                            <span className="mx-0.5 inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[#C8A84E]/18 bg-[#F8F0E3]/80 px-1.5 align-middle text-[11px] font-bold leading-none text-[#8B7141]">
-                              {ayah.numberInSurah}
-                            </span>{" "}
-                          </span>
-                        );
-                      })}
-                    </p>
-                  </section>
-                );
-              })}
+          <div className={`quran-reader-window ${readerOverflow && !readerAtEnd ? "is-overflowing" : ""}`}>
+            <div
+              ref={readerRef}
+              className={`quran-text overflow-y-auto px-3 pb-7 pt-3 text-center font-semibold text-[#12100D] transition-all duration-300 ${focusMode ? "text-[24px] leading-[2.5]" : "text-[23px] leading-[2.38]"}`}
+              style={{ fontFamily: '"IBM Plex Sans Arabic", "Cairo", sans-serif' }}
+              onScroll={syncReaderScrollState}
+              onPointerDown={(event) => {
+                pointerStartRef.current = { x: event.clientX, y: event.clientY, at: Date.now() };
+              }}
+              onPointerUp={handleReaderTap}
+            >
+              <div className={`quran-page-content ${isShortPage ? "quran-page-content--short" : ""}`}>
+                <div className="w-full space-y-5">
+                  {ayahGroups.map((group) => {
+                    const firstAyah = group[0];
+                    return (
+                      <section key={`${firstAyah.surahName}-${firstAyah.numberInSurah}`} className="space-y-3">
+                        {firstAyah.numberInSurah === 1 && (
+                          <div className="mx-auto w-full max-w-[260px] rounded-[16px] border border-[#C8A84E]/16 bg-[#F8F0E3]/72 px-5 py-1.5 text-[15px] font-bold text-[#21493F]">
+                            سورة {firstAyah.surahName}
+                          </div>
+                        )}
+                        {shouldShowBasmala(firstAyah) && (
+                          <p className="text-[22px] font-extrabold text-[#21493F]">{BASMALA_TEXT}</p>
+                        )}
+                        <p className="mx-auto max-w-[34rem] text-pretty">
+                          {group.map((ayah) => {
+                            const ayahText = stripBasmalaFromAyah(ayah);
+                            return (
+                              <span key={`${ayah.surahNumber}-${ayah.numberInSurah}`} className="inline">
+                                {ayahText}{ayahText ? " " : ""}
+                                <span className="mx-0.5 inline-flex h-6 min-w-6 items-center justify-center rounded-full border border-[#C8A84E]/18 bg-[#F8F0E3]/80 px-1.5 align-middle text-[11px] font-bold leading-none text-[#8B7141]">
+                                  {ayah.numberInSurah}
+                                </span>{" "}
+                              </span>
+                            );
+                          })}
+                        </p>
+                      </section>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           </div>
         )}
 
-        <div className="mx-2 mb-2 grid grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-[20px] border border-[#C8A84E]/10 bg-[#FBFCFA]/90 p-1.5 shadow-sm">
+        <div className="mx-2 mb-2 grid shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-2 rounded-[20px] border border-[#C8A84E]/10 bg-[#FBFCFA]/90 p-1.5 shadow-sm">
           <button
             onClick={() => goToPage(page - 1)}
             disabled={page <= 1}
