@@ -4,6 +4,7 @@ import { getSmartAthar, type AtharContent } from "../../services/atharEngine";
 import html2canvas from "html2canvas";
 import { trackEvent } from "../../utils/analytics";
 import { recordAtharBehavior } from "../../experience/memory";
+import { recordContentShown } from "../../experience/recordContentShown";
 import { useSurfaceSignal } from "../../experience/useSurfaceSignal";
 
 const NAME_KEY = "athar-share-name";
@@ -75,6 +76,7 @@ export default function AtharCard() {
       .then((content) => {
         if (!mounted) return;
         setAthar(content);
+        recordContentShown(content.id);
         localStorage.setItem("athar-content", JSON.stringify(content));
         localStorage.setItem("athar-last-shown", String(Date.now()));
         trackEvent("athar_content_view", { kind: content.kind, time: content.time });
@@ -89,6 +91,7 @@ export default function AtharCard() {
           time: "any",
         };
         setAthar(fallback);
+        recordContentShown(fallback.id);
       });
 
     return () => {
