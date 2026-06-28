@@ -5,6 +5,7 @@ import html2canvas from "html2canvas";
 import { trackEvent } from "../../utils/analytics";
 import { recordAtharBehavior } from "../../experience/memory";
 import { useSurfaceSignal } from "../../experience/useSurfaceSignal";
+import { loadExperienceContent } from "./loadExperienceContent";
 
 const NAME_KEY = "athar-share-name";
 const NAME_SEEN_KEY = "athar-name-prompt-seen";
@@ -71,7 +72,8 @@ export default function AtharCard() {
       setNameDraft(savedName);
     } catch {}
 
-    getSmartAthar()
+    loadExperienceContent()
+      .then((content) => content || getSmartAthar())
       .then((content) => {
         if (!mounted) return;
         setAthar(content);
