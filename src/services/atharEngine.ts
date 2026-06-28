@@ -2,6 +2,7 @@ import { ATHAR_LIBRARY, type AtharItem, type AtharTag, type AtharTime } from "..
 import { readLastAtharBrainDecision } from "../experience/brain";
 import { getAtharContentForDecision, warmAtharContentCache } from "../content/gateway";
 import { getAyahByReference, getRandomAyah } from "./quranApi";
+import { readAtharRecentIds, rememberAtharContentId } from "./atharRotation";
 
 export type AtharContent = {
   id: string;
@@ -49,20 +50,8 @@ const getTimeContext = (): AtharTime => {
   return "any";
 };
 
-const readRecentIds = () => {
-  try {
-    return JSON.parse(localStorage.getItem("athar-recent-ids") || "[]") as string[];
-  } catch {
-    return [];
-  }
-};
-
-const saveRecentId = (id: string) => {
-  try {
-    const next = [id, ...readRecentIds().filter((item) => item !== id)].slice(0, 12);
-    localStorage.setItem("athar-recent-ids", JSON.stringify(next));
-  } catch {}
-};
+const readRecentIds = readAtharRecentIds;
+const saveRecentId = rememberAtharContentId;
 
 const pickFromLibrary = (time: AtharTime): AtharContent => {
   const recent = readRecentIds();
