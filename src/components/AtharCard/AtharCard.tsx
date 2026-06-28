@@ -4,6 +4,7 @@ import { getSmartAthar, type AtharContent } from "../../services/atharEngine";
 import html2canvas from "html2canvas";
 import { trackEvent } from "../../utils/analytics";
 import { recordAtharBehavior } from "../../experience/memory";
+import { recordContentShown } from "../../experience/recordContentShown";
 import { useSurfaceSignal } from "../../experience/useSurfaceSignal";
 
 const NAME_KEY = "athar-share-name";
@@ -75,6 +76,7 @@ export default function AtharCard() {
       .then((content) => {
         if (!mounted) return;
         setAthar(content);
+        recordContentShown(content.id);
         localStorage.setItem("athar-content", JSON.stringify(content));
         localStorage.setItem("athar-last-shown", String(Date.now()));
         trackEvent("athar_content_view", { kind: content.kind, time: content.time });
@@ -89,6 +91,7 @@ export default function AtharCard() {
           time: "any",
         };
         setAthar(fallback);
+        recordContentShown(fallback.id);
       });
 
     return () => {
@@ -226,105 +229,75 @@ export default function AtharCard() {
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: 0.2 }}
-      className={`w-full overflow-hidden rounded-card bg-white p-4 text-center shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${mood.aura}`}
+      className={`relative overflow-hidden rounded-[2rem] bg-gradient-to-br ${mood.shell} p-4 shadow-2xl ${mood.aura} ring-1 ${mood.ring}`}
     >
-      <motion.div
-        ref={cardRef}
-        initial={{ opacity: 0.96, scale: 0.992 }}
-        animate={{ opacity: 1, scale: [1, 1.006, 1] }}
-        transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
-        className={`relative min-h-[430px] w-full overflow-hidden rounded-[32px] bg-gradient-to-br ${mood.shell} px-7 py-9 shadow-inner ring-1 ${mood.ring}`}
-      >
-        <motion.div
-          animate={{ opacity: [0.5, 0.82, 0.5], scale: [1, 1.08, 1] }}
-          transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
-          className={`absolute -top-24 left-1/2 h-60 w-60 -translate-x-1/2 rounded-full blur-3xl ${mood.glow}`}
-        />
-        <div className="absolute inset-0 rounded-[32px] bg-[radial-gradient(circle_at_50%_8%,rgba(255,255,255,0.52),transparent_24%),linear-gradient(135deg,rgba(255,255,255,0.22),transparent_38%)]" />
-        <div className="absolute -bottom-24 -right-16 h-64 w-64 rounded-full border border-action/8" />
-        <div className="absolute -bottom-28 -left-20 h-72 w-72 rounded-full border border-action/5" />
-        <div className="absolute inset-x-8 top-10 h-44 rounded-b-[96px] border-x border-b border-action/5" />
+      <div className={`pointer-events-none absolute -top-20 left-8 h-44 w-44 rounded-full ${mood.glow} blur-3xl`} />
+      <div className="relative rounded-[1.6rem] border border-white/70 bg-white/72 p-5 backdrop-blur-md" ref={cardRef}>
+        <div className="mb-4 flex items-center justify-between text-xs text-secondary-text">
+          <span>أثر اليوم</span>
+          <span>وقف رقمي</span>
+        </div>
+        <p className="whitespace-pre-line text-center text-2xl font-bold leading-[2.2] text-primary-text">{athar.text}</p>
+        <p className="mt-4 text-center text-sm text-secondary-text">{athar.source}</p>
+        {shareName && <p className="mt-4 text-center text-xs text-secondary-text">إهداء من {shareName}</p>}
+      </div>
 
-        <motion.div
-          key={athar.id}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.38, ease: "easeOut" }}
-          className="relative z-10 flex min-h-[352px] flex-col items-center justify-between"
+      <div className="mt-4 flex items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={handleShare}
+          disabled={isSharing}
+          className="flex-1 rounded-full bg-primary px-4 py-3 text-sm font-bold text-white shadow-lg disabled:opacity-60"
         >
-          <p className="text-sm font-bold tracking-wide text-action/80">أثر اليوم</p>
+          {isSharing ? "جاري تجهيز الأثر..." : "مشاركة الأثر"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setShowNameActions(true)}
+          className="rounded-full bg-white/75 px-4 py-3 text-sm font-bold text-primary-text shadow-sm"
+        >
+          الاسم
+        </button>
+      </div>
 
-          <div className="flex flex-1 items-center justify-center py-9">
-            <p className="break-words text-[1.72rem] font-extrabold leading-[2.35] text-primary-text">
-              {athar.text}
-            </p>
+      {showNamePrompt && (
+        <div className="mt-4 rounded-[1.5rem] bg-white/82 p-4 shadow-inner">
+          <p className="text-sm font-bold text-primary-text">أضف اسمك على بطاقة الأثر</p>
+          <input
+            value={nameDraft}
+            onChange={(event) => setNameDraft(event.target.value)}
+            maxLength={28}
+            className="mt-3 w-full rounded-2xl border border-primary/15 bg-white px-4 py-3 text-right text-sm outline-none focus:border-primary"
+            placeholder="اكتب اسمك"
+          />
+          <div className="mt-3 flex gap-2">
+            <button onClick={saveName} className="flex-1 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white">
+              حفظ ومتابعة
+            </button>
+            <button onClick={skipName} className="rounded-full bg-soft px-4 py-2 text-sm font-bold text-primary-text">
+              تخطي
+            </button>
           </div>
+        </div>
+      )}
 
-          <div className="w-full space-y-3">
-            <p className="text-sm font-semibold text-secondary-text/80">{athar.source}</p>
-            {shareName && (
-              <div className="flex w-full justify-start">
-                <button
-                  type="button"
-                  onClick={() => {
-                    pulse();
-                    setNameDraft(shareName);
-                    setShowNameActions(true);
-                  }}
-                  className="inline-flex items-center gap-2 rounded-full bg-white/75 px-4 py-2.5 text-sm font-extrabold text-action shadow-md shadow-action/5 backdrop-blur active:scale-[0.97]"
-                >
-                  <span className="text-base leading-none">✦</span>
-                  <span>{shareName}</span>
-                  <span className="text-base leading-none opacity-80">✎</span>
-                </button>
-              </div>
-            )}
+      {showNameActions && !showNamePrompt && (
+        <div className="mt-4 rounded-[1.5rem] bg-white/82 p-4 shadow-inner">
+          <input
+            value={nameDraft}
+            onChange={(event) => setNameDraft(event.target.value)}
+            maxLength={28}
+            className="w-full rounded-2xl border border-primary/15 bg-white px-4 py-3 text-right text-sm outline-none focus:border-primary"
+            placeholder="اكتب اسمك"
+          />
+          <div className="mt-3 flex gap-2">
+            <button onClick={saveName} className="flex-1 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white">
+              حفظ
+            </button>
+            <button onClick={deleteName} className="rounded-full bg-soft px-4 py-2 text-sm font-bold text-primary-text">
+              حذف
+            </button>
           </div>
-        </motion.div>
-      </motion.div>
-      <button
-        onClick={handleShare}
-        disabled={isSharing}
-        className="mt-5 w-full rounded-full bg-action px-6 py-4 text-lg font-bold text-white shadow-lg shadow-action/20 transition hover:opacity-90 active:scale-[0.98] disabled:cursor-wait disabled:opacity-75"
-      >
-        {isSharing ? "جاري تجهيز الأثر..." : "شارك الأثر"}
-      </button>
-
-      {(showNamePrompt || showNameActions) && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/25 px-4 pb-8 pt-[18vh] backdrop-blur-sm">
-          <motion.div
-            initial={{ opacity: 0, y: 18, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.22 }}
-            className="w-full max-w-md rounded-[30px] bg-white p-5 text-center shadow-2xl"
-          >
-            <p className="text-xl font-extrabold text-primary-text">
-              {showNameActions ? "تعديل اسمك" : "تحب نكتب اسمك على بطاقة الأثر؟"}
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-secondary-text">
-              {showNameActions ? "عدّل الاسم أو احذفه من بطاقة أثر." : "اكتب اسمك أو لقبك مرة واحدة، ونحفظه لك بهدوء."}
-            </p>
-            <input
-              value={nameDraft}
-              onChange={(event) => setNameDraft(event.target.value)}
-              maxLength={28}
-              placeholder="اسمك أو لقبك"
-              className="mt-5 w-full rounded-2xl border border-action/15 bg-primary-bg px-4 py-4 text-center text-lg font-bold text-primary-text outline-none focus:border-action"
-            />
-            <div className="mt-4 grid grid-cols-2 gap-3">
-              <button onClick={saveName} className="rounded-full bg-action px-5 py-3 font-bold text-white shadow-lg shadow-action/20">
-                متابعة
-              </button>
-              <button onClick={skipName} className="rounded-full bg-primary-bg px-5 py-3 font-bold text-secondary-text">
-                تخطي
-              </button>
-            </div>
-            {showNameActions && (
-              <button onClick={deleteName} className="mt-3 w-full rounded-full bg-red-50 px-5 py-3 font-bold text-red-500">
-                حذف الاسم
-              </button>
-            )}
-          </motion.div>
         </div>
       )}
     </motion.div>
