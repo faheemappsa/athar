@@ -8,7 +8,9 @@ import { hadithProvider } from "./providers/hadithProvider";
 import { localDuaProvider } from "./providers/localDuaProvider";
 import { staticProvider } from "./providers/staticProvider";
 
-const providers = [quranProvider, tafsirProvider, asmaProvider, hadithProvider, localDuaProvider, staticProvider];
+const networkProviders = [quranProvider, tafsirProvider];
+const offlineProviders = [asmaProvider, hadithProvider, localDuaProvider, staticProvider];
+const providers = [...networkProviders, ...offlineProviders];
 
 const toRequest = (decision: AtharBrainDecision, allowNetwork = true): AtharContentRequest => ({
   state: decision.state,
@@ -17,21 +19,39 @@ const toRequest = (decision: AtharBrainDecision, allowNetwork = true): AtharCont
   allowNetwork,
 });
 
-export const getAtharContentForDecision = async (decision: AtharBrainDecision): Promise<AtharProviderContent | null> => {
-  const cached = getCachedAtharContent(decision.avoidContentIds);
-  const request = toRequest(decision, true);
-
-  for (const provider of providers) {
+const getFromProviders = async (
+  request: AtharContentRequest,
+  items: typeof providers,
+): Promise<AtharProviderContent | null> => {
+  for (const provider of items) {
     try {
       const content = await provider.getContent(request);
-      if (content) {
-        cacheAtharContent(content);
-        return content;
-      }
+      if (content) return content;
     } catch {}
   }
 
-  return cached;
+  return null;
+};
+
+export const getAtharContentForDecision = async (decision: AtharBrainDecision): Promise<AtharProviderContent | null> => {
+  const request = toRequest(decision, true);
+
+  const onlineContent = await getFromProviders(request, networkProviders);
+  if (onlineContent) {
+    cacheAtharContent(onlineContent);
+    return onlineContent;
+  }
+
+  const cached = getCachedAtharContent(decision.avoidContentIds);
+  if (cached) return cached;
+
+  const offlineContent = await getFromProviders(toRequest(decision, false), offlineProviders);
+  if (offlineContent) {
+    cacheAtharContent(offlineContent);
+    return offlineContent;
+  }
+
+  return null;
 };
 
 export const warmAtharContentCache = async (decision: AtharBrainDecision) => {
