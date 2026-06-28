@@ -125,6 +125,12 @@ const getRandomQuranAthar = async (time: AtharTime): Promise<AtharContent | null
   };
 };
 
+const normalizeExperienceKind = (kind: string): AtharContent["kind"] => {
+  if (kind === "ayah") return "external-ayah";
+  if (kind === "hadith" || kind === "dua") return kind;
+  return "wisdom";
+};
+
 const getExperienceAthar = async (time: AtharTime): Promise<AtharContent | null> => {
   const decision = resolveDecision();
   const content = await resolveContent(decision);
@@ -135,7 +141,7 @@ const getExperienceAthar = async (time: AtharTime): Promise<AtharContent | null>
     id: content.id,
     text: content.text,
     source: content.source,
-    kind: content.kind === "ayah" ? "external-ayah" : content.kind,
+    kind: normalizeExperienceKind(content.kind),
     time,
   };
 };
