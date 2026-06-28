@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Quran from "../components/Quran/Quran";
 import { recordAtharBehavior } from "../experience/memory";
+import { getQuranPageId } from "../experience/quranPageId";
 
 const broadcastQuranFocus = (active: boolean) => {
   window.dispatchEvent(new CustomEvent("athar-focus-mode", { detail: { path: "/quran", active } }));
@@ -10,7 +11,7 @@ export default function QuranPage() {
   const [focusMode, setFocusMode] = useState(false);
 
   useEffect(() => {
-    recordAtharBehavior({ type: "surface_view", surface: "quran-page", contentId: "quran-page" });
+    recordAtharBehavior({ type: "surface_view", surface: "quran-page", contentId: getQuranPageId() });
   }, []);
 
   useEffect(() => {
@@ -20,7 +21,7 @@ export default function QuranPage() {
     const setQuranFocusMode = (active: boolean) => {
       setFocusMode(active);
       broadcastQuranFocus(active);
-      if (active) recordAtharBehavior({ type: "surface_focus", surface: "quran-page", contentId: "quran-page", durationMs: 5000 });
+      if (active) recordAtharBehavior({ type: "surface_focus", surface: "quran-page", contentId: getQuranPageId(), durationMs: 5000 });
     };
 
     const handleScroll = () => {
