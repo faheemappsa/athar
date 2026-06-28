@@ -27,7 +27,7 @@ export const fetchHadithContent = async (request: AtharContentRequest): Promise<
     provider: "hadith",
     kind: "hadith",
     text: item.hadithArabic,
-    source: item.bookSlug || "Hadith API",
+    source: "Hadith API",
     stateTags: [request.state],
     weight: 7,
     isShareable: true,
