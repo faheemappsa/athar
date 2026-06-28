@@ -1,0 +1,48 @@
+import type { AtharProviderContent } from "../types";
+
+export const DUA_SEEDS: AtharProviderContent[] = [
+  {
+    id: "dua-sakinah-1",
+    provider: "dua",
+    kind: "dua",
+    text: "اللهم أنزل على قلبي سكينة من عندك، واجعلني أطمئن بذكرك وأرضى بتدبيرك.",
+    source: "دعاء مأثور المعنى",
+    stateTags: ["sakinah", "raja"],
+    weight: 8,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+  {
+    id: "dua-rizq-1",
+    provider: "dua",
+    kind: "dua",
+    text: "اللهم اكفني بحلالك عن حرامك، وأغنني بفضلك عمن سواك.",
+    source: "دعاء مأثور",
+    stateTags: ["rizq", "barakah"],
+    weight: 9,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+  {
+    id: "dua-sabr-1",
+    provider: "dua",
+    kind: "dua",
+    text: "ربنا أفرغ علينا صبرًا وثبت أقدامنا وانصرنا على القوم الكافرين.",
+    source: "البقرة: 250",
+    stateTags: ["sabr", "thabat"],
+    weight: 9,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+  {
+    id: "dua-shukr-1",
+    provider: "dua",
+    kind: "dua",
+    text: "رب أوزعني أن أشكر نعمتك التي أنعمت علي وعلى والدي وأن أعمل صالحًا ترضاه.",
+    source: "النمل: 19",
+    stateTags: ["shukr", "barakah"],
+    weight: 9,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+];
