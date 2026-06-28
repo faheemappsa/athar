@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import type { ExperienceContent } from "../../experience/content";
+import type { AtharContent } from "../../services/atharEngine";
 import { loadExperienceContent } from "./loadExperienceContent";
 
 export const useExperienceContent = () => {
-  const [content, setContent] = useState<ExperienceContent | null>(null);
+  const [content, setContent] = useState<AtharContent | null>(null);
 
   useEffect(() => {
     loadExperienceContent().then(setContent).catch(() => setContent(null));
