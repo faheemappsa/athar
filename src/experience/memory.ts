@@ -11,7 +11,7 @@ const SESSION_KEY = "athar-brain-session-id";
 const MAX_EVENTS = 100;
 const MAX_CONTENT_HISTORY = 40;
 
-const SURFACES: AtharSurface[] = ["athar-card", "dhikr-card", "prayer-card"];
+const SURFACES: AtharSurface[] = ["athar-card", "dhikr-card", "prayer-card", "quran-page"];
 const STATES: AtharEmotionalState[] = ["sakinah", "raja", "barakah", "sabr", "shukr", "rizq", "rahmah", "thabat"];
 
 const createId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 9)}`;
@@ -28,6 +28,7 @@ const createSurfaceStats = (): AtharMemorySnapshot["surfaceStats"] => ({
   "athar-card": { views: 0, focuses: 0, clicks: 0, totalFocusMs: 0 },
   "dhikr-card": { views: 0, focuses: 0, clicks: 0, totalFocusMs: 0 },
   "prayer-card": { views: 0, focuses: 0, clicks: 0, totalFocusMs: 0 },
+  "quran-page": { views: 0, focuses: 0, clicks: 0, totalFocusMs: 0 },
 });
 
 const createStateScores = (): Partial<Record<AtharEmotionalState, number>> =>
