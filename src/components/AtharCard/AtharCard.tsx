@@ -5,6 +5,7 @@ import html2canvas from "html2canvas";
 import { trackEvent } from "../../utils/analytics";
 import { recordAtharBehavior } from "../../experience/memory";
 import { useSurfaceSignal } from "../../experience/useSurfaceSignal";
+import { useAtharRefreshSignal } from "./useAtharRefreshSignal";
 
 const NAME_KEY = "athar-share-name";
 const NAME_SEEN_KEY = "athar-name-prompt-seen";
@@ -59,6 +60,7 @@ export default function AtharCard() {
   const [showNameActions, setShowNameActions] = useState(false);
   const [shareAfterName, setShareAfterName] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const refreshSignal = useAtharRefreshSignal();
   const cardRef = useRef<HTMLDivElement>(null);
   const surfaceSignal = useSurfaceSignal<HTMLDivElement>({ surface: "athar-card", contentId: athar?.id, minFocusMs: 4500 });
 
@@ -94,7 +96,7 @@ export default function AtharCard() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [refreshSignal]);
 
   const shareBlob = async (blob: Blob) => {
     const file = new File([blob], "athar-story.png", { type: "image/png" });
