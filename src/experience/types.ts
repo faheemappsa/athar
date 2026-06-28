@@ -1,4 +1,4 @@
-export type AtharSurface = "athar-card" | "dhikr-card" | "prayer-card";
+export type AtharSurface = "athar-card" | "dhikr-card" | "prayer-card" | "quran-page";
 
 export type AtharBehaviorEventType =
   | "surface_view"
@@ -7,7 +7,11 @@ export type AtharBehaviorEventType =
   | "surface_click"
   | "athar_share"
   | "dhikr_tap"
-  | "prayer_view";
+  | "prayer_view"
+  | "quran_page_view"
+  | "quran_page_turn"
+  | "quran_surah_pick"
+  | "quran_reader_scroll";
 
 export type AtharEmotionalState =
   | "sakinah"
