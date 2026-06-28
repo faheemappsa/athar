@@ -9,6 +9,7 @@ export { rankExperienceContent } from "./ranker";
 export { collectProviderItems } from "./collect";
 export { pickBestContent } from "./best";
 export { getBestExperienceContent } from "./manager";
+export { EXPERIENCE_CONTENT_PROVIDERS } from "./registry";
 export { fetchQuranContent } from "./quranApiProvider";
 export { getTafsirContent } from "./tafsirProvider";
 export { HADITH_SEED_IDS, ASMA_SEED_IDS, DUA_SEED_IDS } from "./seeds";
