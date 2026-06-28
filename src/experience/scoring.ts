@@ -91,10 +91,13 @@ const applyMemorySignals = (scores: Record<AtharEmotionalState, number>) => {
   const athar = memory.surfaceStats["athar-card"];
   const dhikr = memory.surfaceStats["dhikr-card"];
   const prayer = memory.surfaceStats["prayer-card"];
+  const quran = memory.surfaceStats["quran-page"];
 
   if (athar.focuses >= 3 || athar.totalFocusMs >= 20000) add(scores, "sakinah", 2.2);
   if (dhikr.clicks >= 10) add(scores, "thabat", 2.4);
   if (prayer.views >= 5) add(scores, "barakah", 1.8);
+  if (quran.views >= 2 || quran.focuses >= 1) add(scores, "sakinah", 2.4);
+  if (quran.totalFocusMs >= 15000) add(scores, "rahmah", 2);
 };
 
 const pickWinner = (scores: Record<AtharEmotionalState, number>) =>
