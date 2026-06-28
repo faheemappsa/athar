@@ -1,6 +1,6 @@
 import type { AtharContentKind, AtharEmotionalState } from "../experience/types";
 
-export type AtharProviderId = "quran" | "tafsir" | "hadith" | "dua" | "asma" | "local";
+export type AtharProviderId = "quran" | "tafsir" | "hadith" | "dua" | "asma" | "meaning" | "local";
 
 export type AtharProviderContent = {
   id: string;
