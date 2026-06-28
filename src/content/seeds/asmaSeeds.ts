@@ -1,0 +1,48 @@
+import type { AtharProviderContent } from "../types";
+
+export const ASMA_SEEDS: AtharProviderContent[] = [
+  {
+    id: "asma-latif",
+    provider: "asma",
+    kind: "asma",
+    text: "اللطيف: الذي يلطف بعباده، ويصل إليهم برحمته من حيث لا يشعرون.",
+    source: "أسماء الله الحسنى",
+    stateTags: ["sakinah", "rahmah"],
+    weight: 8,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+  {
+    id: "asma-wahhab",
+    provider: "asma",
+    kind: "asma",
+    text: "الوهاب: كثير العطاء، يعطي بلا عوض ويفتح لعباده أبواب الفضل.",
+    source: "أسماء الله الحسنى",
+    stateTags: ["rizq", "barakah"],
+    weight: 8,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+  {
+    id: "asma-rahman",
+    provider: "asma",
+    kind: "asma",
+    text: "الرحمن: واسع الرحمة، الذي شملت رحمته كل شيء.",
+    source: "أسماء الله الحسنى",
+    stateTags: ["rahmah", "raja"],
+    weight: 8,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+  {
+    id: "asma-shakur",
+    provider: "asma",
+    kind: "asma",
+    text: "الشكور: الذي يقبل القليل من العمل ويضاعف عليه الأجر والفضل.",
+    source: "أسماء الله الحسنى",
+    stateTags: ["shukr", "barakah"],
+    weight: 8,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+];
