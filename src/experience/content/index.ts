@@ -9,6 +9,7 @@ export { rankExperienceContent } from "./ranker";
 export { collectProviderItems } from "./collect";
 export { pickBestContent } from "./best";
 export { getBestExperienceContent } from "./manager";
+export { resolveExperienceContent } from "./experienceContent";
 export { EXPERIENCE_CONTENT_PROVIDERS } from "./registry";
 export { fetchQuranContent } from "./quranApiProvider";
 export { getTafsirContent } from "./tafsirProvider";
