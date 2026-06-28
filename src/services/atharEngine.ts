@@ -1,4 +1,6 @@
 import { ATHAR_LIBRARY, type AtharItem, type AtharTag, type AtharTime } from "../data/atharLibrary";
+import { readLastAtharBrainDecision } from "../experience/brain";
+import { getAtharContentForDecision, warmAtharContentCache } from "../content/gateway";
 import { getAyahByReference, getRandomAyah } from "./quranApi";
 
 export type AtharContent = {
@@ -124,8 +126,31 @@ const getRandomQuranAthar = async (time: AtharTime): Promise<AtharContent | null
   };
 };
 
+const getBrainGuidedAthar = async (time: AtharTime): Promise<AtharContent | null> => {
+  const decision = readLastAtharBrainDecision();
+  if (!decision) return null;
+
+  const content = await getAtharContentForDecision(decision);
+  void warmAtharContentCache(decision);
+  if (!content) return null;
+
+  saveRecentId(content.id);
+  return {
+    id: content.id,
+    text: content.text,
+    source: content.source,
+    kind: content.kind === "ayah" ? "external-ayah" : (content.kind as AtharItem["kind"]),
+    time,
+  };
+};
+
 export const getSmartAthar = async (): Promise<AtharContent> => {
   const time = getTimeContext();
+
+  try {
+    const brainContent = await getBrainGuidedAthar(time);
+    if (brainContent) return brainContent;
+  } catch {}
 
   try {
     if (Math.random() < 0.65) {
