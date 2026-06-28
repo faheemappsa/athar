@@ -1,0 +1,48 @@
+import type { AtharProviderContent } from "../types";
+
+export const HADITH_SEEDS: AtharProviderContent[] = [
+  {
+    id: "hadith-niyyah",
+    provider: "hadith",
+    kind: "hadith",
+    text: "إنما الأعمال بالنيات، وإنما لكل امرئ ما نوى.",
+    source: "متفق عليه",
+    stateTags: ["thabat", "sakinah"],
+    weight: 8,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+  {
+    id: "hadith-ease",
+    provider: "hadith",
+    kind: "hadith",
+    text: "يسروا ولا تعسروا، وبشروا ولا تنفروا.",
+    source: "صحيح البخاري",
+    stateTags: ["raja", "rahmah"],
+    weight: 8,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+  {
+    id: "hadith-continuity",
+    provider: "hadith",
+    kind: "hadith",
+    text: "أحب الأعمال إلى الله أدومها وإن قل.",
+    source: "متفق عليه",
+    stateTags: ["thabat", "sabr"],
+    weight: 8,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+  {
+    id: "hadith-shukr",
+    provider: "hadith",
+    kind: "hadith",
+    text: "من لا يشكر الناس لا يشكر الله.",
+    source: "حديث حسن",
+    stateTags: ["shukr", "barakah"],
+    weight: 7,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+];
