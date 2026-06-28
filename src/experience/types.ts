@@ -1,4 +1,4 @@
-export type AtharSurface = "athar-card" | "dhikr-card" | "prayer-card";
+export type AtharSurface = "athar-card" | "dhikr-card" | "prayer-card" | "quran-page";
 
 export type AtharBehaviorEventType =
   | "surface_view"
