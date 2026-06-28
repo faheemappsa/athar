@@ -3,6 +3,8 @@ import { motion } from "framer-motion";
 import { getSmartAthar, type AtharContent } from "../../services/atharEngine";
 import html2canvas from "html2canvas";
 import { trackEvent } from "../../utils/analytics";
+import { recordAtharBehavior } from "../../experience/memory";
+import { useSurfaceSignal } from "../../experience/useSurfaceSignal";
 
 const NAME_KEY = "athar-share-name";
 const NAME_SEEN_KEY = "athar-name-prompt-seen";
@@ -58,6 +60,7 @@ export default function AtharCard() {
   const [shareAfterName, setShareAfterName] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const surfaceSignal = useSurfaceSignal<HTMLDivElement>({ surface: "athar-card", contentId: athar?.id, minFocusMs: 4500 });
 
   useEffect(() => {
     let mounted = true;
@@ -102,6 +105,7 @@ export default function AtharCard() {
         text: athar?.text || "أثر اليوم",
       });
       trackEvent("athar_share_success", { method: "native_share" });
+      recordAtharBehavior({ type: "athar_share", surface: "athar-card", contentId: athar?.id, metadata: { method: "native_share" } });
       return;
     }
 
@@ -112,6 +116,7 @@ export default function AtharCard() {
     link.click();
     URL.revokeObjectURL(url);
     trackEvent("athar_share_success", { method: "download" });
+    recordAtharBehavior({ type: "athar_share", surface: "athar-card", contentId: athar?.id, metadata: { method: "download" } });
   };
 
   const generateServerImage = async () => {
@@ -153,6 +158,7 @@ export default function AtharCard() {
 
   const handleShare = async () => {
     pulse();
+    surfaceSignal.recordClick();
     const hasSeenPrompt = localStorage.getItem(NAME_SEEN_KEY) === "1";
     if (!hasSeenPrompt) {
       setShareAfterName(true);
@@ -216,6 +222,7 @@ export default function AtharCard() {
 
   return (
     <motion.div
+      ref={surfaceSignal.ref}
       initial={{ opacity: 0, y: 18 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: 0.2 }}
