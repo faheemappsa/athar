@@ -3,6 +3,7 @@ import { readLastAtharBrainDecision } from "../experience/brain";
 import { recordAtharBehavior } from "../experience/memory";
 import { getAtharContentForDecision, warmAtharContentCache } from "../content/gateway";
 import { getAyahByReference, getRandomAyah } from "./quranApi";
+import { readAtharRecentIds, rememberAtharContentId } from "./atharRotation";
 
 export type AtharContent = {
   id: string;
@@ -50,20 +51,11 @@ const getTimeContext = (): AtharTime => {
   return "any";
 };
 
-const readRecentIds = () => {
-  try {
-    return JSON.parse(localStorage.getItem("athar-recent-ids") || "[]") as string[];
-  } catch {
-    return [];
-  }
-};
+const readRecentIds = readAtharRecentIds;
 
 const saveRecentId = (id: string) => {
-  try {
-    const next = [id, ...readRecentIds().filter((item) => item !== id)].slice(0, 20);
-    localStorage.setItem("athar-recent-ids", JSON.stringify(next));
-    recordAtharBehavior({ type: "surface_view", surface: "athar-card", contentId: id });
-  } catch {}
+  rememberAtharContentId(id);
+  recordAtharBehavior({ type: "surface_view", surface: "athar-card", contentId: id });
 };
 
 const pickFromLibrary = (time: AtharTime): AtharContent => {
