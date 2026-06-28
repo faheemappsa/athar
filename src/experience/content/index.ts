@@ -7,6 +7,8 @@ export { ATHAR_EXPERIENCE_TAGS } from "./tagList";
 export { resolveUserStage } from "./userStageResolver";
 export { rankExperienceContent } from "./ranker";
 export { collectProviderItems } from "./collect";
+export { pickBestContent } from "./best";
+export { getBestExperienceContent } from "./manager";
 export { fetchQuranContent } from "./quranApiProvider";
 export { getTafsirContent } from "./tafsirProvider";
 export { HADITH_SEED_IDS, ASMA_SEED_IDS, DUA_SEED_IDS } from "./seeds";
