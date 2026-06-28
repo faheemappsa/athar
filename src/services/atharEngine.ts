@@ -1,5 +1,6 @@
 import { ATHAR_LIBRARY, type AtharItem, type AtharTag, type AtharTime } from "../data/atharLibrary";
 import { readLastAtharBrainDecision } from "../experience/brain";
+import { recordAtharBehavior } from "../experience/memory";
 import { getAtharContentForDecision, warmAtharContentCache } from "../content/gateway";
 import { getAyahByReference, getRandomAyah } from "./quranApi";
 
@@ -59,8 +60,9 @@ const readRecentIds = () => {
 
 const saveRecentId = (id: string) => {
   try {
-    const next = [id, ...readRecentIds().filter((item) => item !== id)].slice(0, 12);
+    const next = [id, ...readRecentIds().filter((item) => item !== id)].slice(0, 20);
     localStorage.setItem("athar-recent-ids", JSON.stringify(next));
+    recordAtharBehavior({ type: "surface_view", surface: "athar-card", contentId: id });
   } catch {}
 };
 
