@@ -20,6 +20,7 @@ export default function QuranPage() {
     const setQuranFocusMode = (active: boolean) => {
       setFocusMode(active);
       broadcastQuranFocus(active);
+      if (active) recordAtharBehavior({ type: "surface_focus", surface: "quran-page", contentId: "quran-page", durationMs: 5000 });
     };
 
     const handleScroll = () => {
