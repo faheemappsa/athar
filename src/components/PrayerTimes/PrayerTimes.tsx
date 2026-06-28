@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { appMotion } from "../../config/motion";
 import { useSavedLocation } from "../../hooks/useSavedLocation";
 import { getPrayerTimes } from "../../services/prayerApi";
+import { useSurfaceSignal } from "../../experience/useSurfaceSignal";
 
 const IQAMAH_OFFSET: Record<string, number> = {
   Fajr: 20,
@@ -108,9 +109,15 @@ export default function PrayerTimes() {
   const [iqamahCountdown, setIqamahCountdown] = useState<string>("0:00:00");
   const [loadError, setLoadError] = useState("");
   const surfaceMotion = appMotion.surface;
+  const surfaceSignal = useSurfaceSignal<HTMLDivElement>({ surface: "prayer-card", contentId: nextPrayer?.name || "prayer-card", minFocusMs: 4000 });
 
   const hijriDate = useMemo(() => getHijriDate(), []);
   const faithOccasion = useMemo(() => getFaithOccasion(), []);
+
+  const handleLocationRequest = () => {
+    surfaceSignal.recordClick();
+    requestLocation();
+  };
 
   useEffect(() => {
     if (!location) return;
@@ -167,6 +174,7 @@ export default function PrayerTimes() {
   if (!location) {
     return (
       <motion.div
+        ref={surfaceSignal.ref}
         initial={surfaceMotion.initial}
         animate={surfaceMotion.animate}
         transition={surfaceMotion.transition}
@@ -175,7 +183,7 @@ export default function PrayerTimes() {
         <p className="text-lg font-bold text-primary-text">مواقيت الصلاة</p>
         <p className="mt-2 text-sm leading-relaxed text-secondary-text">حدد موقعك مرة واحدة لنحفظ المواقيت بدقة.</p>
         <button
-          onClick={requestLocation}
+          onClick={handleLocationRequest}
           disabled={status === "loading"}
           className="mt-5 rounded-full bg-action px-6 py-3 font-bold text-white shadow-md disabled:opacity-70"
           aria-label="تحديد موقعي لحساب مواقيت الصلاة"
@@ -190,6 +198,7 @@ export default function PrayerTimes() {
   if (!timings || !nextPrayer) {
     return (
       <motion.div
+        ref={surfaceSignal.ref}
         initial={surfaceMotion.initial}
         animate={surfaceMotion.animate}
         transition={surfaceMotion.transition}
@@ -204,6 +213,7 @@ export default function PrayerTimes() {
 
   return (
     <motion.div
+      ref={surfaceSignal.ref}
       initial={surfaceMotion.initial}
       animate={surfaceMotion.animate}
       transition={surfaceMotion.transition}
@@ -215,7 +225,7 @@ export default function PrayerTimes() {
         <div className="text-right">
           <p className="text-sm font-bold text-action">{hijriDate}</p>
         </div>
-        <button onClick={requestLocation} className="grid h-12 w-12 shrink-0 place-items-center rounded-[20px] bg-mint-soft text-xl text-action shadow-sm shadow-action/5" aria-label="تحديث موقعي لحساب مواقيت الصلاة">⌖</button>
+        <button onClick={handleLocationRequest} className="grid h-12 w-12 shrink-0 place-items-center rounded-[20px] bg-mint-soft text-xl text-action shadow-sm shadow-action/5" aria-label="تحديث موقعي لحساب مواقيت الصلاة">⌖</button>
       </div>
 
       <div className="relative z-10 mt-5 text-center">
