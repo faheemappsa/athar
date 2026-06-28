@@ -1,0 +1,48 @@
+import type { AtharProviderContent } from "../types";
+
+export const MEANING_SEEDS: AtharProviderContent[] = [
+  {
+    id: "meaning-sakinah",
+    provider: "meaning",
+    kind: "wisdom",
+    text: "السكينة: طمأنينة يضعها الله في القلب عند الخوف أو الاضطراب.",
+    source: "معاني القرآن",
+    stateTags: ["sakinah", "thabat"],
+    weight: 7,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+  {
+    id: "meaning-tawakkul",
+    provider: "meaning",
+    kind: "wisdom",
+    text: "التوكل: اعتماد القلب على الله مع فعل الأسباب دون تعلق بها.",
+    source: "معاني القرآن",
+    stateTags: ["thabat", "sakinah"],
+    weight: 7,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+  {
+    id: "meaning-yusr",
+    provider: "meaning",
+    kind: "wisdom",
+    text: "اليُسر: التسهيل والفرج بعد الضيق، وهو من لطف الله بعباده.",
+    source: "غريب القرآن",
+    stateTags: ["raja", "sabr"],
+    weight: 7,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+  {
+    id: "meaning-barakah",
+    provider: "meaning",
+    kind: "wisdom",
+    text: "البركة: ثبوت الخير ونماؤه، وقد تكون في الوقت أو الرزق أو العمل.",
+    source: "معاني القرآن",
+    stateTags: ["barakah", "shukr"],
+    weight: 7,
+    isShareable: true,
+    isOfflineReady: true,
+  },
+];
