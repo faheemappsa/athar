@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Quran from "../components/Quran/Quran";
+import { recordAtharBehavior } from "../experience/memory";
 
 const broadcastQuranFocus = (active: boolean) => {
   window.dispatchEvent(new CustomEvent("athar-focus-mode", { detail: { path: "/quran", active } }));
@@ -7,6 +8,10 @@ const broadcastQuranFocus = (active: boolean) => {
 
 export default function QuranPage() {
   const [focusMode, setFocusMode] = useState(false);
+
+  useEffect(() => {
+    recordAtharBehavior({ type: "surface_view", surface: "quran-page", contentId: "quran-page" });
+  }, []);
 
   useEffect(() => {
     const scrollElement = document.getElementById("app-scroll");
