@@ -1,6 +1,8 @@
 import { resolveContent, resolveDecision } from "../../experience";
+import { toAtharContent } from "./toAtharContent";
 
 export const loadExperienceContent = async () => {
   const decision = resolveDecision();
-  return resolveContent(decision);
+  const content = await resolveContent(decision);
+  return content ? toAtharContent(content) : null;
 };
