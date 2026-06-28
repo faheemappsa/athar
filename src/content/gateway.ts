@@ -2,9 +2,10 @@ import type { AtharBrainDecision } from "../experience/types";
 import type { AtharContentRequest, AtharProviderContent } from "./types";
 import { cacheAtharContent, getCachedAtharContent } from "./cache";
 import { quranProvider } from "./providers/quranProvider";
+import { localDuaProvider } from "./providers/localDuaProvider";
 import { staticProvider } from "./providers/staticProvider";
 
-const providers = [quranProvider, staticProvider];
+const providers = [quranProvider, localDuaProvider, staticProvider];
 
 const toRequest = (decision: AtharBrainDecision, allowNetwork = true): AtharContentRequest => ({
   state: decision.state,
