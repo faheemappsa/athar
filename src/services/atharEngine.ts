@@ -1,4 +1,5 @@
 import { ATHAR_LIBRARY, type AtharItem, type AtharTag, type AtharTime } from "../data/atharLibrary";
+import { resolveContent, resolveDecision } from "../experience";
 import { getAyahByReference, getRandomAyah } from "./quranApi";
 
 export type AtharContent = {
@@ -124,8 +125,28 @@ const getRandomQuranAthar = async (time: AtharTime): Promise<AtharContent | null
   };
 };
 
+const getExperienceAthar = async (time: AtharTime): Promise<AtharContent | null> => {
+  const decision = resolveDecision();
+  const content = await resolveContent(decision);
+  if (!content) return null;
+
+  saveRecentId(content.id);
+  return {
+    id: content.id,
+    text: content.text,
+    source: content.source,
+    kind: content.kind === "ayah" ? "external-ayah" : content.kind,
+    time,
+  };
+};
+
 export const getSmartAthar = async (): Promise<AtharContent> => {
   const time = getTimeContext();
+
+  try {
+    const experience = await getExperienceAthar(time);
+    if (experience) return experience;
+  } catch {}
 
   try {
     if (Math.random() < 0.65) {
