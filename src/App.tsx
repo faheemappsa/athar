@@ -14,6 +14,7 @@ import AppIntro from "./components/Shared/AppIntro";
 import ConnectionBanner from "./components/Shared/ConnectionBanner";
 import AppUpdatePrompt from "./components/Shared/AppUpdatePrompt";
 import { useActiveSection } from "./hooks/useActiveSection";
+import { runAtharBrain } from "./experience/brain";
 import { trackEvent } from "./utils/analytics";
 
 const AnalyticsPageView = () => {
@@ -31,6 +32,16 @@ const AnalyticsPageView = () => {
 
 const AppShell = () => {
   const section = useActiveSection();
+
+  useEffect(() => {
+    const decision = runAtharBrain();
+    trackEvent("athar_brain_decision", {
+      state: decision.state,
+      score: decision.score,
+      time_band: decision.entry.timeBand,
+      visit_count: decision.entry.visitCount,
+    });
+  }, []);
 
   return (
     <div className="app-shell" data-section={section.key} data-context={section.context}>
