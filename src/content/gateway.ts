@@ -3,13 +3,14 @@ import type { AtharContentRequest, AtharProviderContent } from "./types";
 import { cacheAtharContent, getCachedAtharContent } from "./cache";
 import { quranProvider } from "./providers/quranProvider";
 import { tafsirProvider } from "./providers/tafsirProvider";
+import { meaningProvider } from "./providers/meaningProvider";
 import { asmaProvider } from "./providers/asmaProvider";
 import { hadithProvider } from "./providers/hadithProvider";
 import { localDuaProvider } from "./providers/localDuaProvider";
 import { staticProvider } from "./providers/staticProvider";
 
 const networkProviders = [quranProvider, tafsirProvider];
-const offlineProviders = [asmaProvider, hadithProvider, localDuaProvider, staticProvider];
+const offlineProviders = [meaningProvider, asmaProvider, hadithProvider, localDuaProvider, staticProvider];
 const providers = [...networkProviders, ...offlineProviders];
 
 const toRequest = (decision: AtharBrainDecision, allowNetwork = true): AtharContentRequest => ({
