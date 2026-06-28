@@ -7,6 +7,8 @@ import { SLEEP_ADHKAR_EXTRA } from "../../data/sleepAdhkarExtra";
 import { useSavedLocation } from "../../hooks/useSavedLocation";
 import { getPrayerTimes } from "../../services/prayerApi";
 import { getDhikrCompletionIdentity } from "../../utils/dhikrCompletion";
+import { recordAtharBehavior } from "../../experience/memory";
+import { useSurfaceSignal } from "../../experience/useSurfaceSignal";
 import DhikrCompletionCard from "./DhikrCompletionCard";
 import DhikrSessionHeader from "./DhikrSessionHeader";
 
@@ -205,6 +207,7 @@ export default function Dhikr() {
   const categoryInfo = CATEGORY_LABELS[category];
   const completionCount = completionDays.length;
   const identityCopy = getDhikrCompletionIdentity(completionCount);
+  const surfaceSignal = useSurfaceSignal<HTMLDivElement>({ surface: "dhikr-card", contentId: current?.id, minFocusMs: 5000 });
 
   useEffect(() => {
     const element = dhikrTextRef.current;
@@ -228,6 +231,7 @@ export default function Dhikr() {
   };
 
   const goToNextDhikr = () => {
+    surfaceSignal.recordClick();
     enterFocusMode();
     if (currentIndex + 1 < dhikrList.length) {
       setCurrentIndex(currentIndex + 1);
@@ -245,6 +249,8 @@ export default function Dhikr() {
   const handleTap = () => {
     enterFocusMode();
     if (!current || isComplete) return;
+
+    recordAtharBehavior({ type: "dhikr_tap", surface: "dhikr-card", contentId: current.id, metadata: { category, count: count + 1 } });
 
     const newCount = Math.min(count + 1, safeCount);
     setCount(newCount);
@@ -267,6 +273,7 @@ export default function Dhikr() {
   };
 
   const resetProgress = () => {
+    surfaceSignal.recordClick();
     exitFocusMode();
     localStorage.removeItem(progressKey);
     setCurrentIndex(0);
@@ -278,6 +285,7 @@ export default function Dhikr() {
   if (!loaded || !current) {
     return (
       <motion.div
+        ref={surfaceSignal.ref}
         initial={surfaceMotion.initial}
         animate={surfaceMotion.animate}
         transition={surfaceMotion.transition}
@@ -290,6 +298,7 @@ export default function Dhikr() {
 
   return (
     <motion.div
+      ref={surfaceSignal.ref}
       initial={surfaceMotion.initial}
       animate={surfaceMotion.animate}
       transition={surfaceMotion.transition}
