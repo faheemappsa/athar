@@ -1,6 +1,8 @@
 import type { AtharSurface } from "./types";
+import { readAtharMemory } from "./memory";
 
 const DAILY_KEY = "athar-daily-intelligence-v1";
+const DHIKR_COMPLETION_KEY = "athar-dhikr-completion-days";
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 type AtharSection = "home" | "dhikr" | "quran" | "radio";
@@ -62,18 +64,54 @@ export const createDailySnapshot = (now = Date.now()): AtharDailySnapshot => ({
   highIntentScore: 0,
 });
 
+const readDhikrCompletionToday = () => {
+  const storage = getStorage();
+  if (!storage) return false;
+
+  try {
+    const days = JSON.parse(storage.getItem(DHIKR_COMPLETION_KEY) || "[]") as string[];
+    return days.includes(getAtharDayKey());
+  } catch {
+    return false;
+  }
+};
+
+const mergeMemorySignals = (snapshot: AtharDailySnapshot) => {
+  try {
+    const memory = readAtharMemory();
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEvents = memory.recentEvents.filter((event) => event.timestamp >= todayStart.getTime());
+
+    const dhikrEvents = todayEvents.filter((event) => event.surface === "dhikr-card");
+    const quranEvents = todayEvents.filter((event) => event.surface === "quran-page");
+
+    if (dhikrEvents.length > 0 || (snapshot.sections.dhikr || 0) > 0) snapshot.dhikr.viewed = true;
+    snapshot.dhikr.taps = Math.max(snapshot.dhikr.taps, dhikrEvents.filter((event) => event.type === "dhikr_tap" || event.type === "surface_click").length);
+    snapshot.dhikr.focusCount = Math.max(snapshot.dhikr.focusCount, dhikrEvents.filter((event) => event.type === "surface_focus").length);
+    snapshot.dhikr.completed = snapshot.dhikr.completed || readDhikrCompletionToday();
+    snapshot.dhikr.lastAt = dhikrEvents[0]?.timestamp || snapshot.dhikr.lastAt;
+
+    if (quranEvents.length > 0 || (snapshot.sections.quran || 0) > 0) snapshot.quran.viewed = true;
+    snapshot.quran.focusCount = Math.max(snapshot.quran.focusCount, quranEvents.filter((event) => event.type === "surface_focus").length);
+    snapshot.quran.lastAt = quranEvents[0]?.timestamp || snapshot.quran.lastAt;
+  } catch {}
+
+  return snapshot;
+};
+
 const normalizeDaily = (raw: Partial<AtharDailySnapshot> | null | undefined, now = Date.now()) => {
   const today = getAtharDayKey(new Date(now));
-  if (!raw || raw.day !== today) return createDailySnapshot(now);
+  if (!raw || raw.day !== today) return mergeMemorySignals(createDailySnapshot(now));
 
-  return {
+  return mergeMemorySignals({
     ...createDailySnapshot(now),
     ...raw,
     updatedAt: raw.updatedAt || now,
     sections: raw.sections || {},
     dhikr: { ...createTask(), ...(raw.dhikr || {}) },
     quran: { ...createTask(), ...(raw.quran || {}) },
-  } as AtharDailySnapshot;
+  } as AtharDailySnapshot);
 };
 
 export const readAtharDailySnapshot = () => {
@@ -112,7 +150,7 @@ const scoreDaily = (snapshot: AtharDailySnapshot) => {
 };
 
 const commitDaily = (snapshot: AtharDailySnapshot) => {
-  const next = { ...snapshot, updatedAt: Date.now() };
+  const next = { ...mergeMemorySignals(snapshot), updatedAt: Date.now() };
   next.highIntentScore = scoreDaily(next);
   return writeAtharDailySnapshot(next);
 };
