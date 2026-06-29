@@ -86,6 +86,7 @@ export default function SupabaseReportsPanel() {
       </div>
 
       <div className="relative mt-5 grid gap-4">
+        <div className="rounded-[30px] bg-primary-bg p-4"><h3 className="mb-3 text-base font-black">أكثر الصفحات زيارة</h3><Bar rows={summary.topPages || []} /></div>
         <div className="rounded-[30px] bg-primary-bg p-4"><h3 className="mb-3 text-base font-black">أهم الأحداث</h3><Bar rows={summary.topEvents} /></div>
         <div className="rounded-[30px] bg-primary-bg p-4"><h3 className="mb-3 text-base font-black">الأجهزة</h3><Bar rows={summary.devices} /></div>
       </div>
