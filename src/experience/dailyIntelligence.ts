@@ -1,5 +1,6 @@
 import type { AtharSurface } from "./types";
 import { readAtharMemory } from "./memory";
+import { pickHabitMessage } from "./habitMessages";
 
 const DAILY_KEY = "athar-daily-intelligence-v1";
 const DHIKR_COMPLETION_KEY = "athar-dhikr-completion-days";
@@ -208,29 +209,34 @@ export const recordAtharSurfaceDailySignal = (input: {
 
 const isRecentlyActive = (snapshot: AtharDailySnapshot) => Date.now() - snapshot.updatedAt <= ONE_DAY_MS;
 
+const makeFeedback = (snapshot: AtharDailySnapshot, input: Omit<AtharDailyFeedback, "message">): AtharDailyFeedback => ({
+  ...input,
+  message: pickHabitMessage(input.reason, snapshot),
+});
+
 export const getAtharDailyFeedback = (): AtharDailyFeedback => {
   const snapshot = readAtharDailySnapshot();
   const isHighIntent = snapshot.highIntentScore >= 7 || snapshot.homeReturns >= 2 || (snapshot.dhikr.viewed && snapshot.quran.viewed);
 
   if (!isRecentlyActive(snapshot)) {
-    return { isHighIntent: false, aura: "none", message: "خذ أثر اليوم بهدوء.", reason: "fresh_return" };
+    return makeFeedback(snapshot, { isHighIntent: false, aura: "none", reason: "fresh_return" });
   }
 
   if (snapshot.dhikr.viewed && !snapshot.dhikr.completed && (snapshot.homeReturns > 0 || snapshot.dhikr.taps > 0)) {
-    return { isHighIntent, aura: isHighIntent ? "attention" : "soft", message: "لا تنسى تكمل أذكارك.", reason: "dhikr_missing" };
+    return makeFeedback(snapshot, { isHighIntent, aura: isHighIntent ? "attention" : "soft", reason: "dhikr_missing" });
   }
 
   if (snapshot.quran.viewed && snapshot.quran.focusCount < 2 && snapshot.homeReturns > 0) {
-    return { isHighIntent, aura: isHighIntent ? "attention" : "soft", message: "لا تترك وردك من المصحف.", reason: "quran_missing" };
+    return makeFeedback(snapshot, { isHighIntent, aura: isHighIntent ? "attention" : "soft", reason: "quran_missing" });
   }
 
   if (snapshot.dhikr.completed && snapshot.quran.viewed) {
-    return { isHighIntent: true, aura: "complete", message: "يومك مكتمل.. وأثرك باقي.", reason: "complete_day" };
+    return makeFeedback(snapshot, { isHighIntent: true, aura: "complete", reason: "complete_day" });
   }
 
   if (isHighIntent) {
-    return { isHighIntent, aura: "soft", message: "واضح إن لك أثر اليوم.. خذ لحظة وكمّل.", reason: "keep_going" };
+    return makeFeedback(snapshot, { isHighIntent, aura: "soft", reason: "keep_going" });
   }
 
-  return { isHighIntent, aura: snapshot.homeReturns > 0 ? "soft" : "none", message: "أثر جديد ينتظرك.", reason: "fresh_return" };
+  return makeFeedback(snapshot, { isHighIntent, aura: snapshot.homeReturns > 0 ? "soft" : "none", reason: "fresh_return" });
 };
