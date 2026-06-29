@@ -14,6 +14,30 @@ import { staticProvider } from "./providers/staticProvider";
 const networkProviders = [quranProvider, tafsirProvider];
 const offlineProviders = [meaningProvider, asmaProvider, hadithPlusProvider, hadithProvider, extraDuaProvider, localDuaProvider, staticProvider];
 const providers = [...networkProviders, ...offlineProviders];
+const WARM_CACHE_KEY = "athar-warm-cache-at";
+const WARM_CACHE_INTERVAL_MS = 8 * 60 * 1000;
+
+const canUseBrowserStorage = () => typeof window !== "undefined" && Boolean(window.localStorage);
+
+const shouldWarmCache = () => {
+  if (!canUseBrowserStorage()) return false;
+  if (typeof navigator !== "undefined" && !navigator.onLine) return false;
+
+  try {
+    const lastWarmAt = Number(localStorage.getItem(WARM_CACHE_KEY) || 0);
+    return Date.now() - lastWarmAt > WARM_CACHE_INTERVAL_MS;
+  } catch {
+    return false;
+  }
+};
+
+const markWarmCache = () => {
+  if (!canUseBrowserStorage()) return;
+
+  try {
+    localStorage.setItem(WARM_CACHE_KEY, String(Date.now()));
+  } catch {}
+};
 
 const toRequest = (decision: AtharBrainDecision, allowNetwork = true): AtharContentRequest => ({ state: decision.state, preferredKinds: decision.preferredKinds, avoidContentIds: decision.avoidContentIds, allowNetwork });
 
@@ -45,9 +69,16 @@ export const getAtharContentForDecision = async (decision: AtharBrainDecision): 
 };
 
 export const warmAtharContentCache = async (decision: AtharBrainDecision) => {
+  if (!shouldWarmCache()) return;
+  markWarmCache();
+
+  const warmProviders = [quranProvider, meaningProvider, asmaProvider, extraDuaProvider, staticProvider];
   const request = toRequest(decision, true);
-  await Promise.allSettled(providers.map(async (provider) => {
-    const content = await provider.getContent(request);
-    if (content) cacheAtharContent(content);
-  }));
+
+  for (const provider of warmProviders) {
+    try {
+      const content = await provider.getContent(request);
+      if (content) cacheAtharContent(content);
+    } catch {}
+  }
 };
