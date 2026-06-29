@@ -1,3 +1,5 @@
+import { recordLocalAnalyticsEvent } from "./localAnalytics";
+
 type AnalyticsParams = Record<string, string | number | boolean | undefined>;
 type GtagCommand = "js" | "config" | "event";
 
@@ -33,6 +35,7 @@ export const initAnalytics = () => {
 
 export const trackEvent = (eventName: string, params?: AnalyticsParams) => {
   try {
+    recordLocalAnalyticsEvent(eventName, params);
     initAnalytics();
     window.gtag?.("event", eventName, params);
   } catch {}
