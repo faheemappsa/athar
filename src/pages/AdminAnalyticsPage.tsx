@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { getLocalAnalyticsSummary } from "../utils/localAnalytics";
+import SupabaseReportsPanel from "../components/Admin/SupabaseReportsPanel";
 
 const ADMIN_PIN_KEY = "athar-admin-unlocked";
 const DEFAULT_PIN = "athar1446";
@@ -105,15 +106,17 @@ export default function AdminAnalyticsPage() {
             <div>
               <p className="text-sm font-bold text-action">لوحة المتابعة الخاصة</p>
               <h1 className="mt-1 text-2xl font-extrabold">تقارير أثر</h1>
-              <p className="mt-2 text-xs leading-6 text-secondary-text">تعرض الآن بيانات فعلية من هذا المتصفح. عند ربط Supabase ستصبح البيانات عامة لكل الزوار وأكثر دقة.</p>
+              <p className="mt-2 text-xs leading-6 text-secondary-text">تعرض الآن بيانات فعلية من هذا المتصفح، ومعها لوحة Supabase الحية لكل الزوار عند توفر البيانات.</p>
             </div>
-            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-extrabold text-emerald-700">محلي الآن</span>
+            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-extrabold text-emerald-700">خاص</span>
           </div>
           <div className="mt-4 rounded-2xl bg-primary-bg p-3 text-xs font-bold text-secondary-text break-all">{adminUrl}</div>
           <button onClick={() => setRefreshKey((value) => value + 1)} className="mt-4 w-full rounded-full bg-action px-5 py-3 text-sm font-extrabold text-white shadow-lg shadow-action/20">
             تحديث الأرقام
           </button>
         </header>
+
+        <SupabaseReportsPanel />
 
         <section className="grid grid-cols-2 gap-3">
           {metrics.map((metric) => (
@@ -126,26 +129,21 @@ export default function AdminAnalyticsPage() {
         </section>
 
         <section className="rounded-[32px] bg-white p-5 shadow-xl">
-          <h2 className="text-lg font-extrabold">اتجاه النشاط</h2>
-          <p className="mt-1 text-xs text-secondary-text">آخر 7 أيام من الأحداث المسجلة محليًا.</p>
+          <h2 className="text-lg font-extrabold">اتجاه النشاط المحلي</h2>
+          <p className="mt-1 text-xs text-secondary-text">آخر 7 أيام من هذا المتصفح كنسخة احتياطية.</p>
           <div className="mt-4 text-action"><Sparkline values={summary.trend.map((item) => item.value)} /></div>
         </section>
 
         <section className="rounded-[32px] bg-white p-5 shadow-xl">
-          <h2 className="text-lg font-extrabold">الأجهزة</h2>
-          <p className="mt-1 text-xs text-secondary-text">مصنفة من أحداث هذا المتصفح حتى ربط Supabase.</p>
+          <h2 className="text-lg font-extrabold">الأجهزة المحلية</h2>
+          <p className="mt-1 text-xs text-secondary-text">تصنيف محلي احتياطي.</p>
           <div className="mt-5"><BarList rows={summary.devices} /></div>
         </section>
 
         <section className="rounded-[32px] bg-white p-5 shadow-xl">
-          <h2 className="text-lg font-extrabold">أهم الأحداث</h2>
-          <p className="mt-1 text-xs text-secondary-text">الصفحات، المشاركة، العقل، والرجوع للتطبيق.</p>
+          <h2 className="text-lg font-extrabold">أهم الأحداث المحلية</h2>
+          <p className="mt-1 text-xs text-secondary-text">نسخة محلية بجانب Supabase.</p>
           <div className="mt-5"><BarList rows={summary.topEvents} /></div>
-        </section>
-
-        <section className="rounded-[32px] border border-dashed border-action/25 bg-white/70 p-5 shadow-lg">
-          <h2 className="text-lg font-extrabold">مرحلة Supabase لاحقًا</h2>
-          <p className="mt-2 text-sm leading-7 text-secondary-text">البيانات الحالية محلية ومفيدة للتجربة. عند إرسال مفاتيح Supabase سنحفظ أحداث كل الزوار ونضيف المناطق، الجلسات، أكثر المسارات، ونسب التثبيت والمشاركة بدقة أعلى.</p>
         </section>
       </div>
     </div>
