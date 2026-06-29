@@ -1,3 +1,5 @@
+import { sendSupabaseAnalyticsEvent } from "./supabaseAnalytics";
+
 const LOCAL_ANALYTICS_KEY = "athar-local-analytics-v1";
 const MAX_EVENTS = 500;
 
@@ -63,6 +65,7 @@ export const recordLocalAnalyticsEvent = (name: string, params?: LocalAnalyticsE
     };
     const next = [event, ...readLocalAnalyticsEvents()].slice(0, MAX_EVENTS);
     storage.setItem(LOCAL_ANALYTICS_KEY, JSON.stringify(next));
+    void sendSupabaseAnalyticsEvent(event);
   } catch {}
 };
 
@@ -104,6 +107,7 @@ export const getLocalAnalyticsSummary = () => {
     .slice(0, 6);
 
   return {
+    source: "local" as const,
     totalEvents: events.length,
     todayVisits: todayEvents.filter((event) => event.name === "page_view").length,
     shares: shares.length,
