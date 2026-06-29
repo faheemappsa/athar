@@ -1,73 +1,12 @@
-import { useMemo, useState } from "react";
-import { getLocalAnalyticsSummary } from "../utils/localAnalytics";
+import { useState } from "react";
 import SupabaseReportsPanel from "../components/Admin/SupabaseReportsPanel";
 
 const ADMIN_PIN_KEY = "athar-admin-unlocked";
 const DEFAULT_PIN = "athar1446";
 
-type Metric = {
-  label: string;
-  value: string;
-  hint: string;
-};
-
-const Sparkline = ({ values }: { values: number[] }) => {
-  const safeValues = values.length ? values : [0, 0, 0, 0, 0, 0, 0];
-  const maxTrend = Math.max(1, ...safeValues);
-  const points = safeValues
-    .map((value, index) => {
-      const x = 18 + index * 44;
-      const y = 106 - (value / maxTrend) * 78;
-      return `${x},${y}`;
-    })
-    .join(" ");
-
-  return (
-    <svg viewBox="0 0 310 130" className="h-36 w-full overflow-visible">
-      <path d="M18 106H292" stroke="currentColor" strokeOpacity="0.08" strokeWidth="2" />
-      <polyline points={points} fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-      {safeValues.map((value, index) => {
-        const x = 18 + index * 44;
-        const y = 106 - (value / maxTrend) * 78;
-        return <circle key={index} cx={x} cy={y} r="5" fill="currentColor" />;
-      })}
-    </svg>
-  );
-};
-
-const BarList = ({ rows, suffix = "" }: { rows: { name: string; value: number }[]; suffix?: string }) => {
-  const safeRows = rows.length ? rows : [{ name: "لا توجد بيانات بعد", value: 0 }];
-  const max = Math.max(1, ...safeRows.map((row) => row.value));
-  return (
-    <div className="space-y-4">
-      {safeRows.map((row) => (
-        <div key={row.name}>
-          <div className="mb-2 flex items-center justify-between text-sm font-bold">
-            <span>{row.name}</span>
-            <span>{row.value}{suffix}</span>
-          </div>
-          <div className="h-3 overflow-hidden rounded-full bg-action/10">
-            <div className="h-full rounded-full bg-action" style={{ width: `${Math.max(4, (row.value / max) * 100)}%` }} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
 export default function AdminAnalyticsPage() {
   const [pin, setPin] = useState("");
   const [unlocked, setUnlocked] = useState(() => localStorage.getItem(ADMIN_PIN_KEY) === "1");
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  const adminUrl = useMemo(() => `${window.location.origin}/admin/athar`, []);
-  const summary = useMemo(() => getLocalAnalyticsSummary(), [refreshKey]);
-  const metrics: Metric[] = [
-    { label: "زيارات اليوم", value: String(summary.todayVisits), hint: "من هذا المتصفح" },
-    { label: "المشاركات", value: String(summary.shares), hint: "أحداث المشاركة" },
-    { label: "فتح كتطبيق", value: String(summary.standaloneOpens), hint: "PWA standalone" },
-    { label: "العميل رقم 1", value: String(summary.highIntent), hint: "تفاعل عالي" },
-  ];
 
   const login = () => {
     if (pin.trim() === DEFAULT_PIN) {
@@ -106,45 +45,13 @@ export default function AdminAnalyticsPage() {
             <div>
               <p className="text-sm font-bold text-action">لوحة المتابعة الخاصة</p>
               <h1 className="mt-1 text-2xl font-extrabold">تقارير أثر</h1>
-              <p className="mt-2 text-xs leading-6 text-secondary-text">تعرض الآن بيانات فعلية من هذا المتصفح، ومعها لوحة Supabase الحية لكل الزوار عند توفر البيانات.</p>
+              <p className="mt-2 text-xs leading-6 text-secondary-text">بيانات حية من Supabase. التحديث من غرفة القيادة بالأسفل.</p>
             </div>
             <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-extrabold text-emerald-700">خاص</span>
           </div>
-          <div className="mt-4 rounded-2xl bg-primary-bg p-3 text-xs font-bold text-secondary-text break-all">{adminUrl}</div>
-          <button onClick={() => setRefreshKey((value) => value + 1)} className="mt-4 w-full rounded-full bg-action px-5 py-3 text-sm font-extrabold text-white shadow-lg shadow-action/20">
-            تحديث الأرقام
-          </button>
         </header>
 
         <SupabaseReportsPanel />
-
-        <section className="grid grid-cols-2 gap-3">
-          {metrics.map((metric) => (
-            <div key={metric.label} className="rounded-[28px] bg-white p-4 shadow-lg">
-              <p className="text-xs font-bold text-secondary-text">{metric.label}</p>
-              <p className="mt-2 text-3xl font-extrabold text-action">{metric.value}</p>
-              <p className="mt-1 text-[11px] font-semibold text-secondary-text/80">{metric.hint}</p>
-            </div>
-          ))}
-        </section>
-
-        <section className="rounded-[32px] bg-white p-5 shadow-xl">
-          <h2 className="text-lg font-extrabold">اتجاه النشاط المحلي</h2>
-          <p className="mt-1 text-xs text-secondary-text">آخر 7 أيام من هذا المتصفح كنسخة احتياطية.</p>
-          <div className="mt-4 text-action"><Sparkline values={summary.trend.map((item) => item.value)} /></div>
-        </section>
-
-        <section className="rounded-[32px] bg-white p-5 shadow-xl">
-          <h2 className="text-lg font-extrabold">الأجهزة المحلية</h2>
-          <p className="mt-1 text-xs text-secondary-text">تصنيف محلي احتياطي.</p>
-          <div className="mt-5"><BarList rows={summary.devices} /></div>
-        </section>
-
-        <section className="rounded-[32px] bg-white p-5 shadow-xl">
-          <h2 className="text-lg font-extrabold">أهم الأحداث المحلية</h2>
-          <p className="mt-1 text-xs text-secondary-text">نسخة محلية بجانب Supabase.</p>
-          <div className="mt-5"><BarList rows={summary.topEvents} /></div>
-        </section>
       </div>
     </div>
   );
