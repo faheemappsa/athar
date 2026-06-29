@@ -39,6 +39,25 @@ const Stat = ({ label, value, hint }: { label: string; value: number; hint: stri
   </div>
 );
 
+const Health = ({ value }: { value: number }) => (
+  <div className="relative mt-5 overflow-hidden rounded-[30px] bg-primary-bg p-4 ring-1 ring-action/10">
+    <div className="absolute -left-10 -top-10 h-24 w-24 rounded-full bg-action/10 blur-2xl" />
+    <div className="relative flex items-center justify-between gap-4">
+      <div>
+        <p className="text-xs font-extrabold text-secondary-text">مؤشر صحة أثر</p>
+        <h3 className="mt-1 text-3xl font-black text-action">{value}/100</h3>
+        <p className="mt-1 text-xs leading-5 text-secondary-text">قراءة سريعة للنشاط، المشاركة، التثبيت، والولاء.</p>
+      </div>
+      <div className="grid h-24 w-24 shrink-0 place-items-center rounded-full bg-white shadow-inner ring-8 ring-action/10">
+        <span className="text-2xl font-black text-action">{value}</span>
+      </div>
+    </div>
+    <div className="relative mt-4 h-3 rounded-full bg-white">
+      <div className="h-3 rounded-full bg-action" style={{ width: `${value}%` }} />
+    </div>
+  </div>
+);
+
 export default function SupabaseReportsPanel() {
   const [summary, setSummary] = useState<Awaited<ReturnType<typeof fetchSupabaseAnalyticsSummary>>>(null);
   const [loading, setLoading] = useState(false);
@@ -71,6 +90,8 @@ export default function SupabaseReportsPanel() {
         <div><p className="text-sm font-black text-action">Supabase Live</p><h2 className="text-2xl font-black">غرفة قيادة أثر</h2><p className="mt-1 text-xs leading-6 text-secondary-text">قراءة حية لآخر 7 أيام من جدول athar_events.</p></div>
         <button onClick={reload} className="rounded-full bg-action px-4 py-2 text-xs font-extrabold text-white shadow-lg shadow-action/20">تحديث</button>
       </div>
+
+      <Health value={summary.healthScore || 0} />
 
       <div className="relative mt-5 grid grid-cols-2 gap-3">
         <Stat label="إجمالي الأحداث" value={summary.totalEvents} hint="آخر 7 أيام" />
