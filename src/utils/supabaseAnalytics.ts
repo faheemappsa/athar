@@ -76,7 +76,7 @@ const labelEvent = (name: string) => eventLabels[name] || name.replaceAll("_", "
 const labelPage = (path: string) => pageLabels[path] || path.replace(/^\//, "");
 
 const sortedRows = (items: string[]) =>
-  Object.entries(countBy(items))
+  Object.entries(countBy(items.filter(Boolean)))
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 6);
@@ -102,6 +102,7 @@ export const fetchSupabaseAnalyticsSummary = async () => {
     if (!response.ok) return null;
     const rows = (await response.json()) as SupabaseEventRow[];
     const pageViews = rows.filter((row) => row.event_name === "page_view");
+    const activeRows = rows.filter((row) => Date.now() - new Date(row.created_at).getTime() <= 5 * 60 * 1000);
 
     const todayVisits = pageViews.filter((row) => isSameDay(row.created_at)).length;
     const shares = rows.filter((row) => row.event_name.includes("share")).length;
@@ -125,6 +126,10 @@ export const fetchSupabaseAnalyticsSummary = async () => {
     const devices = sortedRows(rows.map((row) => row.device || "غير معروف"));
     const topEvents = sortedRows(rows.map((row) => labelEvent(row.event_name)));
     const topPages = sortedRows(pageViews.map((row) => labelPage(row.page_path || "/")));
+    const topCities = sortedRows(rows.map((row) => String(row.params?.city || "")));
+    const activeCities = sortedRows(activeRows.map((row) => String(row.params?.city || "")));
+    const activeNow = activeRows.length;
+    const lastActivity = activeRows[0] ? labelEvent(activeRows[0].event_name) : "لا يوجد نشاط الآن";
 
     return {
       source: "supabase" as const,
@@ -135,11 +140,15 @@ export const fetchSupabaseAnalyticsSummary = async () => {
       standaloneOpens,
       highIntent,
       healthScore,
+      activeNow,
+      lastActivity,
       funnel,
       trend,
       devices,
       topEvents,
       topPages,
+      topCities,
+      activeCities,
     };
   } catch {
     return null;
