@@ -57,6 +57,17 @@ const sortedRows = (items: string[]) =>
     .sort((a, b) => b.value - a.value)
     .slice(0, 6);
 
+const clampScore = (value: number) => Math.max(0, Math.min(100, Math.round(value)));
+
+const getHealthScore = (input: { todayVisits: number; shares: number; standaloneOpens: number; highIntent: number; totalEvents: number }) => {
+  const activity = Math.min(35, input.todayVisits * 7);
+  const sharing = Math.min(25, input.shares * 5);
+  const appUse = Math.min(20, input.standaloneOpens * 4);
+  const loyalty = Math.min(20, input.highIntent * 5);
+  const baseline = input.totalEvents > 0 ? 10 : 0;
+  return clampScore(baseline + activity + sharing + appUse + loyalty);
+};
+
 export const fetchSupabaseAnalyticsSummary = async () => {
   try {
     const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -73,6 +84,7 @@ export const fetchSupabaseAnalyticsSummary = async () => {
     const installs = rows.filter((row) => row.event_name.includes("install")).length;
     const standaloneOpens = rows.filter((row) => row.standalone).length;
     const highIntent = rows.filter((row) => row.event_name === "athar_brain_decision" && Number(row.params?.score || 0) >= 7).length;
+    const healthScore = getHealthScore({ todayVisits, shares, standaloneOpens, highIntent, totalEvents: rows.length });
 
     const trend = Array.from({ length: 7 }).map((_, index) => {
       const offset = 6 - index;
@@ -92,6 +104,7 @@ export const fetchSupabaseAnalyticsSummary = async () => {
       installs,
       standaloneOpens,
       highIntent,
+      healthScore,
       trend,
       devices,
       topEvents,
