@@ -1,21 +1,27 @@
 import type { AtharContentRequest, AtharProviderContent } from "../types";
 
-const API_BASE = "https://hadithapi.com/api";
+const API_BASE = "https://api.hadith.gading.dev/books";
 const HADITH_TIMEOUT_MS = 7000;
+const SHORT_HADITH_MAX_LENGTH = 220;
 
-type HadithApiItem = {
-  hadithArabic?: string;
-  hadithNumber?: string | number;
-  bookSlug?: string;
+type OpenHadithItem = {
+  number?: number | string;
+  arab?: string;
 };
 
-const getApiKey = () => {
-  try {
-    return import.meta.env.VITE_HADITH_API_KEY as string | undefined;
-  } catch {
-    return undefined;
-  }
+type OpenHadithResponse = {
+  data?: {
+    hadiths?: OpenHadithItem[];
+  };
 };
+
+const OPEN_BOOKS = [
+  { id: "bukhari", label: "صحيح البخاري" },
+  { id: "muslim", label: "صحيح مسلم" },
+  { id: "tirmidzi", label: "جامع الترمذي" },
+  { id: "nasai", label: "سنن النسائي" },
+  { id: "abu-daud", label: "سنن أبي داود" },
+] as const;
 
 const fetchWithTimeout = async (url: string) => {
   const controller = new AbortController();
@@ -24,35 +30,43 @@ const fetchWithTimeout = async (url: string) => {
   try {
     const response = await fetch(url, { signal: controller.signal });
     if (!response.ok) return null;
-    return response.json();
+    return response.json() as Promise<OpenHadithResponse>;
   } finally {
     clearTimeout(timeout);
   }
 };
 
+const cleanHadithText = (text: string) => text.replace(/\s+/g, " ").trim();
+
+const isShortHadith = (text: string) => {
+  const clean = cleanHadithText(text);
+  return clean.length >= 28 && clean.length <= SHORT_HADITH_MAX_LENGTH;
+};
+
+const pickBook = () => OPEN_BOOKS[Math.floor(Math.random() * OPEN_BOOKS.length)] || OPEN_BOOKS[0];
+
 export const fetchHadithContent = async (request: AtharContentRequest): Promise<AtharProviderContent | null> => {
-  const apiKey = getApiKey();
-  if (!apiKey || request.allowNetwork === false) return null;
+  if (request.allowNetwork === false) return null;
 
   try {
-    const url = `${API_BASE}/hadiths?apiKey=${apiKey}&status=Sahih&paginate=25`;
-    const data = await fetchWithTimeout(url);
-    const items = (data?.hadiths?.data || []) as HadithApiItem[];
+    const book = pickBook();
+    const data = await fetchWithTimeout(`${API_BASE}/${book.id}?range=1-120`);
+    const items = data?.data?.hadiths || [];
     const item = items.find((hadith) => {
-      const id = `hadith-api-${hadith.hadithNumber || hadith.bookSlug || "unknown"}`;
-      return hadith.hadithArabic && !request.avoidContentIds.includes(id);
+      const id = `hadith-open-${book.id}-${hadith.number || "unknown"}`;
+      return hadith.arab && isShortHadith(hadith.arab) && !request.avoidContentIds.includes(id);
     });
 
-    if (!item?.hadithArabic) return null;
+    if (!item?.arab) return null;
 
-    const hadithId = `hadith-api-${item.hadithNumber || item.bookSlug || Date.now()}`;
+    const hadithId = `hadith-open-${book.id}-${item.number || Date.now()}`;
 
     return {
       id: hadithId,
       provider: "hadith",
       kind: "hadith",
-      text: item.hadithArabic,
-      source: item.bookSlug ? `Hadith API - ${item.bookSlug}` : "Hadith API",
+      text: cleanHadithText(item.arab),
+      source: `${book.label}${item.number ? `: ${item.number}` : ""}`,
       stateTags: [request.state],
       weight: 7,
       isShareable: true,
