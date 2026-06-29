@@ -52,9 +52,10 @@ const countBy = (items: string[]) =>
   }, {});
 
 const eventLabels: Record<string, string> = {
-  page_view: "زيارة صفحة",
+  page_view: "فتح صفحة",
   athar_content_view: "قراءة محتوى",
   athar_brain_decision: "قرار الذكاء",
+  nav_home: "فتح الرئيسية",
   nav_dhikr: "فتح الأذكار",
   nav_quran: "فتح المصحف",
   nav_radio: "فتح الإذاعة",
@@ -62,6 +63,7 @@ const eventLabels: Record<string, string> = {
   athar_share_success: "مشاركة ناجحة",
   athar_share_error: "فشل مشاركة",
   install_prompt_shown: "ظهور التثبيت",
+  beforeinstallprompt: "جاهز للتثبيت",
   app_installed: "تثبيت التطبيق",
 };
 
@@ -106,15 +108,16 @@ export const fetchSupabaseAnalyticsSummary = async () => {
 
     const todayVisits = pageViews.filter((row) => isSameDay(row.created_at)).length;
     const shares = rows.filter((row) => row.event_name.includes("share")).length;
-    const installs = rows.filter((row) => row.event_name.includes("install")).length;
+    const installs = rows.filter((row) => row.event_name === "app_installed").length;
     const standaloneOpens = rows.filter((row) => row.standalone).length;
+    const installConversion = installs > 0 ? clampScore((standaloneOpens / installs) * 100) : 0;
     const highIntent = rows.filter((row) => row.event_name === "athar_brain_decision" && Number(row.params?.score || 0) >= 7).length;
     const healthScore = getHealthScore({ todayVisits, shares, standaloneOpens, highIntent, totalEvents: rows.length });
     const funnel = [
       { name: "زيارة", value: todayVisits },
       { name: "مشاركة", value: shares },
+      { name: "تثبيت", value: installs },
       { name: "فتح كتطبيق", value: standaloneOpens },
-      { name: "عميل رقم 1", value: highIntent },
     ];
 
     const trend = Array.from({ length: 7 }).map((_, index) => {
@@ -138,6 +141,7 @@ export const fetchSupabaseAnalyticsSummary = async () => {
       shares,
       installs,
       standaloneOpens,
+      installConversion,
       highIntent,
       healthScore,
       activeNow,
