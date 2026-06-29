@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { getSmartAthar, type AtharContent } from "../../services/atharEngine";
-import html2canvas from "html2canvas";
 import { trackEvent } from "../../utils/analytics";
 import { recordAtharBehavior } from "../../experience/memory";
 import { getAtharDailyFeedback, recordAtharCardTouch, type AtharDailyFeedback } from "../../experience/dailyIntelligence";
@@ -60,6 +59,11 @@ const pulse = () => {
   } catch {}
 };
 
+const getShareErrorMessage = (error: unknown) => {
+  if (error instanceof DOMException && error.name === "AbortError") return "";
+  return "تعذر تجهيز صورة الأثر. حاول مرة ثانية بعد لحظات.";
+};
+
 export default function AtharCard() {
   const [athar, setAthar] = useState<AtharContent | null>(null);
   const [shareName, setShareName] = useState("");
@@ -68,10 +72,10 @@ export default function AtharCard() {
   const [showNameActions, setShowNameActions] = useState(false);
   const [shareAfterName, setShareAfterName] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [shareError, setShareError] = useState("");
   const [dailyFeedback, setDailyFeedback] = useState<AtharDailyFeedback | null>(null);
   const [showDailyMessage, setShowDailyMessage] = useState(false);
   const refreshSignal = useAtharRefreshSignal();
-  const cardRef = useRef<HTMLDivElement>(null);
   const messageTimerRef = useRef<number | null>(null);
   const surfaceSignal = useSurfaceSignal<HTMLDivElement>({ surface: "athar-card", contentId: athar?.id, minFocusMs: 4500 });
 
@@ -140,6 +144,7 @@ export default function AtharCard() {
 
   const shareBlob = async (blob: Blob) => {
     const file = new File([blob], "athar-story.png", { type: "image/png" });
+
     if (navigator.share && navigator.canShare?.({ files: [file] })) {
       await navigator.share({ files: [file], title: "أثر", text: athar?.text || "أثر اليوم" });
       trackEvent("athar_share_success", { method: "native_share" });
@@ -152,8 +157,11 @@ export default function AtharCard() {
     const link = document.createElement("a");
     link.href = url;
     link.download = "athar-story.png";
+    link.rel = "noopener";
+    document.body.appendChild(link);
     link.click();
-    URL.revokeObjectURL(url);
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
     trackEvent("athar_share_success", { method: "download" });
     recordAtharBehavior({ type: "athar_share", surface: "athar-card", contentId: athar?.id, metadata: { method: "download" } });
     refreshDailyFeedback();
@@ -161,6 +169,7 @@ export default function AtharCard() {
 
   const generateServerImage = async () => {
     if (!athar) throw new Error("No Athar content");
+
     const response = await fetch("/api/athar-image", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -168,25 +177,28 @@ export default function AtharCard() {
     });
 
     if (!response.ok) throw new Error("Server image failed");
-    return response.blob();
-  };
 
-  const generateFallbackImage = async () => {
-    if (!cardRef.current) throw new Error("No card element");
-    const canvas = await html2canvas(cardRef.current, { scale: 2, backgroundColor: "#F8FFFD" });
-    const image = canvas.toDataURL("image/png");
-    return fetch(image).then((res) => res.blob());
+    const blob = await response.blob();
+    if (!blob.type.includes("image/png") || blob.size < 1024) {
+      throw new Error("Invalid story image");
+    }
+
+    return blob;
   };
 
   const shareImage = async () => {
     if (!athar || isSharing) return;
     setIsSharing(true);
+    setShareError("");
     trackEvent("athar_share_start", { kind: athar.kind, time: athar.time });
+
     try {
-      const blob = await generateServerImage().catch(() => generateFallbackImage());
+      const blob = await generateServerImage();
       await shareBlob(blob);
-    } catch {
-      trackEvent("athar_share_error");
+    } catch (error) {
+      const message = getShareErrorMessage(error);
+      if (message) setShareError(message);
+      trackEvent("athar_share_error", { reason: error instanceof Error ? error.message : "unknown" });
     } finally {
       setIsSharing(false);
     }
@@ -254,7 +266,7 @@ export default function AtharCard() {
 
   return (
     <motion.div ref={surfaceSignal.ref} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.2 }} className={`relative w-full overflow-hidden rounded-card bg-white p-4 text-center shadow-xl transition-all duration-300 before:pointer-events-none before:absolute before:inset-2 before:-z-10 before:rounded-[34px] before:blur-2xl hover:-translate-y-1 hover:shadow-2xl ${mood.aura} ${auraClass}`}>
-      <motion.div ref={cardRef} onClick={showSmartMessage} initial={{ opacity: 0.96, scale: 0.992 }} animate={{ opacity: 1, scale: [1, 1.006, 1] }} transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }} className={`relative min-h-[430px] w-full cursor-pointer overflow-hidden rounded-[32px] bg-gradient-to-br ${mood.shell} px-7 py-9 shadow-inner ring-1 ${mood.ring}`}>
+      <motion.div onClick={showSmartMessage} initial={{ opacity: 0.96, scale: 0.992 }} animate={{ opacity: 1, scale: [1, 1.006, 1] }} transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }} className={`relative min-h-[430px] w-full cursor-pointer overflow-hidden rounded-[32px] bg-gradient-to-br ${mood.shell} px-7 py-9 shadow-inner ring-1 ${mood.ring}`}>
         <motion.div animate={{ opacity: [0.5, 0.82, 0.5], scale: [1, 1.08, 1] }} transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }} className={`absolute -top-24 left-1/2 h-60 w-60 -translate-x-1/2 rounded-full blur-3xl ${mood.glow}`} />
         <div className="absolute inset-0 rounded-[32px] bg-[radial-gradient(circle_at_50%_8%,rgba(255,255,255,0.52),transparent_24%),linear-gradient(135deg,rgba(255,255,255,0.22),transparent_38%)]" />
         <div className="absolute -bottom-24 -right-16 h-64 w-64 rounded-full border border-action/8" />
@@ -301,8 +313,16 @@ export default function AtharCard() {
       </AnimatePresence>
 
       <button onClick={handleShare} disabled={isSharing} className="mt-5 w-full rounded-full bg-action px-6 py-4 text-lg font-bold text-white shadow-lg shadow-action/20 transition hover:opacity-90 active:scale-[0.98] disabled:cursor-wait disabled:opacity-75">
-        {isSharing ? "جاري تجهيز الأثر..." : "شارك الأثر"}
+        {isSharing ? "جاري تجهيز صورة الأثر..." : "شارك الأثر"}
       </button>
+
+      <AnimatePresence>
+        {shareError && (
+          <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} className="mt-3 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-bold leading-relaxed text-red-600">
+            {shareError}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {(showNamePrompt || showNameActions) && (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/25 px-4 pb-8 pt-[18vh] backdrop-blur-sm">
