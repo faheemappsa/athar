@@ -58,6 +58,8 @@ const saveRecentId = (id: string) => {
   recordAtharBehavior({ type: "surface_view", surface: "athar-card", contentId: id });
 };
 
+const mergeAvoidIds = (ids: string[] = []) => Array.from(new Set([...ids, ...readRecentIds()])).slice(0, 40);
+
 const pickFromLibrary = (time: AtharTime): AtharContent => {
   const recent = readRecentIds();
   const pool = ATHAR_LIBRARY.filter((item) => item.times.includes(time) || item.times.includes("any"));
@@ -124,8 +126,9 @@ const getBrainGuidedAthar = async (time: AtharTime): Promise<AtharContent | null
   const decision = readLastAtharBrainDecision();
   if (!decision) return null;
 
-  const content = await getAtharContentForDecision(decision);
-  void warmAtharContentCache(decision);
+  const freshDecision = { ...decision, avoidContentIds: mergeAvoidIds(decision.avoidContentIds) };
+  const content = await getAtharContentForDecision(freshDecision);
+  void warmAtharContentCache(freshDecision);
   if (!content) return null;
 
   saveRecentId(content.id);
