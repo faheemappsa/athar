@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AdminLaunchSignalsPanel from "../components/Admin/AdminLaunchSignalsPanel";
 import SupabaseReportsPanel from "../components/Admin/SupabaseReportsPanel";
 
 const ADMIN_PIN_KEY = "athar-admin-unlocked";
@@ -52,6 +53,7 @@ export default function AdminAnalyticsPage() {
         </header>
 
         <SupabaseReportsPanel />
+        <AdminLaunchSignalsPanel />
       </div>
     </div>
   );
