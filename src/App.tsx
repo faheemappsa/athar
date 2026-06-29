@@ -78,9 +78,13 @@ const AppShell = () => {
 
   if (isAdminRoute) {
     return (
-      <Routes>
-        <Route path="/admin/athar" element={<AdminAnalyticsPage />} />
-      </Routes>
+      <div className="admin-shell">
+        <main className="admin-scroll">
+          <Routes>
+            <Route path="/admin/athar" element={<AdminAnalyticsPage />} />
+          </Routes>
+        </main>
+      </div>
     );
   }
 
