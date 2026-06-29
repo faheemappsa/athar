@@ -51,6 +51,30 @@ const countBy = (items: string[]) =>
     return acc;
   }, {});
 
+const eventLabels: Record<string, string> = {
+  page_view: "زيارة صفحة",
+  athar_content_view: "قراءة محتوى",
+  athar_brain_decision: "قرار الذكاء",
+  nav_dhikr: "فتح الأذكار",
+  nav_quran: "فتح المصحف",
+  nav_radio: "فتح الإذاعة",
+  athar_share_start: "بدأ مشاركة",
+  athar_share_success: "مشاركة ناجحة",
+  athar_share_error: "فشل مشاركة",
+  install_prompt_shown: "ظهور التثبيت",
+  app_installed: "تثبيت التطبيق",
+};
+
+const pageLabels: Record<string, string> = {
+  "/": "الرئيسية",
+  "/dhikr": "الأذكار",
+  "/quran": "المصحف",
+  "/radio": "الإذاعة",
+};
+
+const labelEvent = (name: string) => eventLabels[name] || name.replaceAll("_", " ");
+const labelPage = (path: string) => pageLabels[path] || path.replace(/^\//, "");
+
 const sortedRows = (items: string[]) =>
   Object.entries(countBy(items))
     .map(([name, value]) => ({ name, value }))
@@ -98,9 +122,9 @@ export const fetchSupabaseAnalyticsSummary = async () => {
       return { name: label, value: rows.filter((row) => isSameDay(row.created_at, offset)).length };
     });
 
-    const devices = sortedRows(rows.map((row) => row.device || "Unknown"));
-    const topEvents = sortedRows(rows.map((row) => row.event_name));
-    const topPages = sortedRows(pageViews.map((row) => row.page_path || "/"));
+    const devices = sortedRows(rows.map((row) => row.device || "غير معروف"));
+    const topEvents = sortedRows(rows.map((row) => labelEvent(row.event_name)));
+    const topPages = sortedRows(pageViews.map((row) => labelPage(row.page_path || "/")));
 
     return {
       source: "supabase" as const,
