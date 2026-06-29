@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Quran from "../components/Quran/Quran";
 import { recordAtharBehavior } from "../experience/memory";
+import { recordAtharSurfaceDailySignal } from "../experience/dailyIntelligence";
 import { getQuranPageId } from "../experience/quranPageId";
 
 const broadcastQuranFocus = (active: boolean) => {
@@ -9,9 +10,11 @@ const broadcastQuranFocus = (active: boolean) => {
 
 export default function QuranPage() {
   const [focusMode, setFocusMode] = useState(false);
+  const focusRecordedRef = useRef(false);
 
   useEffect(() => {
     recordAtharBehavior({ type: "surface_view", surface: "quran-page", contentId: getQuranPageId() });
+    recordAtharSurfaceDailySignal({ surface: "quran-page", type: "view" });
   }, []);
 
   useEffect(() => {
@@ -21,8 +24,10 @@ export default function QuranPage() {
     const setQuranFocusMode = (active: boolean) => {
       setFocusMode(active);
       broadcastQuranFocus(active);
-      if (active) {
+      if (active && !focusRecordedRef.current) {
+        focusRecordedRef.current = true;
         recordAtharBehavior({ type: "surface_focus", surface: "quran-page", contentId: getQuranPageId(), durationMs: 5000 });
+        recordAtharSurfaceDailySignal({ surface: "quran-page", type: "focus" });
       }
     };
 
