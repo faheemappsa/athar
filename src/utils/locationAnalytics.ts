@@ -11,7 +11,14 @@ type City = {
   lng: number;
 };
 
-const LOCATION_KEY = "athar-saved-location";
+const LOCATION_KEYS = [
+  "athar-saved-location",
+  "athar-prayer-location",
+  "athar-location",
+  "prayer-times",
+  "athar-prayer-times",
+  "athar_prayer_times",
+];
 
 const cities: City[] = [
   { name: "الرياض", region: "منطقة الرياض", lat: 24.7136, lng: 46.6753 },
@@ -43,21 +50,57 @@ const distanceKm = (a: StoredLocation, b: City) => {
   return 2 * r * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
 };
 
+const asNumber = (value: unknown) => {
+  const parsed = typeof value === "string" ? Number(value) : value;
+  return typeof parsed === "number" && Number.isFinite(parsed) ? parsed : null;
+};
+
+const findLocation = (value: unknown): StoredLocation | null => {
+  if (!value || typeof value !== "object") return null;
+  const record = value as Record<string, unknown>;
+
+  const lat = asNumber(record.lat ?? record.latitude ?? record.coords_lat ?? record.userLat);
+  const lng = asNumber(record.lng ?? record.lon ?? record.long ?? record.longitude ?? record.coords_lng ?? record.userLng);
+  if (lat !== null && lng !== null) return { lat, lng };
+
+  for (const nested of Object.values(record)) {
+    const found = findLocation(nested);
+    if (found) return found;
+  }
+
+  return null;
+};
+
+const readStoredLocation = () => {
+  for (const key of LOCATION_KEYS) {
+    const raw = localStorage.getItem(key);
+    if (!raw) continue;
+
+    try {
+      const parsed = JSON.parse(raw);
+      const location = findLocation(parsed);
+      if (location) return location;
+    } catch {}
+  }
+
+  return null;
+};
+
 export const getSavedAnalyticsLocation = () => {
   try {
-    const raw = localStorage.getItem(LOCATION_KEY);
-    if (!raw) return null;
-    const location = JSON.parse(raw) as StoredLocation;
-    if (typeof location.lat !== "number" || typeof location.lng !== "number") return null;
+    const location = readStoredLocation();
+    if (!location) return null;
 
     const nearest = cities
       .map((city) => ({ ...city, distance: distanceKm(location, city) }))
       .sort((a, b) => a.distance - b.distance)[0];
 
+    if (!nearest || nearest.distance > 180) return null;
+
     return {
-      city: nearest?.name || "غير معروف",
-      region: nearest?.region || "غير معروف",
-      distance_km: Math.round(nearest?.distance || 0),
+      city: nearest.name,
+      region: nearest.region,
+      distance_km: Math.round(nearest.distance),
     };
   } catch {
     return null;
