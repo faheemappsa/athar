@@ -26,21 +26,26 @@ const makeQrSvg = async () => {
   return QRCode.toString(APP_URL, {
     type: "svg",
     margin: 0,
-    width: 92,
+    width: 86,
     color: {
-      dark: "#234C40",
-      light: "#FFFFFF",
+      dark: "#2D5C4D",
+      light: "#F7F1E6",
     },
   });
 };
 
+const getTextScale = (text: string) => {
+  const length = text.length;
+  if (length > 210) return { fontSize: 47, lineHeight: 1.82, top: 440, bottom: 520 };
+  if (length > 155) return { fontSize: 54, lineHeight: 1.86, top: 470, bottom: 520 };
+  if (length > 95) return { fontSize: 64, lineHeight: 1.9, top: 510, bottom: 520 };
+  if (length > 52) return { fontSize: 76, lineHeight: 1.92, top: 540, bottom: 520 };
+  return { fontSize: 88, lineHeight: 1.95, top: 560, bottom: 520 };
+};
+
 const makeElement = (text: string, source: string, name: string, qrSvg: string) => {
-  const isLong = text.length > 150;
-  const isMedium = text.length > 92;
-  const isShort = text.length <= 52;
-  const fontSize = isLong ? 52 : isMedium ? 64 : isShort ? 86 : 76;
-  const lineHeight = isLong ? 1.84 : isMedium ? 1.9 : 1.98;
   const sourceLabel = source || "أثر";
+  const scale = getTextScale(text);
 
   return {
     type: "div",
@@ -52,9 +57,9 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
         position: "relative",
         direction: "rtl",
         overflow: "hidden",
-        background: "linear-gradient(150deg, #FBF8F0 0%, #F7F3E8 44%, #EAF4EE 100%)",
+        background: "#F7F1E6",
         fontFamily: "NotoNaskhArabic",
-        color: "#20382E",
+        color: "#21493F",
       },
       children: [
         {
@@ -62,10 +67,8 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              inset: 34,
-              borderRadius: 72,
-              border: "1px solid rgba(35, 76, 64, 0.08)",
-              boxShadow: "0 34px 100px rgba(31, 59, 48, 0.10)",
+              inset: 0,
+              background: "radial-gradient(circle at 50% 6%, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.24) 24%, rgba(247,241,230,0) 48%)",
             },
           },
         },
@@ -74,12 +77,12 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              width: 780,
-              height: 780,
-              borderRadius: 780,
-              left: -310,
-              top: -260,
-              background: "radial-gradient(circle, rgba(255,255,255,0.82) 0%, rgba(143,211,179,0.18) 52%, rgba(143,211,179,0) 72%)",
+              width: 760,
+              height: 760,
+              borderRadius: 760,
+              left: -420,
+              top: 120,
+              border: "2px solid rgba(45,92,77,0.055)",
             },
           },
         },
@@ -88,12 +91,12 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              width: 980,
-              height: 980,
-              borderRadius: 980,
-              right: -420,
-              bottom: -350,
-              border: "2px solid rgba(35, 76, 64, 0.055)",
+              width: 690,
+              height: 690,
+              borderRadius: 690,
+              right: -410,
+              bottom: 260,
+              border: "2px solid rgba(45,92,77,0.05)",
             },
           },
         },
@@ -102,108 +105,25 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              width: 680,
-              height: 680,
-              borderRadius: 680,
-              left: -260,
-              bottom: -220,
-              border: "2px solid rgba(35, 76, 64, 0.045)",
-            },
-          },
-        },
-        {
-          type: "div",
-          props: {
-            style: {
-              position: "absolute",
-              left: 82,
-              right: 82,
-              top: 92,
-              height: 500,
-              borderLeft: "1.5px solid rgba(35, 76, 64, 0.045)",
-              borderRight: "1.5px solid rgba(35, 76, 64, 0.045)",
-              borderBottom: "1.5px solid rgba(35, 76, 64, 0.045)",
-              borderBottomLeftRadius: 250,
-              borderBottomRightRadius: 250,
-            },
-          },
-        },
-        {
-          type: "div",
-          props: {
-            style: {
-              position: "absolute",
-              left: 84,
-              right: 84,
-              top: 96,
+              left: 66,
+              right: 66,
+              top: 84,
+              bottom: 156,
               display: "flex",
-              justifyContent: "center",
-              textAlign: "center",
-            },
-            children: {
-              type: "div",
-              props: {
-                style: {
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "12px 30px",
-                  borderRadius: 999,
-                  background: "rgba(255,255,255,0.42)",
-                  color: "rgba(47,111,87,0.82)",
-                  fontSize: 30,
-                  fontWeight: 800,
-                  letterSpacing: -0.4,
-                },
-                children: "أثر اليوم",
-              },
-            },
-          },
-        },
-        {
-          type: "div",
-          props: {
-            style: {
-              position: "absolute",
-              left: 78,
-              right: 78,
-              top: 260,
-              bottom: 330,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
+              overflow: "hidden",
+              borderRadius: 66,
+              background: "#FFFDF8",
+              border: "10px solid rgba(255,255,255,0.9)",
+              boxShadow: "0 34px 90px rgba(37,79,67,0.16)",
             },
             children: [
               {
                 type: "div",
                 props: {
                   style: {
-                    display: "flex",
-                    maxWidth: 900,
-                    fontSize,
-                    lineHeight,
-                    fontWeight: 700,
-                    letterSpacing: -1.3,
-                    color: "#1E352B",
-                    textWrap: "balance",
-                    whiteSpace: "pre-wrap",
-                    textShadow: "0 16px 44px rgba(31, 59, 48, 0.05)",
-                  },
-                  children: text,
-                },
-              },
-              {
-                type: "div",
-                props: {
-                  style: {
-                    display: "flex",
-                    width: 62,
-                    height: 1,
-                    marginTop: 52,
-                    marginBottom: 32,
-                    background: "rgba(47,111,87,0.16)",
+                    position: "absolute",
+                    inset: 0,
+                    background: "linear-gradient(180deg, rgba(255,253,248,0.96) 0%, rgba(255,253,248,0.96) 72%, #789783 72%, #789783 100%)",
                   },
                 },
               },
@@ -211,13 +131,213 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                 type: "div",
                 props: {
                   style: {
-                    display: "flex",
-                    color: "rgba(92,75,58,0.64)",
-                    fontSize: 30,
-                    fontWeight: 800,
-                    letterSpacing: -0.2,
+                    position: "absolute",
+                    left: -70,
+                    top: 34,
+                    width: 300,
+                    height: 620,
+                    opacity: 0.1,
+                    borderRadius: 200,
+                    border: "8px solid #789783",
                   },
-                  children: sourceLabel,
+                },
+              },
+              {
+                type: "div",
+                props: {
+                  style: {
+                    position: "absolute",
+                    right: -88,
+                    bottom: 350,
+                    width: 300,
+                    height: 430,
+                    opacity: 0.08,
+                    borderRadius: 200,
+                    border: "8px solid #789783",
+                  },
+                },
+              },
+              {
+                type: "div",
+                props: {
+                  style: {
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    top: 112,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                  },
+                  children: [
+                    {
+                      type: "div",
+                      props: {
+                        style: {
+                          display: "flex",
+                          fontSize: 48,
+                          lineHeight: 1,
+                          color: "#789783",
+                        },
+                        children: "✦",
+                      },
+                    },
+                    {
+                      type: "div",
+                      props: {
+                        style: {
+                          display: "flex",
+                          marginTop: 28,
+                          fontSize: 48,
+                          lineHeight: 1.2,
+                          color: "#21493F",
+                          fontWeight: 400,
+                          letterSpacing: -0.8,
+                        },
+                        children: "أثر اليوم",
+                      },
+                    },
+                    {
+                      type: "div",
+                      props: {
+                        style: {
+                          display: "flex",
+                          width: 138,
+                          height: 2,
+                          marginTop: 50,
+                          background: "rgba(120,151,131,0.34)",
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+              {
+                type: "div",
+                props: {
+                  style: {
+                    position: "absolute",
+                    left: 86,
+                    right: 86,
+                    top: scale.top,
+                    bottom: scale.bottom,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                  },
+                  children: {
+                    type: "div",
+                    props: {
+                      style: {
+                        display: "flex",
+                        maxWidth: 880,
+                        fontSize: scale.fontSize,
+                        lineHeight: scale.lineHeight,
+                        color: "#244F43",
+                        fontWeight: 400,
+                        letterSpacing: -1.15,
+                        whiteSpace: "pre-wrap",
+                      },
+                      children: text,
+                    },
+                  },
+                },
+              },
+              {
+                type: "div",
+                props: {
+                  style: {
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    bottom: 320,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 2,
+                  },
+                  children: {
+                    type: "div",
+                    props: {
+                      style: {
+                        display: "flex",
+                        width: 116,
+                        height: 116,
+                        borderRadius: 116,
+                        background: "#F7F1E6",
+                        border: "8px solid rgba(191,177,146,0.58)",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "#5C8570",
+                        fontSize: 44,
+                        boxShadow: "0 12px 26px rgba(37,79,67,0.12)",
+                      },
+                      children: "❦",
+                    },
+                  },
+                },
+              },
+              {
+                type: "div",
+                props: {
+                  style: {
+                    position: "absolute",
+                    left: 80,
+                    right: 80,
+                    bottom: 118,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    color: "#FFFDF8",
+                  },
+                  children: [
+                    {
+                      type: "div",
+                      props: {
+                        style: {
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: 20,
+                          fontSize: 42,
+                          lineHeight: 1.25,
+                          fontWeight: 400,
+                          letterSpacing: -0.6,
+                        },
+                        children: [
+                          { type: "span", props: { children: "❧" } },
+                          { type: "span", props: { children: sourceLabel } },
+                          { type: "span", props: { children: "☙" } },
+                        ],
+                      },
+                    },
+                    name
+                      ? {
+                          type: "div",
+                          props: {
+                            style: {
+                              display: "flex",
+                              marginTop: 30,
+                              borderRadius: 999,
+                              background: "rgba(255,255,255,0.18)",
+                              border: "1px solid rgba(255,255,255,0.18)",
+                              padding: "8px 26px",
+                              fontSize: 28,
+                              color: "rgba(255,255,255,0.92)",
+                            },
+                            children: name,
+                          },
+                        }
+                      : {
+                          type: "div",
+                          props: { style: { display: "flex", width: 1, height: 1, opacity: 0 }, children: "" },
+                        },
+                  ],
                 },
               },
             ],
@@ -228,13 +348,15 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           props: {
             style: {
               position: "absolute",
-              left: 72,
-              right: 72,
-              bottom: 88,
+              left: 0,
+              right: 0,
+              bottom: 42,
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
-              justifyContent: "space-between",
-              gap: 26,
+              justifyContent: "center",
+              textAlign: "center",
+              color: "#5C8570",
             },
             children: [
               {
@@ -243,101 +365,48 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
                   style: {
                     display: "flex",
                     alignItems: "center",
-                    gap: 18,
+                    justifyContent: "center",
+                    gap: 16,
+                    fontSize: 44,
+                    lineHeight: 1,
+                    fontWeight: 400,
                   },
                   children: [
+                    { type: "span", props: { children: "أثر" } },
+                    { type: "span", props: { children: "❧" } },
+                  ],
+                },
+              },
+              {
+                type: "div",
+                props: {
+                  style: {
+                    display: "flex",
+                    marginTop: 20,
+                    alignItems: "center",
+                    gap: 16,
+                    fontSize: 24,
+                    color: "#496D5F",
+                  },
+                  children: [
+                    { type: "span", props: { children: "— خير يبقى، وأثر لا يزول —" } },
                     {
-                      type: "div",
+                      type: "span",
                       props: {
                         style: {
                           display: "flex",
-                          width: 104,
-                          height: 104,
-                          borderRadius: 22,
-                          background: "rgba(255,255,255,0.88)",
-                          padding: 9,
-                          boxShadow: "0 16px 42px rgba(31, 59, 48, 0.11)",
+                          width: 34,
+                          height: 34,
+                          borderRadius: 8,
+                          overflow: "hidden",
+                          opacity: 0.72,
                         },
                         dangerouslySetInnerHTML: { __html: qrSvg },
-                      },
-                    },
-                    {
-                      type: "div",
-                      props: {
-                        style: {
-                          display: "flex",
-                          width: 1,
-                          height: 78,
-                          background: "rgba(35, 76, 64, 0.16)",
-                        },
-                      },
-                    },
-                    {
-                      type: "div",
-                      props: {
-                        style: {
-                          display: "flex",
-                          flexDirection: "column",
-                          alignItems: "flex-start",
-                          justifyContent: "center",
-                        },
-                        children: [
-                          {
-                            type: "div",
-                            props: {
-                              style: {
-                                display: "flex",
-                                fontSize: 38,
-                                color: "#254F43",
-                                fontWeight: 800,
-                                letterSpacing: -0.7,
-                                lineHeight: 1,
-                              },
-                              children: "أثر",
-                            },
-                          },
-                          {
-                            type: "div",
-                            props: {
-                              style: {
-                                display: "flex",
-                                marginTop: 10,
-                                fontSize: 22,
-                                color: "rgba(35, 76, 64, 0.66)",
-                                fontWeight: 700,
-                                direction: "ltr",
-                                letterSpacing: -0.2,
-                              },
-                              children: "athar-sandy.vercel.app",
-                            },
-                          },
-                        ],
                       },
                     },
                   ],
                 },
               },
-              name
-                ? {
-                    type: "div",
-                    props: {
-                      style: {
-                        display: "flex",
-                        fontSize: 26,
-                        color: "rgba(39, 93, 74, 0.72)",
-                        fontWeight: 800,
-                        padding: "10px 22px",
-                        borderRadius: 999,
-                        background: "rgba(255,255,255,0.46)",
-                        border: "1px solid rgba(39, 93, 74, 0.07)",
-                      },
-                      children: name,
-                    },
-                  }
-                : {
-                    type: "div",
-                    props: { style: { display: "flex", width: 1, height: 1, opacity: 0 }, children: "" },
-                  },
             ],
           },
         },
@@ -365,7 +434,7 @@ export default async function handler(req: any, res: any) {
         {
           name: "NotoNaskhArabic",
           data: font,
-          weight: 700,
+          weight: 400,
           style: "normal",
         },
       ],
