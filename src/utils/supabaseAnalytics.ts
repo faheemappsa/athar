@@ -85,6 +85,12 @@ export const fetchSupabaseAnalyticsSummary = async () => {
     const standaloneOpens = rows.filter((row) => row.standalone).length;
     const highIntent = rows.filter((row) => row.event_name === "athar_brain_decision" && Number(row.params?.score || 0) >= 7).length;
     const healthScore = getHealthScore({ todayVisits, shares, standaloneOpens, highIntent, totalEvents: rows.length });
+    const funnel = [
+      { name: "زيارة", value: todayVisits },
+      { name: "مشاركة", value: shares },
+      { name: "فتح كتطبيق", value: standaloneOpens },
+      { name: "عميل رقم 1", value: highIntent },
+    ];
 
     const trend = Array.from({ length: 7 }).map((_, index) => {
       const offset = 6 - index;
@@ -105,6 +111,7 @@ export const fetchSupabaseAnalyticsSummary = async () => {
       standaloneOpens,
       highIntent,
       healthScore,
+      funnel,
       trend,
       devices,
       topEvents,
