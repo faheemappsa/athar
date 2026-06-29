@@ -1,3 +1,4 @@
+import { getSavedAnalyticsLocation } from "./locationAnalytics";
 import { sendSupabaseAnalyticsEvent } from "./supabaseAnalytics";
 
 const LOCAL_ANALYTICS_KEY = "athar-local-analytics-v1";
@@ -55,13 +56,19 @@ export const recordLocalAnalyticsEvent = (name: string, params?: LocalAnalyticsE
   if (window.location.pathname.startsWith("/admin")) return;
 
   try {
+    const savedLocation = getSavedAnalyticsLocation();
     const event: LocalAnalyticsEvent = {
       name,
       at: Date.now(),
       path: window.location.pathname,
       device: getDevice(),
       standalone: isStandalone(),
-      params,
+      params: {
+        ...(params || {}),
+        city: savedLocation?.city,
+        region: savedLocation?.region,
+        city_distance_km: savedLocation?.distance_km,
+      },
     };
     const next = [event, ...readLocalAnalyticsEvents()].slice(0, MAX_EVENTS);
     storage.setItem(LOCAL_ANALYTICS_KEY, JSON.stringify(next));
