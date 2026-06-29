@@ -15,7 +15,15 @@ import ConnectionBanner from "./components/Shared/ConnectionBanner";
 import AppUpdatePrompt from "./components/Shared/AppUpdatePrompt";
 import { useActiveSection } from "./hooks/useActiveSection";
 import { runAtharBrain } from "./experience/brain";
+import { recordAtharAppReturn, recordAtharSectionVisit } from "./experience/dailyIntelligence";
 import { trackEvent } from "./utils/analytics";
+
+const getSectionFromPath = (pathname: string) => {
+  if (pathname.startsWith("/dhikr")) return "dhikr" as const;
+  if (pathname.startsWith("/quran")) return "quran" as const;
+  if (pathname.startsWith("/radio")) return "radio" as const;
+  return "home" as const;
+};
 
 const AnalyticsPageView = () => {
   const location = useLocation();
@@ -25,6 +33,7 @@ const AnalyticsPageView = () => {
       page_path: `${location.pathname}${location.search}`,
       page_title: document.title,
     });
+    recordAtharSectionVisit(getSectionFromPath(location.pathname));
   }, [location.pathname, location.search]);
 
   return null;
@@ -41,6 +50,23 @@ const AppShell = () => {
       time_band: decision.entry.timeBand,
       visit_count: decision.entry.visitCount,
     });
+  }, []);
+
+  useEffect(() => {
+    const handleReturn = () => recordAtharAppReturn();
+    const handleVisibility = () => {
+      if (!document.hidden) recordAtharAppReturn();
+    };
+
+    window.addEventListener("pageshow", handleReturn);
+    window.addEventListener("focus", handleReturn);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("pageshow", handleReturn);
+      window.removeEventListener("focus", handleReturn);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, []);
 
   return (
