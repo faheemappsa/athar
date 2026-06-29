@@ -58,6 +58,24 @@ const Health = ({ value }: { value: number }) => (
   </div>
 );
 
+const Funnel = ({ rows }: { rows: Row[] }) => {
+  const safe = rows.length ? rows : [{ name: "لا توجد بيانات", value: 0 }];
+  const max = Math.max(1, ...safe.map((row) => row.value));
+  return (
+    <div className="relative mt-5 rounded-[30px] bg-primary-bg p-4">
+      <h3 className="mb-3 text-base font-black">مسار التحول</h3>
+      <div className="space-y-3">
+        {safe.map((row) => (
+          <div key={row.name} className="rounded-2xl bg-white/80 p-3 ring-1 ring-action/5">
+            <div className="mb-2 flex items-center justify-between text-sm font-bold"><span>{row.name}</span><span>{row.value}</span></div>
+            <div className="h-3 rounded-full bg-action/10"><div className="h-3 rounded-full bg-action" style={{ width: `${Math.max(5, (row.value / max) * 100)}%` }} /></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default function SupabaseReportsPanel() {
   const [summary, setSummary] = useState<Awaited<ReturnType<typeof fetchSupabaseAnalyticsSummary>>>(null);
   const [loading, setLoading] = useState(false);
@@ -100,6 +118,8 @@ export default function SupabaseReportsPanel() {
         <Stat label="فتح كتطبيق" value={summary.standaloneOpens} hint="PWA" />
         <Stat label="العميل رقم 1" value={summary.highIntent} hint="High intent" />
       </div>
+
+      <Funnel rows={summary.funnel || []} />
 
       <div className="relative mt-5 rounded-[30px] bg-primary-bg p-4">
         <div className="flex items-center justify-between"><h3 className="text-base font-black">نبض النشاط</h3><span className="text-xs font-bold text-secondary-text">7 أيام</span></div>
