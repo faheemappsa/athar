@@ -51,6 +51,12 @@ const countBy = (items: string[]) =>
     return acc;
   }, {});
 
+const sortedRows = (items: string[]) =>
+  Object.entries(countBy(items))
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 6);
+
 export const fetchSupabaseAnalyticsSummary = async () => {
   try {
     const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -60,8 +66,9 @@ export const fetchSupabaseAnalyticsSummary = async () => {
 
     if (!response.ok) return null;
     const rows = (await response.json()) as SupabaseEventRow[];
+    const pageViews = rows.filter((row) => row.event_name === "page_view");
 
-    const todayVisits = rows.filter((row) => row.event_name === "page_view" && isSameDay(row.created_at)).length;
+    const todayVisits = pageViews.filter((row) => isSameDay(row.created_at)).length;
     const shares = rows.filter((row) => row.event_name.includes("share")).length;
     const installs = rows.filter((row) => row.event_name.includes("install")).length;
     const standaloneOpens = rows.filter((row) => row.standalone).length;
@@ -73,11 +80,9 @@ export const fetchSupabaseAnalyticsSummary = async () => {
       return { name: label, value: rows.filter((row) => isSameDay(row.created_at, offset)).length };
     });
 
-    const devices = Object.entries(countBy(rows.map((row) => row.device || "Unknown"))).map(([name, value]) => ({ name, value }));
-    const topEvents = Object.entries(countBy(rows.map((row) => row.event_name)))
-      .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 6);
+    const devices = sortedRows(rows.map((row) => row.device || "Unknown"));
+    const topEvents = sortedRows(rows.map((row) => row.event_name));
+    const topPages = sortedRows(pageViews.map((row) => row.page_path || "/"));
 
     return {
       source: "supabase" as const,
@@ -90,6 +95,7 @@ export const fetchSupabaseAnalyticsSummary = async () => {
       trend,
       devices,
       topEvents,
+      topPages,
     };
   } catch {
     return null;
