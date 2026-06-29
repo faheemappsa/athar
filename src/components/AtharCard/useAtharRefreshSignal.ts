@@ -1,10 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const MIN_REFRESH_GAP_MS = 1200;
 
 export const useAtharRefreshSignal = () => {
   const [signal, setSignal] = useState(0);
+  const lastRefreshAtRef = useRef(0);
 
   useEffect(() => {
-    const refresh = () => setSignal((value) => value + 1);
+    const refresh = () => {
+      const now = Date.now();
+      if (now - lastRefreshAtRef.current < MIN_REFRESH_GAP_MS) return;
+      lastRefreshAtRef.current = now;
+      setSignal((value) => value + 1);
+    };
+
     const onVisibility = () => {
       if (!document.hidden) refresh();
     };
