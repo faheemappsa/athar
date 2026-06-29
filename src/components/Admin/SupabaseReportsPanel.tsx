@@ -73,6 +73,7 @@ export default function SupabaseReportsPanel() {
       </div>
 
       <div className="relative mt-5 grid grid-cols-2 gap-3">
+        <Stat label="إجمالي الأحداث" value={summary.totalEvents} hint="آخر 7 أيام" />
         <Stat label="زيارات اليوم" value={summary.todayVisits} hint="كل الزوار" />
         <Stat label="المشاركات" value={summary.shares} hint="Share events" />
         <Stat label="فتح كتطبيق" value={summary.standaloneOpens} hint="PWA" />
