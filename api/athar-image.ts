@@ -5,46 +5,23 @@ import QRCode from "qrcode";
 const WIDTH = 1080;
 const HEIGHT = 1920;
 const APP_URL = "https://athar-sandy.vercel.app";
+const FONT_URL = "https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoNaskhArabic/NotoNaskhArabic-Regular.ttf";
 
-const FONT_URLS = [
-  "https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoNaskhArabic/NotoNaskhArabic-Regular.ttf",
-  "https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoNaskhArabic/NotoNaskhArabic-Medium.ttf",
-];
+let fontData: ArrayBuffer | null = null;
 
-let regularFontData: ArrayBuffer | null = null;
-let mediumFontData: ArrayBuffer | null = null;
+const getFont = async () => {
+  if (fontData) return fontData;
 
-const fetchFont = async (url: string) => {
-  const response = await fetch(url, {
-    headers: {
-      "User-Agent": "athar-image-generator/1.0",
-    },
-  });
-
+  const response = await fetch(FONT_URL);
   if (!response.ok) {
-    throw new Error(`Font loading failed: ${response.status}`);
+    throw new Error(`font_load_failed_${response.status}`);
   }
 
-  return response.arrayBuffer();
+  fontData = await response.arrayBuffer();
+  return fontData;
 };
 
-const getRegularFont = async () => {
-  if (regularFontData) return regularFontData;
-  regularFontData = await fetchFont(FONT_URLS[0]);
-  return regularFontData;
-};
-
-const getMediumFont = async () => {
-  if (mediumFontData) return mediumFontData;
-  try {
-    mediumFontData = await fetchFont(FONT_URLS[1]);
-  } catch {
-    mediumFontData = await getRegularFont();
-  }
-  return mediumFontData;
-};
-
-const normalizeArabicText = (value: string) =>
+const normalizeText = (value: string) =>
   value
     .replace(/[\u200B-\u200F\u202A-\u202E\u2066-\u2069]/g, "")
     .replace(/\s+/g, " ")
@@ -52,53 +29,31 @@ const normalizeArabicText = (value: string) =>
 
 const clean = (value: unknown, fallback = "", maxLength = 420) => {
   if (typeof value !== "string") return fallback;
-  const cleaned = normalizeArabicText(value);
-  return cleaned ? cleaned.slice(0, maxLength) : fallback;
+  const cleaned = normalizeText(value);
+  return (cleaned || fallback).slice(0, maxLength);
 };
 
-const makeQrSvg = async () => {
-  return QRCode.toString(APP_URL, {
-    type: "svg",
+const makeQrDataUrl = async () => {
+  return QRCode.toDataURL(APP_URL, {
     margin: 0,
-    width: 76,
+    width: 120,
     color: {
       dark: "#2F5F50",
       light: "#F7F1E6",
     },
+    errorCorrectionLevel: "M",
   });
 };
 
-type TextScale = {
-  fontSize: number;
-  lineHeight: number;
-  maxWidth: number;
-  minHeight: number;
-};
-
-const getTextScale = (text: string): TextScale => {
+const getTextStyle = (text: string) => {
   const length = text.length;
 
-  if (length > 260) {
-    return { fontSize: 45, lineHeight: 1.95, maxWidth: 850, minHeight: 720 };
-  }
-
-  if (length > 210) {
-    return { fontSize: 50, lineHeight: 1.98, maxWidth: 850, minHeight: 700 };
-  }
-
-  if (length > 160) {
-    return { fontSize: 57, lineHeight: 2.02, maxWidth: 850, minHeight: 680 };
-  }
-
-  if (length > 105) {
-    return { fontSize: 66, lineHeight: 2.04, maxWidth: 830, minHeight: 640 };
-  }
-
-  if (length > 58) {
-    return { fontSize: 76, lineHeight: 2.08, maxWidth: 800, minHeight: 600 };
-  }
-
-  return { fontSize: 88, lineHeight: 2.12, maxWidth: 760, minHeight: 560 };
+  if (length > 260) return { fontSize: 44, lineHeight: 1.88, maxWidth: 850 };
+  if (length > 210) return { fontSize: 50, lineHeight: 1.92, maxWidth: 850 };
+  if (length > 160) return { fontSize: 58, lineHeight: 1.96, maxWidth: 840 };
+  if (length > 105) return { fontSize: 68, lineHeight: 2.0, maxWidth: 820 };
+  if (length > 58) return { fontSize: 78, lineHeight: 2.04, maxWidth: 790 };
+  return { fontSize: 88, lineHeight: 2.08, maxWidth: 740 };
 };
 
 const div = (style: Record<string, unknown>, children?: unknown) => ({
@@ -109,17 +64,8 @@ const div = (style: Record<string, unknown>, children?: unknown) => ({
   },
 });
 
-const span = (style: Record<string, unknown>, children?: unknown) => ({
-  type: "span",
-  props: {
-    style,
-    children,
-  },
-});
-
-const makeElement = (text: string, source: string, name: string, qrSvg: string) => {
-  const scale = getTextScale(text);
-  const sourceLabel = source || "أثر اليوم";
+const makeElement = (text: string, source: string, name: string, qrDataUrl: string) => {
+  const textStyle = getTextStyle(text);
 
   return div(
     {
@@ -137,50 +83,46 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
       div({
         position: "absolute",
         inset: 0,
-        background:
-          "radial-gradient(circle at 50% 4%, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.28) 28%, rgba(247,241,230,0) 54%), linear-gradient(180deg, #F9F3E8 0%, #F7F1E6 56%, #EEF3EC 100%)",
+        background: "linear-gradient(180deg, #F9F3E8 0%, #F7F1E6 54%, #EEF3EC 100%)",
       }),
       div({
         position: "absolute",
-        left: -360,
-        top: 160,
-        width: 780,
-        height: 780,
-        borderRadius: 780,
+        left: -330,
+        top: 120,
+        width: 720,
+        height: 720,
+        borderRadius: 720,
         border: "2px solid rgba(47,95,80,0.055)",
       }),
       div({
         position: "absolute",
-        right: -420,
-        bottom: 110,
-        width: 840,
-        height: 840,
-        borderRadius: 840,
-        border: "2px solid rgba(47,95,80,0.048)",
+        right: -380,
+        bottom: 150,
+        width: 780,
+        height: 780,
+        borderRadius: 780,
+        border: "2px solid rgba(47,95,80,0.05)",
       }),
       div({
         position: "absolute",
         left: 76,
         right: 76,
-        top: 74,
+        top: 76,
         bottom: 86,
-        display: "flex",
-        overflow: "hidden",
         borderRadius: 76,
-        background: "rgba(255,253,248,0.86)",
-        border: "1px solid rgba(255,255,255,0.72)",
+        background: "rgba(255,253,248,0.9)",
+        border: "2px solid rgba(255,255,255,0.72)",
         boxShadow: "0 34px 90px rgba(35,76,65,0.14)",
       }),
       div(
         {
           position: "absolute",
+          top: 138,
           left: 0,
           right: 0,
-          top: 145,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
           textAlign: "center",
         },
         [
@@ -189,12 +131,12 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: 82,
-              height: 82,
-              borderRadius: 82,
+              width: 76,
+              height: 76,
+              borderRadius: 76,
               background: "rgba(47,95,80,0.08)",
               color: "#547D69",
-              fontSize: 34,
+              fontSize: 32,
               lineHeight: 1,
             },
             "❦"
@@ -204,10 +146,9 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
               display: "flex",
               marginTop: 22,
               color: "#234C41",
-              fontSize: 38,
-              lineHeight: 1.35,
-              fontWeight: 500,
-              letterSpacing: -0.4,
+              fontSize: 40,
+              lineHeight: 1.4,
+              fontWeight: 400,
             },
             "أثر"
           ),
@@ -216,7 +157,7 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
               display: "flex",
               marginTop: 8,
               color: "rgba(35,76,65,0.58)",
-              fontSize: 22,
+              fontSize: 23,
               lineHeight: 1.45,
             },
             "خير يبقى، وأثر لا يزول"
@@ -226,10 +167,10 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
       div(
         {
           position: "absolute",
-          left: 108,
-          right: 108,
+          left: 118,
+          right: 118,
           top: 390,
-          bottom: 440,
+          height: 890,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -239,20 +180,17 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           {
             display: "flex",
             width: "100%",
-            maxWidth: scale.maxWidth,
-            minHeight: scale.minHeight,
-            padding: "52px 36px 62px",
+            maxWidth: textStyle.maxWidth,
+            padding: "66px 34px 76px",
             alignItems: "center",
             justifyContent: "center",
             textAlign: "center",
             color: "#1F463B",
-            fontSize: scale.fontSize,
-            lineHeight: scale.lineHeight,
-            fontWeight: 500,
-            letterSpacing: -0.7,
+            fontSize: textStyle.fontSize,
+            lineHeight: textStyle.lineHeight,
+            fontWeight: 400,
+            letterSpacing: -0.55,
             whiteSpace: "pre-wrap",
-            wordBreak: "break-word",
-            overflow: "visible",
           },
           text
         )
@@ -262,11 +200,10 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           position: "absolute",
           left: 116,
           right: 116,
-          bottom: 262,
+          bottom: 280,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
           textAlign: "center",
         },
         [
@@ -279,21 +216,19 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
               borderRadius: 999,
               background: "rgba(47,95,80,0.09)",
               border: "1px solid rgba(47,95,80,0.11)",
-              padding: "12px 30px 16px",
+              padding: "13px 32px 17px",
               color: "#345F50",
-              fontSize: 30,
-              lineHeight: 1.65,
-              fontWeight: 500,
+              fontSize: 31,
+              lineHeight: 1.55,
+              fontWeight: 400,
             },
-            sourceLabel
+            source || "أثر اليوم"
           ),
           name
             ? div(
                 {
                   display: "flex",
                   marginTop: 20,
-                  alignItems: "center",
-                  justifyContent: "center",
                   color: "rgba(35,76,65,0.58)",
                   fontSize: 24,
                   lineHeight: 1.5,
@@ -311,41 +246,28 @@ const makeElement = (text: string, source: string, name: string, qrSvg: string) 
           bottom: 116,
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
-          direction: "ltr",
+          justifyContent: "center",
         },
         [
-          div(
-            {
-              display: "flex",
-              width: 70,
-              height: 70,
-              borderRadius: 18,
-              overflow: "hidden",
-              opacity: 0.74,
-              background: "#F7F1E6",
-              padding: 7,
-              border: "1px solid rgba(47,95,80,0.1)",
-            },
-            span(
-              {
-                display: "flex",
-                width: 56,
-                height: 56,
+          {
+            type: "img",
+            props: {
+              src: qrDataUrl,
+              width: 72,
+              height: 72,
+              style: {
+                width: 72,
+                height: 72,
+                borderRadius: 16,
+                opacity: 0.74,
               },
-              {
-                type: "span",
-                props: {
-                  dangerouslySetInnerHTML: { __html: qrSvg },
-                },
-              }
-            )
-          ),
+            },
+          },
           div(
             {
               display: "flex",
-              direction: "rtl",
-              color: "rgba(35,76,65,0.5)",
+              marginRight: 18,
+              color: "rgba(35,76,65,0.48)",
               fontSize: 21,
               lineHeight: 1.4,
             },
@@ -367,22 +289,16 @@ export default async function handler(req: any, res: any) {
     const text = clean(req.body?.text, "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ", 420);
     const source = clean(req.body?.source, "الرعد: 28", 80);
     const name = clean(req.body?.name, "", 28);
-    const [regularFont, mediumFont, qrSvg] = await Promise.all([getRegularFont(), getMediumFont(), makeQrSvg()]);
+    const [font, qrDataUrl] = await Promise.all([getFont(), makeQrDataUrl()]);
 
-    const svg = await satori(makeElement(text, source, name, qrSvg) as any, {
+    const svg = await satori(makeElement(text, source, name, qrDataUrl) as any, {
       width: WIDTH,
       height: HEIGHT,
       fonts: [
         {
           name: "NotoNaskhArabic",
-          data: regularFont,
+          data: font,
           weight: 400,
-          style: "normal",
-        },
-        {
-          name: "NotoNaskhArabic",
-          data: mediumFont,
-          weight: 500,
           style: "normal",
         },
       ],
@@ -393,9 +309,6 @@ export default async function handler(req: any, res: any) {
         mode: "width",
         value: WIDTH,
       },
-      font: {
-        loadSystemFonts: false,
-      },
     })
       .render()
       .asPng();
@@ -405,7 +318,9 @@ export default async function handler(req: any, res: any) {
     res.setHeader("Cache-Control", "no-store, max-age=0");
     return res.status(200).send(Buffer.from(png));
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Unable to generate Athar image" });
+    const message = error instanceof Error ? error.message : "unknown_error";
+    console.error("athar-image-error", message);
+    res.setHeader("Cache-Control", "no-store, max-age=0");
+    return res.status(500).json({ error: "Unable to generate Athar image", reason: message });
   }
 }
