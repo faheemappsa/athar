@@ -38,6 +38,8 @@ export type AtharDailyFeedback = {
 };
 
 const getStorage = () => {
+  if (typeof window === "undefined") return null;
+
   try {
     return window.localStorage;
   } catch {
@@ -77,6 +79,8 @@ const readDhikrCompletionToday = () => {
 };
 
 const mergeMemorySignals = (snapshot: AtharDailySnapshot) => {
+  if (typeof window === "undefined") return snapshot;
+
   try {
     const memory = readAtharMemory();
     const todayStart = new Date();
