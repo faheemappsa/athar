@@ -6,6 +6,7 @@ import HomePage from "./pages/HomePage";
 import DhikrPage from "./pages/DhikrPage";
 import QuranPage from "./pages/QuranPage";
 import RadioPage from "./pages/RadioPage";
+import AdminAnalyticsPage from "./pages/AdminAnalyticsPage";
 import PageTransition from "./components/Shared/PageTransition";
 import ErrorBoundary from "./components/Shared/ErrorBoundary";
 import InstallPrompt from "./components/Shared/InstallPrompt";
@@ -19,6 +20,7 @@ import { recordAtharAppReturn, recordAtharSectionVisit } from "./experience/dail
 import { trackEvent } from "./utils/analytics";
 
 const getSectionFromPath = (pathname: string) => {
+  if (pathname.startsWith("/admin")) return null;
   if (pathname.startsWith("/dhikr")) return "dhikr" as const;
   if (pathname.startsWith("/quran")) return "quran" as const;
   if (pathname.startsWith("/radio")) return "radio" as const;
@@ -33,7 +35,8 @@ const AnalyticsPageView = () => {
       page_path: `${location.pathname}${location.search}`,
       page_title: document.title,
     });
-    recordAtharSectionVisit(getSectionFromPath(location.pathname));
+    const section = getSectionFromPath(location.pathname);
+    if (section) recordAtharSectionVisit(section);
   }, [location.pathname, location.search]);
 
   return null;
@@ -41,8 +44,11 @@ const AnalyticsPageView = () => {
 
 const AppShell = () => {
   const section = useActiveSection();
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   useEffect(() => {
+    if (isAdminRoute) return;
     const decision = runAtharBrain();
     trackEvent("athar_brain_decision", {
       state: decision.state,
@@ -50,9 +56,10 @@ const AppShell = () => {
       time_band: decision.entry.timeBand,
       visit_count: decision.entry.visitCount,
     });
-  }, []);
+  }, [isAdminRoute]);
 
   useEffect(() => {
+    if (isAdminRoute) return;
     const handleReturn = () => recordAtharAppReturn();
     const handleVisibility = () => {
       if (!document.hidden) recordAtharAppReturn();
@@ -67,7 +74,15 @@ const AppShell = () => {
       window.removeEventListener("focus", handleReturn);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, []);
+  }, [isAdminRoute]);
+
+  if (isAdminRoute) {
+    return (
+      <Routes>
+        <Route path="/admin/athar" element={<AdminAnalyticsPage />} />
+      </Routes>
+    );
+  }
 
   return (
     <div className="app-shell" data-section={section.key} data-context={section.context}>
