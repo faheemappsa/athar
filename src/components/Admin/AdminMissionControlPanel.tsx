@@ -8,6 +8,7 @@ type Tone = "good" | "warn" | "calm" | "dark";
 const pct = (value: number, total: number) => (total > 0 ? Math.round((value / total) * 100) : 0);
 const topName = (rows?: Row[]) => rows?.[0]?.name || "غير واضح";
 const topValue = (rows?: Row[]) => rows?.[0]?.value || 0;
+const totalRows = (rows?: Row[]) => (rows || []).reduce((sum, row) => sum + row.value, 0);
 
 const toneClass: Record<Tone, string> = {
   good: "bg-emerald-50 text-emerald-800 ring-emerald-200",
@@ -24,16 +25,19 @@ const Stat = ({ label, value, hint, tone = "calm" }: { label: string; value: str
   </div>
 );
 
-const Bar = ({ rows }: { rows: Row[] }) => {
+const Bar = ({ rows, limit }: { rows: Row[]; limit?: number }) => {
   const safe = rows.length ? rows : [{ name: "لا توجد بيانات", value: 0 }];
+  const visible = typeof limit === "number" ? safe.slice(0, limit) : safe;
   const max = Math.max(1, ...safe.map((row) => row.value));
+  const total = Math.max(1, totalRows(safe));
+
   return (
     <div className="space-y-3">
-      {safe.slice(0, 5).map((row) => (
+      {visible.map((row) => (
         <div key={row.name}>
           <div className="mb-1 flex items-center justify-between text-sm font-bold">
             <span>{row.name}</span>
-            <span>{row.value}</span>
+            <span>{row.value} • {pct(row.value, total)}%</span>
           </div>
           <div className="h-3 overflow-hidden rounded-full bg-action/10">
             <div className="h-full rounded-full bg-action" style={{ width: `${Math.max(5, (row.value / max) * 100)}%` }} />
@@ -57,8 +61,8 @@ const calc = (summary: Summary) => {
   const pageViews = summary.todayVisits || 0;
   const shares = summary.shares || 0;
   const pwa = summary.standaloneOpens || 0;
-  const installs = summary.installs || 0;
-  const cityHits = (summary.topCities || []).reduce((sum, row) => sum + row.value, 0);
+  const cityHits = totalRows(summary.topCities);
+  const pageHits = totalRows(summary.topPages);
   const shareRate = pct(shares, sessions);
   const pwaRate = pct(pwa, visitors);
   const cityConfidence = pct(cityHits, Math.max(1, visitors));
@@ -67,13 +71,17 @@ const calc = (summary: Summary) => {
   const topPage = topName(summary.topPages);
   const topEvent = topName(summary.topEvents);
   const topCityCount = topValue(summary.topCities);
-
-  const growthScore = Math.min(100, Math.round((Math.min(30, sessions * 8) + Math.min(25, shareRate) + Math.min(20, pwaRate) + Math.min(25, cityConfidence))));
+  const topPageCount = topValue(summary.topPages);
+  const pageShare = pct(topPageCount, Math.max(1, pageHits));
+  const growthScore = Math.min(100, Math.round(Math.min(30, sessions * 8) + Math.min(25, shareRate) + Math.min(20, pwaRate) + Math.min(25, cityConfidence)));
 
   const insights = [
     cityConfidence < 50
       ? { title: "المدن تحتاج بيانات أكثر", detail: "أي زائر لا يحدّث الموقع يبقى استخدامه محسوبًا لكن مدينته غير مؤكدة.", tone: "warn" as const }
-      : { title: "المدن قابلة للقراءة", detail: `أقوى مدينة الآن: ${topCity} (${topCityCount}). راقبها بعد اختبار GPS الجديد.`, tone: "good" as const },
+      : { title: "المدينة الأقوى", detail: `${topCity} هي الأكثر استخدامًا الآن بعدد ${topCityCount}.`, tone: "good" as const },
+    pageHits > 0
+      ? { title: "الصفحة الأقوى", detail: `${topPage} تستحوذ على ${pageShare}% تقريبًا من استخدام الصفحات.`, tone: "calm" as const }
+      : { title: "الصفحات قيد القراءة", detail: "لم تصل بيانات صفحات كافية بعد.", tone: "warn" as const },
     shareRate < 20
       ? { title: "فرصة انتشار", detail: "المشاركة أقل من المطلوب. راقب أثر اليوم وبطاقة الإنجاز لأنها أقوى نقاط الانتشار.", tone: "warn" as const }
       : { title: "المشاركة جيدة", detail: `معدل المشاركة التقريبي ${shareRate}% من الجلسات.`, tone: "good" as const },
@@ -82,7 +90,7 @@ const calc = (summary: Summary) => {
       : { title: "اعتماد التطبيق جيد", detail: `فتح كتطبيق يعادل ${pwaRate}% تقريبًا من زوار اليوم.`, tone: "good" as const },
   ];
 
-  return { visitors, sessions, pageViews, shares, pwa, installs, shareRate, pwaRate, cityConfidence, pagesPerSession, topCity, topPage, topEvent, growthScore, insights };
+  return { visitors, sessions, pageViews, shares, pwa, shareRate, pwaRate, cityConfidence, pagesPerSession, topCity, topPage, topEvent, topCityCount, topPageCount, growthScore, insights };
 };
 
 export default function AdminMissionControlPanel() {
@@ -125,7 +133,7 @@ export default function AdminMissionControlPanel() {
           <div>
             <p className="text-xs font-black text-white/55">Mission Control</p>
             <h2 className="mt-1 text-3xl font-black">غرفة قيادة أثر</h2>
-            <p className="mt-2 text-xs font-bold leading-6 text-white/60">قرار سريع مبني على الزوار، الجلسات، المدن، الانتشار، واعتماد التطبيق.</p>
+            <p className="mt-2 text-xs font-bold leading-6 text-white/60">قراءة دقيقة للزوار، المدن، الصفحات، الانتشار، واعتماد التطبيق.</p>
           </div>
           <button onClick={reload} disabled={loading} className="rounded-full bg-white px-4 py-2 text-xs font-black text-[#1E1B18] disabled:opacity-60">{loading ? "..." : "تحديث"}</button>
         </div>
@@ -139,6 +147,8 @@ export default function AdminMissionControlPanel() {
       <div className="grid grid-cols-2 gap-3">
         <Stat label="زوار اليوم" value={readout.visitors} hint="أجهزة فريدة تقريبًا" />
         <Stat label="جلسات اليوم" value={readout.sessions} hint="استخدام فعلي" />
+        <Stat label="أكثر مدينة" value={readout.topCity} hint={`${readout.topCityCount} مستخدم/إشارة`} tone={readout.topCityCount ? "good" : "warn"} />
+        <Stat label="أكثر صفحة" value={readout.topPage} hint={`${readout.topPageCount} فتح صفحة`} />
         <Stat label="مشاركة" value={`${readout.shareRate}%`} hint={`${readout.shares} حدث مشاركة`} tone={readout.shareRate >= 20 ? "good" : "warn"} />
         <Stat label="فتح كتطبيق" value={`${readout.pwaRate}%`} hint={`${readout.pwa} فتح PWA`} tone={readout.pwaRate >= 20 ? "good" : "calm"} />
       </div>
@@ -147,7 +157,7 @@ export default function AdminMissionControlPanel() {
         <h3 className="text-xl font-black">ثقة البيانات</h3>
         <p className="mt-1 text-xs font-bold leading-6 text-secondary-text">هنا نحدد هل الرقم صالح لاتخاذ قرار أو يحتاج بيانات أكثر.</p>
         <div className="mt-4 grid grid-cols-2 gap-3">
-          <Stat label="ثقة المدن" value={`${readout.cityConfidence}%`} hint={`الأقوى: ${readout.topCity}`} tone={readout.cityConfidence >= 50 ? "good" : "warn"} />
+          <Stat label="ثقة المدن" value={`${readout.cityConfidence}%`} hint="حسب المدن المؤكدة" tone={readout.cityConfidence >= 50 ? "good" : "warn"} />
           <Stat label="صفحات/جلسة" value={readout.pagesPerSession} hint="عمق الاستخدام" />
         </div>
       </div>
@@ -161,15 +171,18 @@ export default function AdminMissionControlPanel() {
 
       <div className="grid gap-4">
         <div className="rounded-[34px] bg-white p-5 shadow-xl ring-1 ring-action/10">
-          <h3 className="mb-3 text-lg font-black">المدن</h3>
+          <h3 className="mb-1 text-lg font-black">كل المدن</h3>
+          <p className="mb-3 text-[11px] font-bold leading-5 text-secondary-text">كل مدينة وصلت من تحديث الموقع تظهر هنا بدون قصّ.</p>
           <Bar rows={summary.topCities || []} />
         </div>
         <div className="rounded-[34px] bg-white p-5 shadow-xl ring-1 ring-action/10">
-          <h3 className="mb-3 text-lg font-black">أكثر الصفحات</h3>
+          <h3 className="mb-1 text-lg font-black">كل الصفحات</h3>
+          <p className="mb-3 text-[11px] font-bold leading-5 text-secondary-text">توضح أي صفحة يستخدمها الناس أكثر.</p>
           <Bar rows={summary.topPages || []} />
         </div>
         <div className="rounded-[34px] bg-white p-5 shadow-xl ring-1 ring-action/10">
-          <h3 className="mb-3 text-lg font-black">أهم الأحداث</h3>
+          <h3 className="mb-1 text-lg font-black">أهم الأحداث</h3>
+          <p className="mb-3 text-[11px] font-bold leading-5 text-secondary-text">الأحداث تساعدنا نفهم ماذا يفعل المستخدم داخل أثر.</p>
           <Bar rows={summary.topEvents || []} />
         </div>
       </div>
