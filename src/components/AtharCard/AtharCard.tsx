@@ -61,6 +61,12 @@ const pulse = () => {
 
 const getShareErrorMessage = (error: unknown) => {
   if (error instanceof DOMException && error.name === "AbortError") return "";
+  if (error instanceof Error && error.message.startsWith("athar_image_api:")) {
+    return `تعذر تجهيز صورة الأثر: ${error.message.replace("athar_image_api:", "")}`;
+  }
+  if (error instanceof Error && error.message) {
+    return `تعذر تجهيز صورة الأثر: ${error.message}`;
+  }
   return "تعذر تجهيز صورة الأثر. حاول مرة ثانية بعد لحظات.";
 };
 
@@ -176,11 +182,27 @@ export default function AtharCard() {
       body: JSON.stringify({ text: athar.text, source: athar.source, name: shareName }),
     });
 
-    if (!response.ok) throw new Error("Server image failed");
+    if (!response.ok) {
+      let reason = `http_${response.status}`;
+      try {
+        const payload = await response.json();
+        if (typeof payload?.reason === "string" && payload.reason.trim()) {
+          reason = payload.reason.trim();
+        } else if (typeof payload?.error === "string" && payload.error.trim()) {
+          reason = payload.error.trim();
+        }
+      } catch {
+        try {
+          const text = await response.text();
+          if (text.trim()) reason = text.trim().slice(0, 140);
+        } catch {}
+      }
+      throw new Error(`athar_image_api:${reason}`);
+    }
 
     const blob = await response.blob();
     if (!blob.type.includes("image/png") || blob.size < 1024) {
-      throw new Error("Invalid story image");
+      throw new Error(`invalid_story_image_${blob.type || "unknown"}_${blob.size}`);
     }
 
     return blob;
