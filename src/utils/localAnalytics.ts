@@ -103,6 +103,9 @@ const createAnalyticsEvent = (
   shared: { visitorId: string; sessionId: string; device: LocalAnalyticsEvent["device"]; standalone: boolean }
 ): LocalAnalyticsEvent => {
   const savedLocation = getSavedAnalyticsLocation();
+  const explicitCity = params?.city;
+  const explicitRegion = params?.region;
+  const explicitDistance = params?.city_distance_km;
 
   return {
     name,
@@ -114,9 +117,9 @@ const createAnalyticsEvent = (
       ...(params || {}),
       visitor_id: shared.visitorId,
       session_id: shared.sessionId,
-      city: savedLocation?.city,
-      region: savedLocation?.region,
-      city_distance_km: savedLocation?.distance_km,
+      city: explicitCity || savedLocation?.city,
+      region: explicitRegion || savedLocation?.region,
+      city_distance_km: explicitDistance ?? savedLocation?.distance_km,
     },
   };
 };
