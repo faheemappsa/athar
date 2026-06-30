@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -23,6 +25,7 @@
   --athar-green-soft: #A8D5C2;
   --athar-gold: #C8A84E;
   --athar-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  --athar-quran-font: "Noto Naskh Arabic", "Noto Naskh", "Traditional Arabic", serif;
 }
 
 html {
@@ -261,7 +264,16 @@ video {
 
 .quran-text {
   scroll-padding-block: 1rem 2rem;
-  font-family: var(--athar-font) !important;
+  font-family: var(--athar-quran-font) !important;
+  font-weight: 500;
+  letter-spacing: 0;
+  word-spacing: 0.02em;
+  word-break: normal;
+  overflow-wrap: normal;
+  line-break: loose;
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
 }
 
 .quran-page-content {
