@@ -51,8 +51,12 @@ const countBy = (items: string[]) =>
     return acc;
   }, {});
 
+const uniqueCount = (items: Array<string | number | boolean | undefined>) => new Set(items.filter(Boolean).map(String)).size;
+
 const eventLabels: Record<string, string> = {
   page_view: "فتح صفحة",
+  session_start: "بداية جلسة",
+  pwa_opened: "فتح كتطبيق",
   athar_content_view: "قراءة محتوى",
   athar_brain_decision: "قرار الذكاء",
   nav_home: "فتح الرئيسية",
@@ -86,20 +90,34 @@ const sortedRows = (items: string[]) =>
 
 const clampScore = (value: number) => Math.max(0, Math.min(100, Math.round(value)));
 
-const getHealthScore = (input: { todayVisits: number; shares: number; standaloneOpens: number; highIntent: number; totalEvents: number }) => {
-  const activity = Math.min(35, input.todayVisits * 7);
+const getHealthScore = (input: { todaySessions: number; shares: number; standaloneOpens: number; highIntent: number; totalEvents: number }) => {
+  const activity = Math.min(35, input.todaySessions * 9);
   const sharing = Math.min(25, input.shares * 5);
-  const appUse = Math.min(20, input.standaloneOpens * 4);
+  const appUse = Math.min(20, input.standaloneOpens * 6);
   const loyalty = Math.min(20, input.highIntent * 5);
   const baseline = input.totalEvents > 0 ? 10 : 0;
   return clampScore(baseline + activity + sharing + appUse + loyalty);
 };
 
 const cityFrom = (row: SupabaseEventRow) => String(row.params?.city || "").trim();
+const visitorFrom = (row: SupabaseEventRow) => row.params?.visitor_id;
+const sessionFrom = (row: SupabaseEventRow) => row.params?.session_id;
 
 const getCitySourceRows = (rows: SupabaseEventRow[]) => {
   const locationRows = rows.filter((row) => row.event_name === "location_updated" && cityFrom(row));
   return locationRows.length ? locationRows : rows.filter((row) => cityFrom(row));
+};
+
+const getCityRowsByVisitor = (rows: SupabaseEventRow[]) => {
+  const seen = new Set<string>();
+  return rows.filter((row) => {
+    const city = cityFrom(row);
+    if (!city) return false;
+    const key = String(visitorFrom(row) || sessionFrom(row) || `${city}-${row.created_at}`);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 };
 
 export const fetchSupabaseAnalyticsSummary = async () => {
@@ -113,18 +131,23 @@ export const fetchSupabaseAnalyticsSummary = async () => {
     const rows = (await response.json()) as SupabaseEventRow[];
     const pageViews = rows.filter((row) => row.event_name === "page_view");
     const activeRows = rows.filter((row) => Date.now() - new Date(row.created_at).getTime() <= 5 * 60 * 1000);
-    const cityRows = getCitySourceRows(rows);
-    const activeCityRows = getCitySourceRows(activeRows);
+    const todayRows = rows.filter((row) => isSameDay(row.created_at));
+    const cityRows = getCityRowsByVisitor(getCitySourceRows(rows));
+    const activeCityRows = getCityRowsByVisitor(getCitySourceRows(activeRows));
 
     const todayVisits = pageViews.filter((row) => isSameDay(row.created_at)).length;
+    const todayVisitors = uniqueCount(todayRows.map(visitorFrom));
+    const todaySessions = uniqueCount(todayRows.map(sessionFrom)) || rows.filter((row) => row.event_name === "session_start" && isSameDay(row.created_at)).length;
     const shares = rows.filter((row) => row.event_name.includes("share")).length;
     const installs = rows.filter((row) => row.event_name === "app_installed").length;
-    const standaloneOpens = rows.filter((row) => row.standalone).length;
-    const installConversion = installs > 0 ? clampScore((standaloneOpens / installs) * 100) : 0;
+    const standaloneOpens = rows.filter((row) => row.event_name === "pwa_opened").length || uniqueCount(rows.filter((row) => row.standalone).map(sessionFrom));
+    const installConversion = todayVisitors > 0 ? clampScore((standaloneOpens / todayVisitors) * 100) : 0;
     const highIntent = rows.filter((row) => row.event_name === "athar_brain_decision" && Number(row.params?.score || 0) >= 7).length;
-    const healthScore = getHealthScore({ todayVisits, shares, standaloneOpens, highIntent, totalEvents: rows.length });
+    const activeNow = uniqueCount(activeRows.map(sessionFrom)) || uniqueCount(activeRows.map(visitorFrom)) || activeRows.length;
+    const healthScore = getHealthScore({ todaySessions: todaySessions || todayVisits, shares, standaloneOpens, highIntent, totalEvents: rows.length });
     const funnel = [
-      { name: "زيارة", value: todayVisits },
+      { name: "زائر", value: todayVisitors || todayVisits },
+      { name: "جلسة", value: todaySessions || todayVisits },
       { name: "مشاركة", value: shares },
       { name: "تثبيت", value: installs },
       { name: "فتح كتطبيق", value: standaloneOpens },
@@ -133,7 +156,9 @@ export const fetchSupabaseAnalyticsSummary = async () => {
     const trend = Array.from({ length: 7 }).map((_, index) => {
       const offset = 6 - index;
       const label = offset === 0 ? "اليوم" : `قبل ${offset}`;
-      return { name: label, value: rows.filter((row) => isSameDay(row.created_at, offset)).length };
+      const dayRows = rows.filter((row) => isSameDay(row.created_at, offset));
+      const sessions = uniqueCount(dayRows.map(sessionFrom));
+      return { name: label, value: sessions || dayRows.length };
     });
 
     const devices = sortedRows(rows.map((row) => row.device || "غير معروف"));
@@ -141,13 +166,14 @@ export const fetchSupabaseAnalyticsSummary = async () => {
     const topPages = sortedRows(pageViews.map((row) => labelPage(row.page_path || "/")));
     const topCities = sortedRows(cityRows.map(cityFrom));
     const activeCities = sortedRows(activeCityRows.map(cityFrom));
-    const activeNow = activeRows.length;
     const lastActivity = activeRows[0] ? labelEvent(activeRows[0].event_name) : "لا يوجد نشاط الآن";
 
     return {
       source: "supabase" as const,
       totalEvents: rows.length,
       todayVisits,
+      todayVisitors,
+      todaySessions,
       shares,
       installs,
       standaloneOpens,
