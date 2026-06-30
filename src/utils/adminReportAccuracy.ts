@@ -15,8 +15,8 @@ const installEventNames = [
   "pwa standalone install confirmed",
 ];
 
-export const normalizeAdminReportAccuracy = <T extends ReportSummary | null>(summary: T): T => {
-  if (!summary) return summary;
+export const normalizeAdminReportAccuracy = <T extends ReportSummary>(summary: T | null): T | null => {
+  if (!summary) return null;
 
   const detectedInstalls = Math.max(
     summary.installs || 0,
@@ -39,5 +39,5 @@ export const normalizeAdminReportAccuracy = <T extends ReportSummary | null>(sum
     installs: detectedInstalls,
     installConversion: summary.standaloneOpens > 0 ? 100 : summary.installConversion || 0,
     funnel,
-  };
+  } as T;
 };
