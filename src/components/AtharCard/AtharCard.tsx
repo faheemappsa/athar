@@ -9,6 +9,8 @@ import { useAtharRefreshSignal } from "./useAtharRefreshSignal";
 
 const NAME_KEY = "athar-share-name";
 const NAME_SEEN_KEY = "athar-name-prompt-seen";
+const STORY_WIDTH = 1080;
+const STORY_HEIGHT = 1920;
 
 const getCardMood = (time: AtharContent["time"]) => {
   if (time === "morning") {
@@ -68,6 +70,139 @@ const getShareErrorMessage = (error: unknown) => {
     return `تعذر تجهيز صورة الأثر: ${error.message}`;
   }
   return "تعذر تجهيز صورة الأثر. حاول مرة ثانية بعد لحظات.";
+};
+
+const getCanvasFont = (size: number, weight = 700) => `${weight} ${size}px -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif`;
+
+const drawRoundRect = (ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) => {
+  const r = Math.min(radius, width / 2, height / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + width, y, x + width, y + height, r);
+  ctx.arcTo(x + width, y + height, x, y + height, r);
+  ctx.arcTo(x, y + height, x, y, r);
+  ctx.arcTo(x, y, x + width, y, r);
+  ctx.closePath();
+};
+
+const wrapArabicText = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number) => {
+  const words = text.replace(/\s+/g, " ").trim().split(" ");
+  const lines: string[] = [];
+  let current = "";
+
+  words.forEach((word) => {
+    const candidate = current ? `${current} ${word}` : word;
+    if (ctx.measureText(candidate).width <= maxWidth || !current) {
+      current = candidate;
+      return;
+    }
+    lines.push(current);
+    current = word;
+  });
+
+  if (current) lines.push(current);
+  return lines;
+};
+
+const createClientStoryImage = async (athar: AtharContent, name: string) => {
+  const canvas = document.createElement("canvas");
+  canvas.width = STORY_WIDTH;
+  canvas.height = STORY_HEIGHT;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("canvas_context_unavailable");
+
+  ctx.direction = "rtl";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+
+  const bg = ctx.createLinearGradient(0, 0, 0, STORY_HEIGHT);
+  bg.addColorStop(0, "#F9F3E8");
+  bg.addColorStop(0.55, "#F7F1E6");
+  bg.addColorStop(1, "#EEF3EC");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, STORY_WIDTH, STORY_HEIGHT);
+
+  ctx.save();
+  ctx.globalAlpha = 0.18;
+  ctx.strokeStyle = "#7CA995";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(120, 500, 390, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(980, 1380, 420, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.shadowColor = "rgba(35,76,65,0.14)";
+  ctx.shadowBlur = 68;
+  ctx.shadowOffsetY = 34;
+  drawRoundRect(ctx, 76, 76, 928, 1758, 76);
+  ctx.fillStyle = "rgba(255,253,248,0.91)";
+  ctx.fill();
+  ctx.restore();
+
+  ctx.fillStyle = "rgba(47,95,80,0.08)";
+  drawRoundRect(ctx, 502, 140, 76, 76, 38);
+  ctx.fill();
+  ctx.font = getCanvasFont(34, 600);
+  ctx.fillStyle = "#547D69";
+  ctx.fillText("❦", 540, 178);
+
+  ctx.font = getCanvasFont(42, 800);
+  ctx.fillStyle = "#234C41";
+  ctx.fillText("أثر", 540, 260);
+
+  ctx.font = getCanvasFont(24, 500);
+  ctx.fillStyle = "rgba(35,76,65,0.58)";
+  ctx.fillText("خير يبقى، وأثر لا يزول", 540, 305);
+
+  const textLength = athar.text.length;
+  const fontSize = textLength > 250 ? 46 : textLength > 190 ? 54 : textLength > 130 ? 64 : textLength > 75 ? 76 : 88;
+  const lineHeight = Math.round(fontSize * 1.9);
+  ctx.font = getCanvasFont(fontSize, 800);
+  ctx.fillStyle = "#1F463B";
+  const lines = wrapArabicText(ctx, athar.text, 820);
+  const blockHeight = lines.length * lineHeight;
+  let y = 850 - blockHeight / 2;
+  lines.forEach((line) => {
+    ctx.fillText(line, 540, y);
+    y += lineHeight;
+  });
+
+  ctx.font = getCanvasFont(32, 700);
+  const sourceText = athar.source || "أثر اليوم";
+  const sourceWidth = Math.min(ctx.measureText(sourceText).width + 88, 760);
+  const badgeX = (STORY_WIDTH - sourceWidth) / 2;
+  drawRoundRect(ctx, badgeX, 1370, sourceWidth, 72, 36);
+  ctx.fillStyle = "rgba(47,95,80,0.09)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(47,95,80,0.11)";
+  ctx.lineWidth = 1;
+  ctx.stroke();
+  ctx.fillStyle = "#345F50";
+  ctx.fillText(sourceText, 540, 1408);
+
+  if (name.trim()) {
+    ctx.font = getCanvasFont(25, 600);
+    ctx.fillStyle = "rgba(35,76,65,0.58)";
+    ctx.fillText(`بأثر من ${name.trim().slice(0, 28)}`, 540, 1494);
+  }
+
+  ctx.font = getCanvasFont(22, 500);
+  ctx.fillStyle = "rgba(35,76,65,0.46)";
+  ctx.fillText("athar-sandy.vercel.app", 540, 1716);
+
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new Error("canvas_blob_failed"));
+        return;
+      }
+      resolve(blob);
+    }, "image/png", 1);
+  });
 };
 
 export default function AtharCard() {
@@ -215,7 +350,10 @@ export default function AtharCard() {
     trackEvent("athar_share_start", { kind: athar.kind, time: athar.time });
 
     try {
-      const blob = await generateServerImage();
+      const blob = await generateServerImage().catch(async (serverError) => {
+        trackEvent("athar_share_canvas_fallback", { reason: serverError instanceof Error ? serverError.message : "unknown" });
+        return createClientStoryImage(athar, shareName);
+      });
       await shareBlob(blob);
     } catch (error) {
       const message = getShareErrorMessage(error);
