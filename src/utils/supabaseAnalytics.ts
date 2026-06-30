@@ -65,6 +65,7 @@ const eventLabels: Record<string, string> = {
   install_prompt_shown: "ظهور التثبيت",
   beforeinstallprompt: "جاهز للتثبيت",
   app_installed: "تثبيت التطبيق",
+  location_updated: "تحديث الموقع",
 };
 
 const pageLabels: Record<string, string> = {
@@ -94,6 +95,13 @@ const getHealthScore = (input: { todayVisits: number; shares: number; standalone
   return clampScore(baseline + activity + sharing + appUse + loyalty);
 };
 
+const cityFrom = (row: SupabaseEventRow) => String(row.params?.city || "").trim();
+
+const getCitySourceRows = (rows: SupabaseEventRow[]) => {
+  const locationRows = rows.filter((row) => row.event_name === "location_updated" && cityFrom(row));
+  return locationRows.length ? locationRows : rows.filter((row) => cityFrom(row));
+};
+
 export const fetchSupabaseAnalyticsSummary = async () => {
   try {
     const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -105,6 +113,8 @@ export const fetchSupabaseAnalyticsSummary = async () => {
     const rows = (await response.json()) as SupabaseEventRow[];
     const pageViews = rows.filter((row) => row.event_name === "page_view");
     const activeRows = rows.filter((row) => Date.now() - new Date(row.created_at).getTime() <= 5 * 60 * 1000);
+    const cityRows = getCitySourceRows(rows);
+    const activeCityRows = getCitySourceRows(activeRows);
 
     const todayVisits = pageViews.filter((row) => isSameDay(row.created_at)).length;
     const shares = rows.filter((row) => row.event_name.includes("share")).length;
@@ -129,8 +139,8 @@ export const fetchSupabaseAnalyticsSummary = async () => {
     const devices = sortedRows(rows.map((row) => row.device || "غير معروف"));
     const topEvents = sortedRows(rows.map((row) => labelEvent(row.event_name)));
     const topPages = sortedRows(pageViews.map((row) => labelPage(row.page_path || "/")));
-    const topCities = sortedRows(rows.map((row) => String(row.params?.city || "")));
-    const activeCities = sortedRows(activeRows.map((row) => String(row.params?.city || "")));
+    const topCities = sortedRows(cityRows.map(cityFrom));
+    const activeCities = sortedRows(activeCityRows.map(cityFrom));
     const activeNow = activeRows.length;
     const lastActivity = activeRows[0] ? labelEvent(activeRows[0].event_name) : "لا يوجد نشاط الآن";
 
