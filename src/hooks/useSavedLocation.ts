@@ -65,6 +65,8 @@ const getPositionOptions: PositionOptions = {
   maximumAge: LOCATION_MAX_AGE_MS,
 };
 
+const roundCoordinate = (value: number) => Math.round(value * 100) / 100;
+
 export const useSavedLocation = () => {
   const [location, setLocation] = useState<SavedLocation | null>(() => readSavedLocation());
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">(() => (readSavedLocation() ? "ready" : "idle"));
@@ -86,18 +88,22 @@ export const useSavedLocation = () => {
     setError("");
   };
 
-  const trackLocationUpdate = (source: "gps" | "default" | "silent") => {
+  const trackLocationUpdate = (source: "gps" | "default" | "silent", next?: SavedLocation) => {
     trackEvent("location_updated", {
       location_source: source,
       prayer_location_updated: true,
+      gps_lat_approx: next ? roundCoordinate(next.lat) : undefined,
+      gps_lng_approx: next ? roundCoordinate(next.lng) : undefined,
+      gps_updated_at: next?.updatedAt,
     });
   };
 
   const requestLocation = () => {
     if (!navigator.geolocation) {
       setStatus("ready");
-      saveLocation(DEFAULT_LOCATION);
-      trackLocationUpdate("default");
+      const next = { ...DEFAULT_LOCATION, updatedAt: Date.now() };
+      saveLocation(next);
+      trackLocationUpdate("default", next);
       setError("المتصفح لا يدعم تحديد الموقع، استخدمنا موقعاً افتراضياً.");
       return;
     }
@@ -107,12 +113,13 @@ export const useSavedLocation = () => {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        saveLocation({
+        const next = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
           updatedAt: Date.now(),
-        });
-        trackLocationUpdate("gps");
+        };
+        saveLocation(next);
+        trackLocationUpdate("gps", next);
       },
       () => {
         const saved = readSavedLocation();
@@ -120,8 +127,9 @@ export const useSavedLocation = () => {
           setLocation(saved);
           setStatus("ready");
         } else {
-          saveLocation(DEFAULT_LOCATION);
-          trackLocationUpdate("default");
+          const next = { ...DEFAULT_LOCATION, updatedAt: Date.now() };
+          saveLocation(next);
+          trackLocationUpdate("default", next);
         }
         setError("تعذر تحديد موقعك الآن. يمكنك تحديثه لاحقاً.");
       },
@@ -150,7 +158,7 @@ export const useSavedLocation = () => {
         const isStale = Date.now() - saved.updatedAt >= 24 * 60 * 60 * 1000;
         if (movedKm >= SIGNIFICANT_MOVE_KM || isStale) {
           saveLocation(next);
-          trackLocationUpdate("silent");
+          trackLocationUpdate("silent", next);
         }
       },
       () => {
@@ -180,8 +188,9 @@ export const useSavedLocation = () => {
   }, []);
 
   const useDefaultLocation = () => {
-    saveLocation({ ...DEFAULT_LOCATION, updatedAt: Date.now() });
-    trackLocationUpdate("default");
+    const next = { ...DEFAULT_LOCATION, updatedAt: Date.now() };
+    saveLocation(next);
+    trackLocationUpdate("default", next);
   };
 
   const daysSinceUpdate = location?.updatedAt ? Math.floor((Date.now() - location.updatedAt) / (24 * 60 * 60 * 1000)) : null;
