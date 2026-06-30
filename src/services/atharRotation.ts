@@ -1,5 +1,5 @@
 const RECENT_KEY = "athar-recent-ids";
-const MAX_RECENT = 32;
+const MAX_RECENT = 20;
 
 const normalizeRecentIds = (ids: string[]) => {
   return Array.from(new Set(ids.filter(Boolean))).slice(0, MAX_RECENT);
