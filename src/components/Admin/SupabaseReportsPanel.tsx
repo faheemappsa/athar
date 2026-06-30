@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { normalizeAdminReportAccuracy } from "../../utils/adminReportAccuracy";
 import { fetchSupabaseAnalyticsSummary } from "../../utils/supabaseAnalytics";
 
 type Row = { name: string; value: number };
@@ -63,7 +64,7 @@ const Health = ({ value }: { value: number }) => (
       <div>
         <p className="text-xs font-extrabold text-secondary-text">مؤشر صحة أثر</p>
         <h3 className="mt-1 text-3xl font-black text-action">{value}/100</h3>
-        <p className="mt-1 text-xs leading-5 text-secondary-text">النشاط، المشاركة، التثبيت، والولاء.</p>
+        <p className="mt-1 text-xs leading-5 text-secondary-text">النشاط، المشاركة، الفتح كتطبيق، والولاء.</p>
       </div>
       <div className="grid h-20 w-20 shrink-0 place-items-center rounded-full bg-white shadow-inner ring-8 ring-action/10">
         <span className="text-xl font-black text-action">{value}</span>
@@ -77,10 +78,10 @@ const InstallCard = ({ installs, opens, conversion }: { installs: number; opens:
   <div className="rounded-[30px] bg-primary-bg p-4 ring-1 ring-action/10">
     <div className="mb-3 flex items-center justify-between"><h3 className="text-base font-black">التطبيق المثبت</h3><span className="rounded-full bg-white px-3 py-1 text-xs font-black text-action">{conversion}%</span></div>
     <div className="grid grid-cols-2 gap-3">
-      <div className="rounded-2xl bg-white/80 p-3"><p className="text-xs font-bold text-secondary-text">تم التثبيت</p><p className="mt-1 text-2xl font-black text-action">{installs}</p></div>
+      <div className="rounded-2xl bg-white/80 p-3"><p className="text-xs font-bold text-secondary-text">تثبيت مؤكد</p><p className="mt-1 text-2xl font-black text-action">{installs}</p></div>
       <div className="rounded-2xl bg-white/80 p-3"><p className="text-xs font-bold text-secondary-text">فتح كتطبيق</p><p className="mt-1 text-2xl font-black text-action">{opens}</p></div>
     </div>
-    <p className="mt-3 text-xs leading-5 text-secondary-text">النسبة = من فتح التطبيق بعد تثبيته.</p>
+    <p className="mt-3 text-xs leading-5 text-secondary-text">فتح التطبيق بوضع PWA يعني أنه يعمل من الشاشة الرئيسية.</p>
   </div>
 );
 
@@ -111,7 +112,7 @@ export default function SupabaseReportsPanel() {
     setLoading(true);
     fetchSupabaseAnalyticsSummary()
       .then((nextSummary) => {
-        setSummary(nextSummary);
+        setSummary(normalizeAdminReportAccuracy(nextSummary));
         setLastUpdated(new Date().toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
       })
       .finally(() => setLoading(false));
@@ -154,7 +155,7 @@ export default function SupabaseReportsPanel() {
       <div className="relative mt-5 grid gap-4">
         <InstallCard installs={summary.installs || 0} opens={summary.standaloneOpens || 0} conversion={summary.installConversion || 0} />
         <Funnel rows={summary.funnel || []} />
-        <div className="rounded-[30px] bg-primary-bg p-4"><h3 className="mb-3 text-base font-black">المدن</h3><Bar rows={summary.topCities || []} /></div>
+        <div className="rounded-[30px] bg-primary-bg p-4"><h3 className="mb-1 text-base font-black">المدن</h3><p className="mb-3 text-[11px] font-bold leading-5 text-secondary-text">تظهر المدينة بعد تحديث مواقيت الصلاة ثم تسجيل نشاط جديد.</p><Bar rows={summary.topCities || []} /></div>
         <div className="rounded-[30px] bg-primary-bg p-4"><h3 className="mb-3 text-base font-black">أكثر الصفحات</h3><Bar rows={summary.topPages || []} /></div>
         <div className="rounded-[30px] bg-primary-bg p-4"><div className="flex items-center justify-between"><h3 className="text-base font-black">نبض النشاط</h3><span className="text-xs font-bold text-secondary-text">7 أيام</span></div><Line rows={summary.trend} /></div>
       </div>
