@@ -179,3 +179,94 @@ video {
 .app-scroll::-webkit-scrollbar {
   display: none;
 }
+
+.dhikr-text-window,
+.quran-reader-window {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.dhikr-text-window {
+  height: clamp(8.75rem, 22dvh, 12rem);
+  flex: 0 0 auto;
+}
+
+.dhikr-text-window--focus {
+  height: clamp(10rem, 25dvh, 14rem);
+}
+
+.dhikr-text-scroll,
+.quran-text {
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.dhikr-text-scroll::-webkit-scrollbar,
+.quran-text::-webkit-scrollbar {
+  display: none;
+}
+
+.dhikr-text-scroll {
+  padding-block-end: 1.7rem;
+}
+
+.dhikr-text-window::after,
+.quran-reader-window::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 5;
+  height: 3rem;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+.dhikr-text-window::after {
+  background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,0.96));
+}
+
+.quran-reader-window::after {
+  background: linear-gradient(180deg, rgba(254,252,247,0), rgba(254,252,247,0.96));
+}
+
+.dhikr-text-window.is-overflowing::after,
+.quran-reader-window.is-overflowing::after {
+  opacity: 1;
+}
+
+.quran-shell {
+  height: calc(100dvh - 11.75rem);
+  min-height: 34rem;
+  max-height: calc(100dvh - 11.75rem);
+}
+
+.quran-shell--focus {
+  height: calc(100dvh - 8.25rem);
+  max-height: calc(100dvh - 8.25rem);
+}
+
+.quran-reader-window {
+  flex: 1 1 auto;
+}
+
+.quran-text {
+  scroll-padding-block: 1rem 2rem;
+}
+
+.quran-page-content {
+  min-height: 100%;
+}
+
+.quran-page-content--short {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
