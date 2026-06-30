@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AdminGrowthIntelligencePanel from "../components/Admin/AdminGrowthIntelligencePanel";
 import AdminLaunchSignalsPanel from "../components/Admin/AdminLaunchSignalsPanel";
 import SupabaseReportsPanel from "../components/Admin/SupabaseReportsPanel";
 
@@ -53,6 +54,7 @@ export default function AdminAnalyticsPage() {
         </header>
 
         <SupabaseReportsPanel />
+        <AdminGrowthIntelligencePanel />
         <AdminLaunchSignalsPanel />
       </div>
     </div>
