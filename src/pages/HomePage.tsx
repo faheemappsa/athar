@@ -1,4 +1,5 @@
 import { useLocation } from "react-router-dom";
+import LaunchAccuracyTrackers from "../components/Analytics/LaunchAccuracyTrackers";
 import PrayerTimes from "../components/PrayerTimes/PrayerTimes";
 import RadioPlayer from "../components/Radio/RadioPlayer";
 import AtharCard from "../components/AtharCard/AtharCard";
@@ -9,6 +10,7 @@ export default function HomePage() {
 
   return (
     <div className="space-y-5">
+      <LaunchAccuracyTrackers />
       <PrayerTimes />
       <RadioPlayer />
       <AtharCard key={location.key} />
