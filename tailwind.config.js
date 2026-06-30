@@ -19,7 +19,7 @@ export default {
         card: "28px"
       },
       fontFamily: {
-        arabic: ["IBM Plex Sans Arabic", "Cairo", "sans-serif"]
+        arabic: ["-apple-system", "BlinkMacSystemFont", "Segoe UI", "Arial", "sans-serif"]
       }
     }
   },
