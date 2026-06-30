@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { trackEvent } from "../utils/analytics";
 
 export type SavedLocation = {
   lat: number;
@@ -85,10 +86,18 @@ export const useSavedLocation = () => {
     setError("");
   };
 
+  const trackLocationUpdate = (source: "gps" | "default" | "silent") => {
+    trackEvent("location_updated", {
+      location_source: source,
+      prayer_location_updated: true,
+    });
+  };
+
   const requestLocation = () => {
     if (!navigator.geolocation) {
       setStatus("ready");
       saveLocation(DEFAULT_LOCATION);
+      trackLocationUpdate("default");
       setError("المتصفح لا يدعم تحديد الموقع، استخدمنا موقعاً افتراضياً.");
       return;
     }
@@ -103,6 +112,7 @@ export const useSavedLocation = () => {
           lng: position.coords.longitude,
           updatedAt: Date.now(),
         });
+        trackLocationUpdate("gps");
       },
       () => {
         const saved = readSavedLocation();
@@ -111,6 +121,7 @@ export const useSavedLocation = () => {
           setStatus("ready");
         } else {
           saveLocation(DEFAULT_LOCATION);
+          trackLocationUpdate("default");
         }
         setError("تعذر تحديد موقعك الآن. يمكنك تحديثه لاحقاً.");
       },
@@ -137,7 +148,10 @@ export const useSavedLocation = () => {
         };
         const movedKm = getDistanceKm(saved, next);
         const isStale = Date.now() - saved.updatedAt >= 24 * 60 * 60 * 1000;
-        if (movedKm >= SIGNIFICANT_MOVE_KM || isStale) saveLocation(next);
+        if (movedKm >= SIGNIFICANT_MOVE_KM || isStale) {
+          saveLocation(next);
+          trackLocationUpdate("silent");
+        }
       },
       () => {
         silentCheckInFlightRef.current = false;
@@ -167,6 +181,7 @@ export const useSavedLocation = () => {
 
   const useDefaultLocation = () => {
     saveLocation({ ...DEFAULT_LOCATION, updatedAt: Date.now() });
+    trackLocationUpdate("default");
   };
 
   const daysSinceUpdate = location?.updatedAt ? Math.floor((Date.now() - location.updatedAt) / (24 * 60 * 60 * 1000)) : null;
