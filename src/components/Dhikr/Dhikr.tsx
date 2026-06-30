@@ -55,6 +55,12 @@ const broadcastDhikrFocus = (active: boolean) => {
   window.dispatchEvent(new CustomEvent("athar-focus-mode", { detail: { path: "/dhikr", active } }));
 };
 
+const gentleHaptic = (duration = 12) => {
+  try {
+    navigator.vibrate?.(duration);
+  } catch {}
+};
+
 const getDhikrList = (category: DhikrCategory) => {
   const baseList = ADHKAR[category] || ADHKAR.morning;
 
@@ -203,11 +209,13 @@ export default function Dhikr() {
   const isFinalDhikr = currentIndex + 1 >= dhikrList.length;
   const itemProgress = Math.min(100, (count / safeCount) * 100);
   const remainingCount = Math.max(0, safeCount - count);
+  const isLastTap = remainingCount === 1 && !isComplete && safeCount > 1;
   const totalProgress = dhikrList.length > 0 ? ((currentIndex + count / safeCount) / dhikrList.length) * 100 : 0;
   const categoryInfo = CATEGORY_LABELS[category];
   const completionCount = completionDays.length;
   const identityCopy = getDhikrCompletionIdentity(completionCount);
   const surfaceSignal = useSurfaceSignal<HTMLDivElement>({ surface: "dhikr-card", contentId: current?.id, minFocusMs: 5000 });
+  const tapHint = isComplete ? (isFinalDhikr ? "أتممت وردك" : "أحسنت… ننتقل للذكر التالي") : feedback === "success" ? "تمت" : isLastTap ? "آخر تسبيحة" : "اضغط للتسبيح";
 
   useEffect(() => {
     const element = dhikrTextRef.current;
@@ -250,6 +258,7 @@ export default function Dhikr() {
     enterFocusMode();
     if (!current || isComplete) return;
 
+    gentleHaptic(isLastTap ? 24 : 10);
     recordAtharBehavior({ type: "dhikr_tap", surface: "dhikr-card", contentId: current.id, metadata: { category, count: count + 1 } });
 
     const newCount = Math.min(count + 1, safeCount);
@@ -265,10 +274,10 @@ export default function Dhikr() {
           setCount(0);
           setFeedback("idle");
         }
-      }, 1150);
+      }, 1450);
     } else {
       setFeedback("success");
-      setTimeout(() => setFeedback("idle"), 180);
+      setTimeout(() => setFeedback("idle"), 140);
     }
   };
 
@@ -340,30 +349,30 @@ export default function Dhikr() {
           <button
             onClick={handleTap}
             disabled={isComplete}
-            className={`group mx-auto block w-fit outline-none transition-all duration-300 disabled:cursor-default ${focusMode ? "mt-7" : "mt-6"}`}
+            className={`group mx-auto block w-fit outline-none transition-all duration-300 disabled:cursor-default ${focusMode ? "mt-5" : "mt-5"}`}
             aria-label="اضغط للتسبيح"
           >
             <motion.div
               key={`ring-${pulseKey}`}
               animate={feedback === "success" ? counterMotion.success : feedback === "complete" ? counterMotion.complete : counterMotion.idle}
               transition={feedback === "complete" ? counterMotion.completeTransition : counterMotion.successTransition}
-              className={`relative mx-auto grid place-items-center rounded-full transition-all duration-300 ${focusMode ? "h-[clamp(14rem,38dvh,17rem)] w-[clamp(14rem,38dvh,17rem)]" : "h-60 w-60"}`}
+              className={`relative mx-auto grid place-items-center rounded-full transition-all duration-300 ${focusMode ? "h-[clamp(11.75rem,30dvh,14rem)] w-[clamp(11.75rem,30dvh,14rem)]" : "h-48 w-48"}`}
             >
               <div
                 className="absolute inset-0 rounded-full transition-all duration-300"
                 style={{
-                  background: `conic-gradient(#38A47C ${itemProgress}%, rgba(56,164,124,0.12) ${itemProgress}%)`,
+                  background: `conic-gradient(${isComplete ? "#2E7D61" : "#38A47C"} ${itemProgress}%, rgba(56,164,124,0.12) ${itemProgress}%)`,
                 }}
               />
-              <div className="absolute inset-[10px] rounded-full bg-white shadow-xl shadow-action/10" />
-              <div className="absolute inset-[22px] rounded-full bg-primary-bg/80" />
+              <div className="absolute inset-[9px] rounded-full bg-white shadow-xl shadow-action/10" />
+              <div className={`absolute inset-[20px] rounded-full transition-all duration-300 ${isComplete ? "bg-mint-soft" : "bg-primary-bg/80"}`} />
 
               <motion.div
                 key={`pulse-${pulseKey}`}
                 initial={pulseMotion.initial}
                 animate={pulseMotion.animate}
-                transition={pulseMotion.transition}
-                className="absolute inset-2 rounded-full border border-action/30"
+                transition={{ ...pulseMotion.transition, duration: feedback === "complete" ? 0.5 : 0.28 }}
+                className={`absolute rounded-full border transition-all duration-300 ${isComplete ? "inset-0 border-action/40 bg-action/5" : "inset-2 border-action/25"}`}
               />
 
               {feedback === "complete" && (
@@ -376,11 +385,9 @@ export default function Dhikr() {
               )}
 
               <div className="relative z-10 text-center">
-                <p className="text-5xl font-extrabold leading-none text-action">{count}</p>
-                <p className="mt-2 text-sm font-bold text-secondary-text">من {safeCount}</p>
-                <p className="mt-4 text-sm font-semibold text-primary-text">
-                  {feedback === "complete" ? "تم الذكر" : feedback === "success" ? "" : "اضغط للتسبيح"}
-                </p>
+                <p className={`${isComplete ? "text-4xl" : "text-5xl"} font-extrabold leading-none text-action`}>{isComplete ? "✓" : count}</p>
+                <p className="mt-2 text-sm font-bold text-secondary-text">{isComplete ? "تم هذا الذكر" : `من ${safeCount}`}</p>
+                <p className={`mt-3 px-4 text-sm font-extrabold ${isComplete ? "text-action" : "text-primary-text"}`}>{tapHint}</p>
               </div>
             </motion.div>
           </button>
