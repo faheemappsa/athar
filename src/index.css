@@ -270,3 +270,9 @@ video {
   align-items: center;
   justify-content: center;
 }
+
+body,
+.admin-shell,
+.app-shell {
+  font-family: 'Cairo', sans-serif;
+}
