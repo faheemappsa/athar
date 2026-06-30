@@ -2,46 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'Thmanyah Sans';
-  src: url('https://raw.githubusercontent.com/faheemappsa/athar/e9f1960043c0f0d722f03f4bee2174c582187d2f/thmanyahsans-Light.otf') format('opentype');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Thmanyah Sans';
-  src: url('https://raw.githubusercontent.com/faheemappsa/athar/e9f1960043c0f0d722f03f4bee2174c582187d2f/thmanyahsans-Regular.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Thmanyah Sans';
-  src: url('https://raw.githubusercontent.com/faheemappsa/athar/e9f1960043c0f0d722f03f4bee2174c582187d2f/thmanyahsans-Medium.otf') format('opentype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Thmanyah Sans';
-  src: url('https://raw.githubusercontent.com/faheemappsa/athar/e9f1960043c0f0d722f03f4bee2174c582187d2f/thmanyahsans-Bold.otf') format('opentype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Thmanyah Sans';
-  src: url('https://raw.githubusercontent.com/faheemappsa/athar/e9f1960043c0f0d722f03f4bee2174c582187d2f/thmanyahsans-Black.otf') format('opentype');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   --app-bg: #EAF6F3;
   --app-fg: #244A3F;
@@ -62,7 +22,7 @@
   --athar-green: #2E7D61;
   --athar-green-soft: #A8D5C2;
   --athar-gold: #C8A84E;
-  --athar-font: 'Thmanyah Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --athar-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
 }
 
 html {
