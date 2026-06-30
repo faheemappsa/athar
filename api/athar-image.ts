@@ -5,6 +5,7 @@ import QRCode from "qrcode";
 const WIDTH = 1080;
 const HEIGHT = 1920;
 const APP_URL = "https://athar-sandy.vercel.app";
+const DISPLAY_URL = "athar.sa";
 const FONT_URL = "https://raw.githubusercontent.com/googlefonts/noto-fonts/main/hinted/ttf/NotoNaskhArabic/NotoNaskhArabic-Regular.ttf";
 
 let fontData: ArrayBuffer | null = null;
@@ -35,11 +36,11 @@ const clean = (value: unknown, fallback = "", maxLength = 420) => {
 
 const makeQrDataUrl = async () => {
   return QRCode.toDataURL(APP_URL, {
-    margin: 0,
-    width: 120,
+    margin: 1,
+    width: 140,
     color: {
       dark: "#2F5F50",
-      light: "#F7F1E6",
+      light: "#FFFDF8",
     },
     errorCorrectionLevel: "M",
   });
@@ -48,12 +49,12 @@ const makeQrDataUrl = async () => {
 const getTextStyle = (text: string) => {
   const length = text.length;
 
-  if (length > 260) return { fontSize: 44, lineHeight: 1.88, maxWidth: 850 };
-  if (length > 210) return { fontSize: 50, lineHeight: 1.92, maxWidth: 850 };
-  if (length > 160) return { fontSize: 58, lineHeight: 1.96, maxWidth: 840 };
-  if (length > 105) return { fontSize: 68, lineHeight: 2.0, maxWidth: 820 };
-  if (length > 58) return { fontSize: 78, lineHeight: 2.04, maxWidth: 790 };
-  return { fontSize: 88, lineHeight: 2.08, maxWidth: 740 };
+  if (length > 260) return { fontSize: 43, lineHeight: 1.88, maxWidth: 850 };
+  if (length > 210) return { fontSize: 49, lineHeight: 1.92, maxWidth: 850 };
+  if (length > 160) return { fontSize: 57, lineHeight: 1.96, maxWidth: 840 };
+  if (length > 105) return { fontSize: 66, lineHeight: 2.0, maxWidth: 820 };
+  if (length > 58) return { fontSize: 76, lineHeight: 2.04, maxWidth: 790 };
+  return { fontSize: 86, lineHeight: 2.08, maxWidth: 740 };
 };
 
 const div = (style: Record<string, unknown>, children?: unknown) => ({
@@ -87,37 +88,37 @@ const makeElement = (text: string, source: string, name: string, qrDataUrl: stri
       }),
       div({
         position: "absolute",
-        left: -330,
-        top: 120,
-        width: 720,
-        height: 720,
-        borderRadius: 720,
-        border: "2px solid rgba(47,95,80,0.055)",
+        left: -340,
+        top: 135,
+        width: 710,
+        height: 710,
+        borderRadius: 710,
+        border: "2px solid rgba(47,95,80,0.045)",
       }),
       div({
         position: "absolute",
-        right: -380,
-        bottom: 150,
-        width: 780,
-        height: 780,
-        borderRadius: 780,
-        border: "2px solid rgba(47,95,80,0.05)",
+        right: -395,
+        bottom: 165,
+        width: 790,
+        height: 790,
+        borderRadius: 790,
+        border: "2px solid rgba(47,95,80,0.04)",
       }),
       div({
         position: "absolute",
         left: 76,
         right: 76,
         top: 76,
-        bottom: 86,
-        borderRadius: 76,
-        background: "rgba(255,253,248,0.9)",
+        bottom: 76,
+        borderRadius: 78,
+        background: "rgba(255,253,248,0.92)",
         border: "2px solid rgba(255,255,255,0.72)",
-        boxShadow: "0 34px 90px rgba(35,76,65,0.14)",
+        boxShadow: "0 34px 86px rgba(35,76,65,0.12)",
       }),
       div(
         {
           position: "absolute",
-          top: 138,
+          top: 136,
           left: 0,
           right: 0,
           display: "flex",
@@ -131,12 +132,12 @@ const makeElement = (text: string, source: string, name: string, qrDataUrl: stri
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: 76,
-              height: 76,
-              borderRadius: 76,
-              background: "rgba(47,95,80,0.08)",
+              width: 68,
+              height: 68,
+              borderRadius: 68,
+              background: "rgba(47,95,80,0.065)",
               color: "#547D69",
-              fontSize: 32,
+              fontSize: 30,
               lineHeight: 1,
             },
             "❦"
@@ -144,9 +145,9 @@ const makeElement = (text: string, source: string, name: string, qrDataUrl: stri
           div(
             {
               display: "flex",
-              marginTop: 22,
+              marginTop: 18,
               color: "#234C41",
-              fontSize: 40,
+              fontSize: 38,
               lineHeight: 1.4,
               fontWeight: 400,
             },
@@ -155,22 +156,30 @@ const makeElement = (text: string, source: string, name: string, qrDataUrl: stri
           div(
             {
               display: "flex",
-              marginTop: 8,
-              color: "rgba(35,76,65,0.58)",
-              fontSize: 23,
+              marginTop: 6,
+              color: "rgba(35,76,65,0.5)",
+              fontSize: 22,
               lineHeight: 1.45,
             },
             "خير يبقى، وأثر لا يزول"
           ),
         ]
       ),
+      div({
+        position: "absolute",
+        left: 310,
+        right: 310,
+        top: 352,
+        height: 1,
+        background: "rgba(47,95,80,0.08)",
+      }),
       div(
         {
           position: "absolute",
           left: 118,
           right: 118,
-          top: 390,
-          height: 890,
+          top: 400,
+          height: 820,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -181,7 +190,7 @@ const makeElement = (text: string, source: string, name: string, qrDataUrl: stri
             display: "flex",
             width: "100%",
             maxWidth: textStyle.maxWidth,
-            padding: "66px 34px 76px",
+            padding: "48px 34px 58px",
             alignItems: "center",
             justifyContent: "center",
             textAlign: "center",
@@ -189,7 +198,7 @@ const makeElement = (text: string, source: string, name: string, qrDataUrl: stri
             fontSize: textStyle.fontSize,
             lineHeight: textStyle.lineHeight,
             fontWeight: 400,
-            letterSpacing: -0.55,
+            letterSpacing: -0.45,
             whiteSpace: "pre-wrap",
           },
           text
@@ -200,7 +209,7 @@ const makeElement = (text: string, source: string, name: string, qrDataUrl: stri
           position: "absolute",
           left: 116,
           right: 116,
-          bottom: 280,
+          bottom: 395,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -214,11 +223,11 @@ const makeElement = (text: string, source: string, name: string, qrDataUrl: stri
               justifyContent: "center",
               maxWidth: 760,
               borderRadius: 999,
-              background: "rgba(47,95,80,0.09)",
-              border: "1px solid rgba(47,95,80,0.11)",
-              padding: "13px 32px 17px",
+              background: "rgba(47,95,80,0.075)",
+              border: "1px solid rgba(47,95,80,0.095)",
+              padding: "12px 32px 16px",
               color: "#345F50",
-              fontSize: 31,
+              fontSize: 30,
               lineHeight: 1.55,
               fontWeight: 400,
             },
@@ -228,8 +237,8 @@ const makeElement = (text: string, source: string, name: string, qrDataUrl: stri
             ? div(
                 {
                   display: "flex",
-                  marginTop: 20,
-                  color: "rgba(35,76,65,0.58)",
+                  marginTop: 18,
+                  color: "rgba(35,76,65,0.54)",
                   fontSize: 24,
                   lineHeight: 1.5,
                 },
@@ -241,38 +250,61 @@ const makeElement = (text: string, source: string, name: string, qrDataUrl: stri
       div(
         {
           position: "absolute",
-          left: 112,
-          right: 112,
-          bottom: 116,
+          left: 190,
+          right: 190,
+          bottom: 305,
+          height: 1,
+          background: "rgba(47,95,80,0.11)",
+        }
+      ),
+      div(
+        {
+          position: "absolute",
+          left: 0,
+          right: 0,
+          bottom: 125,
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
+          textAlign: "center",
         },
         [
+          div(
+            {
+              display: "flex",
+              color: "#234C41",
+              fontSize: 28,
+              lineHeight: 1.35,
+              fontWeight: 400,
+            },
+            "أثر"
+          ),
+          div(
+            {
+              display: "flex",
+              marginTop: 4,
+              color: "rgba(35,76,65,0.54)",
+              fontSize: 21,
+              lineHeight: 1.35,
+            },
+            DISPLAY_URL
+          ),
           {
             type: "img",
             props: {
               src: qrDataUrl,
-              width: 72,
-              height: 72,
+              width: 82,
+              height: 82,
               style: {
-                width: 72,
-                height: 72,
-                borderRadius: 16,
-                opacity: 0.74,
+                marginTop: 14,
+                width: 82,
+                height: 82,
+                borderRadius: 14,
+                opacity: 0.82,
               },
             },
           },
-          div(
-            {
-              display: "flex",
-              marginRight: 18,
-              color: "rgba(35,76,65,0.48)",
-              fontSize: 21,
-              lineHeight: 1.4,
-            },
-            "athar-sandy.vercel.app"
-          ),
         ]
       ),
     ]
