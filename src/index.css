@@ -245,14 +245,14 @@ video {
 }
 
 .quran-shell {
-  height: calc(100dvh - 11.75rem);
-  min-height: 34rem;
-  max-height: calc(100dvh - 11.75rem);
+  height: clamp(34rem, calc(100dvh - 3.25rem - var(--safe-bottom)), 55rem);
+  min-height: min(34rem, calc(100dvh - 3.25rem - var(--safe-bottom)));
+  max-height: calc(100dvh - 3.25rem - var(--safe-bottom));
 }
 
 .quran-shell--focus {
-  height: calc(100dvh - 8.25rem);
-  max-height: calc(100dvh - 8.25rem);
+  height: clamp(36rem, calc(100dvh - 1.75rem - var(--safe-bottom)), 58rem);
+  max-height: calc(100dvh - 1.75rem - var(--safe-bottom));
 }
 
 .quran-reader-window {
