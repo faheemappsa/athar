@@ -103,6 +103,43 @@ const Funnel = ({ rows }: { rows: Row[] }) => {
   );
 };
 
+const InsightBadge = ({ label, value, tone = "good" }: { label: string; value: string; tone?: "good" | "warn" | "soft" }) => {
+  const toneClass = tone === "warn" ? "bg-amber-50 text-amber-700 ring-amber-200" : tone === "soft" ? "bg-white text-secondary-text ring-action/10" : "bg-emerald-50 text-emerald-700 ring-emerald-200";
+  return <span className={`rounded-full px-3 py-1 text-[11px] font-black ring-1 ${toneClass}`}>{label}: {value}</span>;
+};
+
+const AdminInsights = ({ summary }: { summary: NonNullable<Awaited<ReturnType<typeof fetchSupabaseAnalyticsSummary>>> }) => {
+  const visitors = summary.todayVisitors || summary.todayVisits || 0;
+  const sessions = summary.todaySessions || summary.todayVisits || 0;
+  const citiesCount = (summary.topCities || []).reduce((sum, row) => sum + row.value, 0);
+  const cityCoverage = visitors ? Math.min(100, Math.round((citiesCount / visitors) * 100)) : 0;
+  const pwaRate = visitors ? Math.min(100, Math.round(((summary.standaloneOpens || 0) / visitors) * 100)) : 0;
+  const sessionsPerVisitor = visitors ? Math.round((sessions / visitors) * 10) / 10 : 0;
+  const qualityScore = Math.min(100, Math.round((visitors ? 36 : 0) + (sessions ? 24 : 0) + Math.min(25, cityCoverage * 0.25) + Math.min(15, pwaRate * 0.15)));
+  const verdict = qualityScore >= 75 ? "قراءة قوية" : qualityScore >= 45 ? "قراءة متوسطة" : "بيانات قيد التكوّن";
+
+  return (
+    <div className="relative mt-5 overflow-hidden rounded-[30px] bg-gradient-to-br from-white via-primary-bg to-mint-soft/70 p-4 ring-1 ring-action/10">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-extrabold text-secondary-text">قراءة غرفة القيادة</p>
+          <h3 className="mt-1 text-xl font-black text-primary-text">{verdict}</h3>
+          <p className="mt-1 text-xs leading-6 text-secondary-text">اللوحة الآن تفرّق بين الزائر، الجلسة، الحدث، وفتح التطبيق الحقيقي.</p>
+        </div>
+        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-white shadow-inner ring-8 ring-action/10">
+          <span className="text-lg font-black text-action">{qualityScore}</span>
+        </div>
+      </div>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <InsightBadge label="المدن" value={`${cityCoverage}%`} tone={cityCoverage >= 60 ? "good" : "warn"} />
+        <InsightBadge label="PWA" value={`${pwaRate}%`} tone={pwaRate ? "good" : "soft"} />
+        <InsightBadge label="جلسات/زائر" value={`${sessionsPerVisitor}`} tone="soft" />
+      </div>
+      <p className="mt-3 text-[11px] font-bold leading-5 text-secondary-text">أي زائر لا يسمح بتحديث الموقع سيظهر ضمن الاستخدام الحقيقي، لكن مدينته تبقى غير مؤكدة.</p>
+    </div>
+  );
+};
+
 export default function SupabaseReportsPanel() {
   const [summary, setSummary] = useState<Awaited<ReturnType<typeof fetchSupabaseAnalyticsSummary>>>(null);
   const [loading, setLoading] = useState(false);
@@ -144,6 +181,7 @@ export default function SupabaseReportsPanel() {
 
       <LiveNow activeNow={summary.activeNow || 0} lastActivity={summary.lastActivity || "لا يوجد نشاط الآن"} activeCities={summary.activeCities || []} />
       <Health value={summary.healthScore || 0} />
+      <AdminInsights summary={summary} />
 
       <div className="relative mt-5 grid grid-cols-2 gap-3">
         <Stat label="زوار اليوم" value={summary.todayVisitors || summary.todayVisits || 0} hint="أجهزة فريدة تقريبًا" />
