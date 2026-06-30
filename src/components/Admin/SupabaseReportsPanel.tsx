@@ -64,7 +64,7 @@ const Health = ({ value }: { value: number }) => (
       <div>
         <p className="text-xs font-extrabold text-secondary-text">مؤشر صحة أثر</p>
         <h3 className="mt-1 text-3xl font-black text-action">{value}/100</h3>
-        <p className="mt-1 text-xs leading-5 text-secondary-text">النشاط، المشاركة، الفتح كتطبيق، والولاء.</p>
+        <p className="mt-1 text-xs leading-5 text-secondary-text">الجلسات، المشاركة، الفتح كتطبيق، والولاء.</p>
       </div>
       <div className="grid h-20 w-20 shrink-0 place-items-center rounded-full bg-white shadow-inner ring-8 ring-action/10">
         <span className="text-xl font-black text-action">{value}</span>
@@ -146,8 +146,8 @@ export default function SupabaseReportsPanel() {
       <Health value={summary.healthScore || 0} />
 
       <div className="relative mt-5 grid grid-cols-2 gap-3">
-        <Stat label="زيارات اليوم" value={summary.todayVisits} hint="كل الزوار" />
-        <Stat label="العميل رقم 1" value={summary.highIntent} hint="تفاعل عالي" />
+        <Stat label="زوار اليوم" value={summary.todayVisitors || summary.todayVisits || 0} hint="أجهزة فريدة تقريبًا" />
+        <Stat label="جلسات اليوم" value={summary.todaySessions || summary.todayVisits || 0} hint="استخدام فعلي" />
         <Stat label="المشاركات" value={summary.shares} hint="أحداث المشاركة" />
         <Stat label="فتح كتطبيق" value={summary.standaloneOpens} hint="PWA" />
       </div>
@@ -155,9 +155,9 @@ export default function SupabaseReportsPanel() {
       <div className="relative mt-5 grid gap-4">
         <InstallCard installs={summary.installs || 0} opens={summary.standaloneOpens || 0} conversion={summary.installConversion || 0} />
         <Funnel rows={summary.funnel || []} />
-        <div className="rounded-[30px] bg-primary-bg p-4"><h3 className="mb-1 text-base font-black">المدن</h3><p className="mb-3 text-[11px] font-bold leading-5 text-secondary-text">تظهر المدينة بعد تحديث مواقيت الصلاة ثم تسجيل نشاط جديد.</p><Bar rows={summary.topCities || []} /></div>
+        <div className="rounded-[30px] bg-primary-bg p-4"><h3 className="mb-1 text-base font-black">المدن</h3><p className="mb-3 text-[11px] font-bold leading-5 text-secondary-text">تظهر المدينة فور تحديث مواقيت الصلاة، وتُحسب لكل زائر قدر الإمكان.</p><Bar rows={summary.topCities || []} /></div>
         <div className="rounded-[30px] bg-primary-bg p-4"><h3 className="mb-3 text-base font-black">أكثر الصفحات</h3><Bar rows={summary.topPages || []} /></div>
-        <div className="rounded-[30px] bg-primary-bg p-4"><div className="flex items-center justify-between"><h3 className="text-base font-black">نبض النشاط</h3><span className="text-xs font-bold text-secondary-text">7 أيام</span></div><Line rows={summary.trend} /></div>
+        <div className="rounded-[30px] bg-primary-bg p-4"><div className="flex items-center justify-between"><h3 className="text-base font-black">نبض الجلسات</h3><span className="text-xs font-bold text-secondary-text">7 أيام</span></div><Line rows={summary.trend} /></div>
       </div>
     </section>
   );
