@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { resolveAnalyticsLocationFromCoords } from "../utils/analyticsLocationResolver";
 import { trackEvent } from "../utils/analytics";
 
 export type SavedLocation = {
@@ -89,9 +90,14 @@ export const useSavedLocation = () => {
   };
 
   const trackLocationUpdate = (source: "gps" | "default" | "silent", next?: SavedLocation) => {
+    const analyticsLocation = next ? resolveAnalyticsLocationFromCoords(next) : null;
+
     trackEvent("location_updated", {
       location_source: source,
       prayer_location_updated: true,
+      city: analyticsLocation?.city,
+      region: analyticsLocation?.region,
+      city_distance_km: analyticsLocation?.city_distance_km,
       gps_lat_approx: next ? roundCoordinate(next.lat) : undefined,
       gps_lng_approx: next ? roundCoordinate(next.lng) : undefined,
       gps_updated_at: next?.updatedAt,
