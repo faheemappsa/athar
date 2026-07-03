@@ -8,6 +8,7 @@ export { createAtharV2Moment } from "./moment";
 export { selectAtharV2, getAtharV2LibrarySnapshot } from "./picker";
 export { ATHAR_V2_SCENARIO_DATES, getAtharV2ScenarioSamples } from "./scenarios";
 export { getAtharV2ForMoment } from "./service";
+export { runAtharV2SelfTest } from "./selfTest";
 export { validateAtharV2Library } from "./validate";
 export type {
   AtharV2ContentType,
