@@ -1,0 +1,41 @@
+name: Athar V2 Import
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - scripts/import-athar-v2-*.mjs
+      - scripts/merge-athar-v2-imports.mjs
+      - .github/workflows/athar-v2-import.yml
+
+permissions:
+  contents: write
+
+jobs:
+  import-athar-v2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Import Athar V2 sources
+        run: node scripts/import-athar-v2-all.mjs
+
+      - name: Commit generated DB
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/athar-v2/imported public/data/athar-v2/athar-db.json
+          if git diff --cached --quiet; then
+            echo "No Athar V2 import changes."
+          else
+            git commit -m "chore(athar-v2): import generated content db"
+            git push
+          fi
