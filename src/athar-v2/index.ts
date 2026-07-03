@@ -3,6 +3,7 @@ export { getAtharV2CardContent } from "./cardService";
 export { ATHAR_V2_CATALOG } from "./catalog";
 export { toAtharV2CardContent } from "./compat";
 export type { AtharV2CardContent } from "./compat";
+export { ATHAR_V2_CONTENT_PACK_FINAL } from "./contentPackFinal";
 export { getAtharV2CoverageReport } from "./coverageReport";
 export { runAtharV2CoverageSelfTest } from "./coverageSelfTest";
 export { ATHAR_V2_DB_LIMITS } from "./dbSchema";
