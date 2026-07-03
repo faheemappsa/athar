@@ -1,0 +1,380 @@
+[
+  {
+    "id": "adhkar-0",
+    "type": "dua",
+    "text": "الْحَمْدُ لِلَّهِ وَحْدَهُ، وَالصَّلاَةُ وَالسَّلاَمُ عَلَى مَنْ لاَ نَبِيَّ بَعْدَهُ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "عن أنس يرفعه: ((لأن أقعد مع قوم يذكرون اللَّه تعالى من صلاة الغداة حتى تطلع الشمس أحبُّ إليَّ من أن أُعتق أربعة من ولد إسماعيل، ولأن أقعد مع قوم يذكرون اللَّه من صلاة العصر إلى أن تغرب الشمس أحبّ إليَّ من أن أعتق أربعة)). أبو داود، برقم 3667، وحسنه الألباني، في صحيح أبي داود، 2/698 ."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-3",
+    "type": "dua",
+    "text": "قُلْ هُوَ ٱللَّهُ أَحَدٌ، ٱللَّهُ ٱلصَّمَدُ، لَمْ يَلِدْ وَلَمْ يُولَدْ، وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "أخرجه أبو داود، 4/ 322، برقم 5082، والترمذي، 5/ 567، برقم 3575، وانظر: صحيح الترمذي، 3/182."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-8",
+    "type": "dua",
+    "text": "اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "الترمذي، 5/ 466، برقم 3391، وانظر: صحيح الترمذي 3/142."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-9",
+    "type": "dua",
+    "text": "اللَّهمَّ بِكَ أمسَينا وبِكَ أصبَحنا وبِكَ نَحيا وبِكَ نموتُ، وإليكَ المصيرُ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "الترمذي، 5/ 466، برقم 3391، وانظر: صحيح الترمذي 3/142."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-13",
+    "type": "dua",
+    "text": "اللَّهُمَّ مَا أَصْبَحَ بِي مِنْ نِعْمَةٍ أَوْ بِأَحَدٍ مِنْ خَلْقِكَ فَمِنْكَ وَحْدَكَ لاَ شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "أخرجه أبو داود، 4/ 318، برقم 5073، والنسائي في عمل اليوم والليلة، برقم 7، وابن السني، برقم 41، وابن حبان، ((موارد)) برقم 2361، وحسّن ابن باز ‘ إسناده في تحفة الأخيار، ص24."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-14",
+    "type": "dua",
+    "text": "اللَّهم ما أمسى بي مِنْ نِعْمَةٍ أَوْ بِأَحَدٍ مِنْ خَلْقِكَ فَمِنْكَ وَحْدَكَ لاَ شَرِيكَ لَكَ، فَلَكَ الْحَمْدُ وَلَكَ الشُّكْرُ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "أخرجه أبو داود، 4/ 318، برقم 5073، والنسائي في عمل اليوم والليلة، برقم 7، وابن السني، برقم 41، وابن حبان، ((موارد)) برقم 2361، وحسّن ابن باز ‘ إسناده في تحفة الأخيار، ص24."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-16",
+    "type": "dua",
+    "text": "حَسْبِيَ اللَّهُ لاَ إِلَهَ إِلاَّ هُوَ عَلَيهِ تَوَكَّلتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "أخرجه ابن السني، برقم 71 مرفوعاً، وأبو داود موقوفاً، 4/ 321، برقم 5081، وصحّح إسناده شعيب وعبدالقادر الأرناؤوط. انظر: زاد المعاد 2/376."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-19",
+    "type": "dua",
+    "text": "بِسْمِ اللَّهِ الَّذِي لاَ يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلاَ فِي السّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "أخرجه أبو داود، 4/ 323، برقم، 5088، والترمذي، 5/ 465، برقم 3388، وابن ماجه، برقم 3869، وأحمد، برقم 446. وانظر: صحيح ابن ماجه، 2/332، وحسّن إسناده العلامة ابن باز ‘ في تحفة الأخيار، ص39."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-20",
+    "type": "dua",
+    "text": "رَضِيتُ بِاللَّهِ رَبَّاً، وَبِالْإِسْلاَمِ دِيناً، وَبِمُحَمَّدٍ ﷺ نَبِيًّا",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "أحمد، 4/ 337، برقم 18967، والنسائي في عمل اليوم والليلة، برقم 4، وابن السني، برقم 68، وأبو داود، 4/ 318، برقم 1531، والترمذي، 5/ 465، برقم، 3389، وحسّنه ابن باز ‘ في تحفة الأخيار ص39."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-21",
+    "type": "dua",
+    "text": "يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغيثُ أَصْلِحْ لِي شَأْنِيَ كُلَّهُ وَلاَ تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "الحاكم وصححه، ووافقه الذهبي، 1/545، وانظر: صحيح الترغيب والترهيب، 1/273."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-26",
+    "type": "dua",
+    "text": "اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْماً نَافِعاً، وَرِزْقاً طَيِّباً، وَعَمَلاً مُتَقَبَّلاً",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "أخرجه ابن السني في ((عمل اليوم والليلة)) برقم (54)، وابن ماجة برقم (925)، وحسن إسناده عبدالقادر وشعيب الأرناؤوط، في تحقيق ((زاد المعاد)) (2/375)."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-27",
+    "type": "dua",
+    "text": "لاَ إِلَهَ إِلاَّ اللَّهُ، وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "صحيح البخاري: 6404، صحيح مسلم: 2693، النسائي في عمل اليوم والليلة، برقم 24، وانظر: صحيح الترغيب والترهيب، 1/272، وتحفة الأخيار لابن باز ‘، ص44، وانظر فضلها في: ص146، حديث، رقم 255 مرَّةً واحدةً عندَ الكَسَلِ: أبو داود، برقم 5077، وابن ماجه، برقم 3798، وأحمد، برقم 8719، وانظر: صحيح الترغيب والترهيب، 1/270، وصحيح أبي داود، 3/957، وصحيح ابن ماجه، 2/331، وزاد المعاد، 2/377."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-28",
+    "type": "dua",
+    "text": "اللَّهُمَّ صَلِّ وَسَلِّمْ عَلَى نَبَيِّنَا مُحَمَّدٍ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "أخرجه الطبراني بإسنادين أحدهما جيد، انظر: مجمع الزوائد (10/120)، وصحيح الترغيب والترهيب (1/273) [برقم (656)]، وضعيف الترغيب والترهيب برقم: 396. وفي السلسلة الضعيفة برقم: 5788."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-29",
+    "type": "dua",
+    "text": "أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "، أخرجه أحمد، 2/ 290، برقم 7898، والنسائي في عمل اليوم والليلة، برقم 590، وابن السني، برقم 68، وانظر: صحيح الترمذي، 3/187، وصحيح ابن ماجه، 2/266، وتحفة الأخيار لابن باز، ص45."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-30",
+    "type": "dua",
+    "text": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ: عَدَدَ خَلْقِهِ، وَرِضَا نَفْسِهِ، وَزِنَةَ عَرْشِهِ، وَمِدَادَ كَلِمَاتِهِ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "مسلم، 4/ 2090، برقم 2726."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-31",
+    "type": "dua",
+    "text": "لاَ إِلَهَ إِلاَّ اللَّهُ، وَحْدَهُ لاَ شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "البخاري، 4/ 95، برقم 3293، ومسلم، 4/ 2071، برقم 2691\nعشرَ مرَّات: النسائي في عمل اليوم والليلة، برقم 24، وانظر: صحيح الترغيب والترهيب، 1/272، وتحفة الأخيار لابن باز ‘، ص44، وانظر فضلها في: ص146، حديث، رقم 255 مرَّةً واحدةً عندَ الكَسَلِ: أبو داود، برقم 5077، وابن ماجه، برقم 3798، وأحمد، برقم 8719، وانظر: صحيح الترغيب والترهيب، 1/270، وصحيح أبي داود، 3/957، وصحيح ابن ماجه، 2/331، وزاد المعاد، 2/377."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-32",
+    "type": "dua",
+    "text": "أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "البخاري مع ((الفتح)) (11/101) [برقم (6307)]، ومسلم (4/2075) [برقم (2702)]."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  },
+  {
+    "id": "adhkar-33",
+    "type": "dua",
+    "text": "سُبْحَانَ اللَّهِ وَبِحَمْدِهِ",
+    "source": {
+      "title": "Morning And Evening Adhkar DB",
+      "reference": "مسلم، 4/ 2071 برقم 2692."
+    },
+    "tags": [
+      "morning",
+      "evening",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 75,
+    "weight": 5
+  }
+]
