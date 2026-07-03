@@ -1,0 +1,12 @@
+import type { AtharV2Item } from "./types";
+
+export const ATHAR_V2_CONTENT_PACK_EXPANDED_02: AtharV2Item[] = [
+  { id: "exp02-ayah-12-87", type: "ayah", text: "إِنَّهُ لَا يَيْأَسُ مِن رَّوْحِ اللَّهِ إِلَّا الْقَوْمُ الْكَافِرُونَ", source: { title: "القرآن الكريم", reference: "يوسف: 87" }, tags: ["hope", "mercy", "short"], occasions: ["daily_evening", "generic"], priority: 82, weight: 7 },
+  { id: "exp02-ayah-16-18", type: "ayah", text: "وَإِن تَعُدُّوا نِعْمَةَ اللَّهِ لَا تُحْصُوهَا", source: { title: "القرآن الكريم", reference: "النحل: 18" }, tags: ["barakah", "hope", "short"], occasions: ["daily_morning", "generic"], priority: 78, weight: 6 },
+  { id: "exp02-ayah-21-87", type: "ayah", text: "لَا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ", source: { title: "القرآن الكريم", reference: "الأنبياء: 87" }, tags: ["dua", "forgiveness", "tawhid", "short"], occasions: ["ramadan_last_night", "arafah", "generic"], priority: 92, weight: 9 },
+  { id: "exp02-dua-3-16", type: "dua", text: "رَبَّنَا إِنَّنَا آمَنَّا فَاغْفِرْ لَنَا ذُنُوبَنَا وَقِنَا عَذَابَ النَّارِ", source: { title: "القرآن الكريم", reference: "آل عمران: 16" }, tags: ["dua", "forgiveness", "short"], occasions: ["friday_last_hour", "ramadan_last_night", "arafah", "generic"], priority: 86, weight: 7 },
+  { id: "exp02-dua-25-74", type: "dua", text: "رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ", source: { title: "القرآن الكريم", reference: "الفرقان: 74" }, tags: ["dua", "mercy", "barakah", "short"], occasions: ["daily_evening", "generic"], priority: 80, weight: 6 },
+  { id: "exp02-hadith-tayyib", type: "hadith", text: "إن الله طيب لا يقبل إلا طيبًا", source: { title: "صحيح مسلم", reference: "حديث أبي هريرة رضي الله عنه" }, tags: ["barakah", "short"], occasions: ["daily_morning", "generic"], priority: 74, weight: 5 },
+  { id: "exp02-hadith-yusr", type: "hadith", text: "يَسِّرُوا ولا تُعَسِّرُوا، وبَشِّرُوا ولا تُنَفِّرُوا", source: { title: "صحيح البخاري وصحيح مسلم", reference: "حديث التيسير" }, tags: ["mercy", "hope", "short"], occasions: ["daily_morning", "generic"], priority: 76, weight: 5 },
+  { id: "exp02-hadith-ghina", type: "hadith", text: "ليس الغنى عن كثرة العَرَض، ولكن الغنى غنى النفس", source: { title: "صحيح البخاري وصحيح مسلم", reference: "حديث أبي هريرة رضي الله عنه" }, tags: ["barakah", "short"], occasions: ["daily_evening", "generic"], priority: 72, weight: 5 }
+];
