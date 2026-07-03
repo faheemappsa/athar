@@ -7,6 +7,7 @@ on:
       - main
     paths:
       - scripts/import-athar-v2-*.mjs
+      - scripts/run-athar-v2-import.mjs
       - scripts/merge-athar-v2-imports.mjs
       - .github/workflows/athar-v2-import.yml
 
@@ -26,7 +27,7 @@ jobs:
           node-version: 20
 
       - name: Import Athar V2 sources
-        run: node scripts/import-athar-v2-all.mjs
+        run: node scripts/run-athar-v2-import.mjs
 
       - name: Commit generated DB
         run: |
