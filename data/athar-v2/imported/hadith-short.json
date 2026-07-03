@@ -1,0 +1,122 @@
+[
+  {
+    "id": "hadith-short-niyyah",
+    "type": "hadith",
+    "text": "إنما الأعمال بالنيات، وإنما لكل امرئ ما نوى",
+    "source": {
+      "title": "صحيح البخاري وصحيح مسلم",
+      "reference": "حديث صحيح قصير"
+    },
+    "tags": [
+      "barakah",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 74,
+    "weight": 5
+  },
+  {
+    "id": "hadith-short-din-nasiha",
+    "type": "hadith",
+    "text": "الدِّينُ النَّصِيحَةُ",
+    "source": {
+      "title": "صحيح مسلم",
+      "reference": "حديث صحيح قصير"
+    },
+    "tags": [
+      "barakah",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 74,
+    "weight": 5
+  },
+  {
+    "id": "hadith-short-rahma",
+    "type": "hadith",
+    "text": "من لا يَرحم لا يُرحم",
+    "source": {
+      "title": "صحيح البخاري وصحيح مسلم",
+      "reference": "حديث صحيح قصير"
+    },
+    "tags": [
+      "barakah",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 74,
+    "weight": 5
+  },
+  {
+    "id": "hadith-short-yusr",
+    "type": "hadith",
+    "text": "يَسِّرُوا ولا تُعَسِّرُوا، وبَشِّرُوا ولا تُنَفِّرُوا",
+    "source": {
+      "title": "صحيح البخاري وصحيح مسلم",
+      "reference": "حديث صحيح قصير"
+    },
+    "tags": [
+      "barakah",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 74,
+    "weight": 5
+  },
+  {
+    "id": "hadith-short-ghina",
+    "type": "hadith",
+    "text": "ليس الغنى عن كثرة العَرَض، ولكن الغنى غنى النفس",
+    "source": {
+      "title": "صحيح البخاري وصحيح مسلم",
+      "reference": "حديث صحيح قصير"
+    },
+    "tags": [
+      "barakah",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 74,
+    "weight": 5
+  },
+  {
+    "id": "hadith-short-tayyib",
+    "type": "hadith",
+    "text": "إن الله طيب لا يقبل إلا طيبًا",
+    "source": {
+      "title": "صحيح مسلم",
+      "reference": "حديث صحيح قصير"
+    },
+    "tags": [
+      "barakah",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 74,
+    "weight": 5
+  }
+]

@@ -1,0 +1,122 @@
+[
+  {
+    "id": "tafsir-short-baqarah-186",
+    "type": "tafsir",
+    "text": "في الآية قرب الله من عباده ووعده بإجابة دعاء من دعاه.",
+    "source": {
+      "title": "التفسير الميسر والسعدي",
+      "reference": "معنى البقرة: 186"
+    },
+    "tags": [
+      "quran_meaning",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 76,
+    "weight": 5
+  },
+  {
+    "id": "tafsir-short-talaq-3",
+    "type": "tafsir",
+    "text": "من صدق اعتماده على الله كفاه الله ما أهمه ويسر له أمره.",
+    "source": {
+      "title": "التفسير الميسر والسعدي",
+      "reference": "معنى الطلاق: 3"
+    },
+    "tags": [
+      "quran_meaning",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 76,
+    "weight": 5
+  },
+  {
+    "id": "tafsir-short-ibrahim-7",
+    "type": "tafsir",
+    "text": "الشكر سبب لزيادة النعم وثباتها، وكفرانها سبب لزوالها.",
+    "source": {
+      "title": "التفسير الميسر والسعدي",
+      "reference": "معنى إبراهيم: 7"
+    },
+    "tags": [
+      "quran_meaning",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 76,
+    "weight": 5
+  },
+  {
+    "id": "tafsir-short-anbiya-87",
+    "type": "tafsir",
+    "text": "جمع الدعاء بين التوحيد والتنزيه والاعتراف بالذنب.",
+    "source": {
+      "title": "التفسير الميسر والسعدي",
+      "reference": "معنى الأنبياء: 87"
+    },
+    "tags": [
+      "quran_meaning",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 76,
+    "weight": 5
+  },
+  {
+    "id": "tafsir-short-qasas-24",
+    "type": "tafsir",
+    "text": "إظهار الفقر إلى الله من أعظم أبواب الدعاء والرزق.",
+    "source": {
+      "title": "التفسير الميسر والسعدي",
+      "reference": "معنى القصص: 24"
+    },
+    "tags": [
+      "quran_meaning",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 76,
+    "weight": 5
+  },
+  {
+    "id": "tafsir-short-sharh-5",
+    "type": "tafsir",
+    "text": "وعد الله أن اليسر مقارن للعسر، فلا يغلب عسر يسرين.",
+    "source": {
+      "title": "التفسير الميسر والسعدي",
+      "reference": "معنى الشرح: 5-6"
+    },
+    "tags": [
+      "quran_meaning",
+      "short"
+    ],
+    "occasions": [
+      "daily_morning",
+      "daily_evening",
+      "generic"
+    ],
+    "priority": 76,
+    "weight": 5
+  }
+]

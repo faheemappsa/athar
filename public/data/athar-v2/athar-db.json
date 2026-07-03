@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "generatedAt": "2026-07-03T15:22:47.700Z",
+  "generatedAt": "2026-07-03T15:23:31.040Z",
   "buildMode": "offline_first_static_asset",
   "maxItemLength": 150,
   "displaySource": "local_static_db",
@@ -12,7 +12,7 @@
       "data/athar-v2/imported/hadith-short.json",
       "data/athar-v2/imported/tafsir-short.json"
     ],
-    "total": 4530
+    "total": 4542
   },
   "items": [
     {
@@ -77091,6 +77091,246 @@
         "generic"
       ],
       "priority": 75,
+      "weight": 5
+    },
+    {
+      "id": "hadith-short-niyyah",
+      "type": "hadith",
+      "text": "إنما الأعمال بالنيات، وإنما لكل امرئ ما نوى",
+      "source": {
+        "title": "صحيح البخاري وصحيح مسلم",
+        "reference": "حديث صحيح قصير"
+      },
+      "tags": [
+        "barakah",
+        "short"
+      ],
+      "occasions": [
+        "daily_morning",
+        "daily_evening",
+        "generic"
+      ],
+      "priority": 74,
+      "weight": 5
+    },
+    {
+      "id": "hadith-short-din-nasiha",
+      "type": "hadith",
+      "text": "الدِّينُ النَّصِيحَةُ",
+      "source": {
+        "title": "صحيح مسلم",
+        "reference": "حديث صحيح قصير"
+      },
+      "tags": [
+        "barakah",
+        "short"
+      ],
+      "occasions": [
+        "daily_morning",
+        "daily_evening",
+        "generic"
+      ],
+      "priority": 74,
+      "weight": 5
+    },
+    {
+      "id": "hadith-short-rahma",
+      "type": "hadith",
+      "text": "من لا يَرحم لا يُرحم",
+      "source": {
+        "title": "صحيح البخاري وصحيح مسلم",
+        "reference": "حديث صحيح قصير"
+      },
+      "tags": [
+        "barakah",
+        "short"
+      ],
+      "occasions": [
+        "daily_morning",
+        "daily_evening",
+        "generic"
+      ],
+      "priority": 74,
+      "weight": 5
+    },
+    {
+      "id": "hadith-short-yusr",
+      "type": "hadith",
+      "text": "يَسِّرُوا ولا تُعَسِّرُوا، وبَشِّرُوا ولا تُنَفِّرُوا",
+      "source": {
+        "title": "صحيح البخاري وصحيح مسلم",
+        "reference": "حديث صحيح قصير"
+      },
+      "tags": [
+        "barakah",
+        "short"
+      ],
+      "occasions": [
+        "daily_morning",
+        "daily_evening",
+        "generic"
+      ],
+      "priority": 74,
+      "weight": 5
+    },
+    {
+      "id": "hadith-short-ghina",
+      "type": "hadith",
+      "text": "ليس الغنى عن كثرة العَرَض، ولكن الغنى غنى النفس",
+      "source": {
+        "title": "صحيح البخاري وصحيح مسلم",
+        "reference": "حديث صحيح قصير"
+      },
+      "tags": [
+        "barakah",
+        "short"
+      ],
+      "occasions": [
+        "daily_morning",
+        "daily_evening",
+        "generic"
+      ],
+      "priority": 74,
+      "weight": 5
+    },
+    {
+      "id": "hadith-short-tayyib",
+      "type": "hadith",
+      "text": "إن الله طيب لا يقبل إلا طيبًا",
+      "source": {
+        "title": "صحيح مسلم",
+        "reference": "حديث صحيح قصير"
+      },
+      "tags": [
+        "barakah",
+        "short"
+      ],
+      "occasions": [
+        "daily_morning",
+        "daily_evening",
+        "generic"
+      ],
+      "priority": 74,
+      "weight": 5
+    },
+    {
+      "id": "tafsir-short-baqarah-186",
+      "type": "tafsir",
+      "text": "في الآية قرب الله من عباده ووعده بإجابة دعاء من دعاه.",
+      "source": {
+        "title": "التفسير الميسر والسعدي",
+        "reference": "معنى البقرة: 186"
+      },
+      "tags": [
+        "quran_meaning",
+        "short"
+      ],
+      "occasions": [
+        "daily_morning",
+        "daily_evening",
+        "generic"
+      ],
+      "priority": 76,
+      "weight": 5
+    },
+    {
+      "id": "tafsir-short-talaq-3",
+      "type": "tafsir",
+      "text": "من صدق اعتماده على الله كفاه الله ما أهمه ويسر له أمره.",
+      "source": {
+        "title": "التفسير الميسر والسعدي",
+        "reference": "معنى الطلاق: 3"
+      },
+      "tags": [
+        "quran_meaning",
+        "short"
+      ],
+      "occasions": [
+        "daily_morning",
+        "daily_evening",
+        "generic"
+      ],
+      "priority": 76,
+      "weight": 5
+    },
+    {
+      "id": "tafsir-short-ibrahim-7",
+      "type": "tafsir",
+      "text": "الشكر سبب لزيادة النعم وثباتها، وكفرانها سبب لزوالها.",
+      "source": {
+        "title": "التفسير الميسر والسعدي",
+        "reference": "معنى إبراهيم: 7"
+      },
+      "tags": [
+        "quran_meaning",
+        "short"
+      ],
+      "occasions": [
+        "daily_morning",
+        "daily_evening",
+        "generic"
+      ],
+      "priority": 76,
+      "weight": 5
+    },
+    {
+      "id": "tafsir-short-anbiya-87",
+      "type": "tafsir",
+      "text": "جمع الدعاء بين التوحيد والتنزيه والاعتراف بالذنب.",
+      "source": {
+        "title": "التفسير الميسر والسعدي",
+        "reference": "معنى الأنبياء: 87"
+      },
+      "tags": [
+        "quran_meaning",
+        "short"
+      ],
+      "occasions": [
+        "daily_morning",
+        "daily_evening",
+        "generic"
+      ],
+      "priority": 76,
+      "weight": 5
+    },
+    {
+      "id": "tafsir-short-qasas-24",
+      "type": "tafsir",
+      "text": "إظهار الفقر إلى الله من أعظم أبواب الدعاء والرزق.",
+      "source": {
+        "title": "التفسير الميسر والسعدي",
+        "reference": "معنى القصص: 24"
+      },
+      "tags": [
+        "quran_meaning",
+        "short"
+      ],
+      "occasions": [
+        "daily_morning",
+        "daily_evening",
+        "generic"
+      ],
+      "priority": 76,
+      "weight": 5
+    },
+    {
+      "id": "tafsir-short-sharh-5",
+      "type": "tafsir",
+      "text": "وعد الله أن اليسر مقارن للعسر، فلا يغلب عسر يسرين.",
+      "source": {
+        "title": "التفسير الميسر والسعدي",
+        "reference": "معنى الشرح: 5-6"
+      },
+      "tags": [
+        "quran_meaning",
+        "short"
+      ],
+      "occasions": [
+        "daily_morning",
+        "daily_evening",
+        "generic"
+      ],
+      "priority": 76,
       "weight": 5
     }
   ]
