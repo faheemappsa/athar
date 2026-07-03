@@ -1,9 +1,9 @@
 import { normalizeAtharV2RecentIds } from "./memory";
-import { selectAtharV2 } from "./picker";
+import { selectAtharV2FromStaticDb } from "./staticSelector";
 import type { AtharV2SelectionOptions } from "./types";
 
 export function getAtharV2ForMoment(options: AtharV2SelectionOptions = {}) {
-  const selection = selectAtharV2(options);
+  const selection = selectAtharV2FromStaticDb(options);
   const nextRecentIds = normalizeAtharV2RecentIds(options.recentIds ?? [], selection.item.id);
 
   return {
