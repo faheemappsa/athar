@@ -1,13 +1,5 @@
-import type { AtharV2Item } from "./types";
-
-export type AtharV2StaticDb = {
-  version: number;
-  generatedAt: string;
-  strategy: "offline-first-static-build-assets";
-  maxTextLength: number;
-  displaySource: "local-athar-v2-db";
-  items: AtharV2Item[];
-};
+import { ATHAR_V2_CATALOG } from "./catalog";
+import type { AtharV2StaticDb } from "./dbSchema";
 
 export function normalizeAtharV2StaticDb(input: unknown): AtharV2StaticDb | null {
   if (!input || typeof input !== "object") return null;
@@ -15,11 +7,34 @@ export function normalizeAtharV2StaticDb(input: unknown): AtharV2StaticDb | null
   if (!Array.isArray(candidate.items)) return null;
 
   return {
-    version: Number(candidate.version ?? 1),
+    version: 2,
     generatedAt: String(candidate.generatedAt ?? ""),
-    strategy: "offline-first-static-build-assets",
-    maxTextLength: Number(candidate.maxTextLength ?? 150),
-    displaySource: "local-athar-v2-db",
-    items: candidate.items,
+    buildMode: "offline_first_static_asset",
+    maxItemLength: 150,
+    displaySource: "local_static_db",
+    liveExternalDisplay: false,
+    items: candidate.items.filter((item) => item.verified !== false && item.text.length <= 150),
   };
+}
+
+export function createAtharV2StaticDbSnapshot(): AtharV2StaticDb {
+  return {
+    version: 2,
+    generatedAt: "development-catalog",
+    buildMode: "offline_first_static_asset",
+    maxItemLength: 150,
+    displaySource: "local_static_db",
+    liveExternalDisplay: false,
+    items: ATHAR_V2_CATALOG.map((item) => ({
+      ...item,
+      normalizedText: item.text.normalize("NFKC"),
+      sourceId: item.source.title,
+      length: item.text.length,
+      verified: Boolean(item.source.title && item.source.reference && item.text.length <= 150),
+    })),
+  };
+}
+
+export function getAtharV2StaticItems() {
+  return createAtharV2StaticDbSnapshot().items.filter((item) => item.verified);
 }
