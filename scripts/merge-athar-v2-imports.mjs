@@ -5,6 +5,8 @@ const TARGET = resolve("public/data/athar-v2/athar-db.json");
 const INPUTS = [
   resolve("data/athar-v2/imported/quran-short.json"),
   resolve("data/athar-v2/imported/adhkar-short.json"),
+  resolve("data/athar-v2/imported/hadith-short.json"),
+  resolve("data/athar-v2/imported/tafsir-short.json"),
 ];
 const MAX = 150;
 const ALLOWED = new Set(["ayah", "dua", "hadith", "tafsir"]);
