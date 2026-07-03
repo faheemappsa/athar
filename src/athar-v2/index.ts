@@ -12,6 +12,7 @@ export { createAtharV2Moment } from "./moment";
 export { selectAtharV2, getAtharV2LibrarySnapshot } from "./picker";
 export type { AtharV2RecentStore } from "./recentStore";
 export { createAtharV2RecentStore } from "./recentStore";
+export { getAtharV2Report } from "./report";
 export { runAtharV2Card } from "./runtime";
 export { ATHAR_V2_SCENARIO_DATES, getAtharV2ScenarioSamples } from "./scenarios";
 export { getAtharV2ForMoment } from "./service";
