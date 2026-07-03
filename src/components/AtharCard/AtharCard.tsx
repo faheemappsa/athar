@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { getSmartAthar, type AtharContent } from "../../services/atharEngine";
+import { getSmartAthar, type AtharContent } from "../../services/atharSmartSource";
 import { trackEvent } from "../../utils/analytics";
 import { recordAtharBehavior } from "../../experience/memory";
 import { getAtharDailyFeedback, recordAtharCardTouch, type AtharDailyFeedback } from "../../experience/dailyIntelligence";
