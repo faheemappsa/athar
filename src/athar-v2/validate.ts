@@ -1,4 +1,4 @@
-import { ATHAR_V2_LIBRARY } from "./library";
+import { ATHAR_V2_CATALOG } from "./catalog";
 import type { AtharV2ContentType } from "./types";
 
 const ALLOWED_TYPES: AtharV2ContentType[] = ["ayah", "dua", "hadith", "tafsir"];
@@ -12,7 +12,7 @@ export function validateAtharV2Library() {
   const issues: AtharV2ValidationIssue[] = [];
   const seen = new Set<string>();
 
-  for (const item of ATHAR_V2_LIBRARY) {
+  for (const item of ATHAR_V2_CATALOG) {
     if (seen.has(item.id)) issues.push({ id: item.id, message: "duplicate_id" });
     seen.add(item.id);
 
@@ -26,7 +26,7 @@ export function validateAtharV2Library() {
 
   return {
     ok: issues.length === 0,
-    total: ATHAR_V2_LIBRARY.length,
+    total: ATHAR_V2_CATALOG.length,
     issues,
   };
 }
