@@ -1,12 +1,11 @@
 import { ATHAR_V2_LIBRARY } from "./library";
+import { normalizeAtharV2RecentIds } from "./memory";
 import { createAtharV2Moment } from "./moment";
 import type { AtharV2SelectionOptions, AtharV2SelectionResult } from "./types";
 
-const DEFAULT_RECENT_LIMIT = 8;
-
 export function selectAtharV2(options: AtharV2SelectionOptions = {}): AtharV2SelectionResult {
   const moment = createAtharV2Moment(options);
-  const recentIds = (options.recentIds ?? []).slice(0, options.limit ?? DEFAULT_RECENT_LIMIT);
+  const recentIds = normalizeAtharV2RecentIds(options.recentIds ?? []);
   const mainPool = ATHAR_V2_LIBRARY.filter((item) => item.occasions.includes(moment.occasion));
   const closePool = ATHAR_V2_LIBRARY.filter((item) => item.occasions.some((occasion) => moment.secondaryOccasions.includes(occasion)));
   const pool = mainPool.length > 0 ? mainPool : closePool.length > 0 ? closePool : ATHAR_V2_LIBRARY;
