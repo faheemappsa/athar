@@ -1,53 +1,49 @@
+import { getLocalHijriDate } from "./localCalendar";
+import { getAtharV2TimeSignals } from "./timeWindows";
 import type { AtharV2Moment, AtharV2MomentInput, AtharV2Occasion, AtharV2Tag } from "./types";
-
-const FRIDAY = 5;
-const SUNDAY = 0;
-const MONDAY = 1;
-
-const toHour = (date: Date) => date.getHours();
-
-const isFridayLastHourWindow = (date: Date) => date.getDay() === FRIDAY && toHour(date) >= 16 && toHour(date) <= 18;
-const isSundayNight = (date: Date) => date.getDay() === SUNDAY && toHour(date) >= 18;
-const isMondayMorning = (date: Date) => date.getDay() === MONDAY && toHour(date) < 12;
-const isMorning = (date: Date) => toHour(date) >= 4 && toHour(date) < 11;
-const isEvening = (date: Date) => toHour(date) >= 16 && toHour(date) < 22;
-const isLastNightWindow = (date: Date) => toHour(date) >= 0 && toHour(date) < 4;
 
 const unique = <T>(values: T[]) => Array.from(new Set(values));
 
 const getReligiousOccasion = (input: AtharV2MomentInput, date: Date): AtharV2Occasion | null => {
   if (input.occasionOverride) return input.occasionOverride;
-  if (input.hijriMonth === 12 && input.hijriDay === 9) return "arafah";
-  if (input.hijriMonth === 9 && isLastNightWindow(date)) return "ramadan_last_night";
-  if (input.hijriMonth === 9) return "ramadan";
+
+  const localHijri = getLocalHijriDate(date);
+  const hijriMonth = input.hijriMonth ?? localHijri.month ?? undefined;
+  const hijriDay = input.hijriDay ?? localHijri.day ?? undefined;
+  const timeSignals = getAtharV2TimeSignals(date);
+
+  if (hijriMonth === 12 && hijriDay === 9) return "arafah";
+  if (hijriMonth === 9 && timeSignals.window === "dawn") return "ramadan_last_night";
+  if (hijriMonth === 9) return "ramadan";
   return null;
 };
 
 export function createAtharV2Moment(input: AtharV2MomentInput = {}): AtharV2Moment {
   const now = input.now ?? new Date();
+  const timeSignals = getAtharV2TimeSignals(now);
   const religiousOccasion = getReligiousOccasion(input, now);
 
   const occasion: AtharV2Occasion =
     religiousOccasion ??
-    (isFridayLastHourWindow(now)
+    (timeSignals.isFridayLastHourWindow
       ? "friday_last_hour"
-      : now.getDay() === FRIDAY
+      : timeSignals.isFriday
         ? "friday"
-        : isSundayNight(now)
+        : timeSignals.isSundayNight
           ? "monday_preparation"
-          : isMondayMorning(now)
+          : timeSignals.isMondayMorning
             ? "monday_fasting"
-            : isMorning(now)
+            : timeSignals.window === "morning"
               ? "daily_morning"
-              : isEvening(now)
+              : timeSignals.window === "evening" || timeSignals.window === "night"
                 ? "daily_evening"
                 : "generic");
 
   const secondaryOccasions: AtharV2Occasion[] = unique([
     occasion,
-    now.getDay() === FRIDAY ? "friday" : "generic",
-    isMorning(now) ? "daily_morning" : "generic",
-    isEvening(now) ? "daily_evening" : "generic",
+    timeSignals.isFriday ? "friday" : "generic",
+    timeSignals.window === "morning" ? "daily_morning" : "generic",
+    timeSignals.window === "evening" || timeSignals.window === "night" ? "daily_evening" : "generic",
     "generic",
   ]);
 
@@ -65,7 +61,7 @@ export function createAtharV2Moment(input: AtharV2MomentInput = {}): AtharV2Mome
   return {
     now,
     day: now.getDay(),
-    hour: toHour(now),
+    hour: now.getHours(),
     occasion,
     secondaryOccasions,
     valueTags,
