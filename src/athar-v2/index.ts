@@ -3,6 +3,8 @@ export { getAtharV2CardContent } from "./cardService";
 export { ATHAR_V2_CATALOG } from "./catalog";
 export { toAtharV2CardContent } from "./compat";
 export type { AtharV2CardContent } from "./compat";
+export { getAtharV2CoverageReport } from "./coverageReport";
+export { runAtharV2CoverageSelfTest } from "./coverageSelfTest";
 export { ATHAR_V2_DUA_LIBRARY } from "./duaLibrary";
 export { isAtharV2Enabled, setAtharV2Enabled } from "./featureFlag";
 export { ATHAR_V2_LIBRARY } from "./library";
