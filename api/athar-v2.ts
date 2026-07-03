@@ -1,0 +1,54 @@
+import type { VercelRequest, VercelResponse } from "@vercel/node";
+
+const items = [
+  {
+    id: "api-ayah-baqarah-201",
+    type: "ayah",
+    text: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
+    source: { title: "القرآن الكريم", reference: "البقرة: 201" },
+    tags: ["dua", "hope", "mercy", "short"],
+    occasions: ["friday_last_hour", "arafah", "ramadan", "generic"],
+    priority: 94,
+    weight: 9,
+  },
+  {
+    id: "api-dua-afw",
+    type: "dua",
+    text: "اللهم إنك عفو تحب العفو فاعف عني",
+    source: { title: "سنن الترمذي", reference: "دعاء ليلة القدر", verifier: "حسن" },
+    tags: ["forgiveness", "mercy", "ramadan", "short"],
+    occasions: ["ramadan", "ramadan_last_night", "arafah", "generic"],
+    priority: 96,
+    weight: 10,
+  },
+  {
+    id: "api-hadith-intentions",
+    type: "hadith",
+    text: "إنما الأعمال بالنيات، وإنما لكل امرئ ما نوى",
+    source: { title: "صحيح البخاري وصحيح مسلم", reference: "حديث النية" },
+    tags: ["barakah", "short"],
+    occasions: ["daily_morning", "generic"],
+    priority: 76,
+    weight: 5,
+  },
+  {
+    id: "api-tafsir-talaq-3",
+    type: "tafsir",
+    text: "من صدق اعتماده على الله كفاه الله ما أهمه ويسر له أمره.",
+    source: { title: "تفسير السعدي", reference: "معنى الطلاق: 3" },
+    tags: ["quran_meaning", "tawakkul", "rizq", "short"],
+    occasions: ["daily_morning", "generic"],
+    priority: 78,
+    weight: 5,
+  },
+];
+
+export default function handler(_request: VercelRequest, response: VercelResponse) {
+  response.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate=86400");
+  response.status(200).json({
+    version: 2,
+    mode: "offline-first-preview-api",
+    liveExternalDisplay: false,
+    items,
+  });
+}
