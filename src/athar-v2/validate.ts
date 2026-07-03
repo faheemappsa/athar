@@ -1,7 +1,5 @@
 import { ATHAR_V2_CATALOG } from "./catalog";
-import type { AtharV2ContentType } from "./types";
-
-const ALLOWED_TYPES: AtharV2ContentType[] = ["ayah", "dua", "hadith", "tafsir"];
+import { ATHAR_V2_ALLOWED_CONTENT_TYPES, ATHAR_V2_SUPPORTED_OCCASIONS } from "./policy";
 
 export type AtharV2ValidationIssue = {
   id: string;
@@ -16,7 +14,10 @@ export function validateAtharV2Library() {
     if (seen.has(item.id)) issues.push({ id: item.id, message: "duplicate_id" });
     seen.add(item.id);
 
-    if (!ALLOWED_TYPES.includes(item.type)) issues.push({ id: item.id, message: "unsupported_type" });
+    if (!ATHAR_V2_ALLOWED_CONTENT_TYPES.includes(item.type)) issues.push({ id: item.id, message: "unsupported_type" });
+    if (item.occasions.some((occasion) => !ATHAR_V2_SUPPORTED_OCCASIONS.includes(occasion))) {
+      issues.push({ id: item.id, message: "unsupported_occasion" });
+    }
     if (item.text.trim().length < 8) issues.push({ id: item.id, message: "text_too_short" });
     if (item.text.length > 180) issues.push({ id: item.id, message: "text_too_long_for_card" });
     if (!item.source.title || !item.source.reference) issues.push({ id: item.id, message: "missing_source" });
