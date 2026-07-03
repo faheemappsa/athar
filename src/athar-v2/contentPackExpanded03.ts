@@ -1,0 +1,12 @@
+import type { AtharV2Item } from "./types";
+
+export const ATHAR_V2_CONTENT_PACK_EXPANDED_03: AtharV2Item[] = [
+  { id: "exp03-tafsir-2-186", type: "tafsir", text: "في الآية قرب الله من عباده ووعده بإجابة دعاء من دعاه.", source: { title: "التفسير الميسر والسعدي", reference: "معنى البقرة: 186" }, tags: ["quran_meaning", "dua", "hope", "short"], occasions: ["friday_last_hour", "ramadan", "generic"], priority: 78, weight: 5 },
+  { id: "exp03-tafsir-11-88", type: "tafsir", text: "التوفيق كله من الله، وبيده صلاح العمل والنية والنتيجة.", source: { title: "تفسير السعدي", reference: "معنى هود: 88" }, tags: ["quran_meaning", "tawakkul", "short"], occasions: ["daily_morning", "generic"], priority: 76, weight: 5 },
+  { id: "exp03-tafsir-14-7", type: "tafsir", text: "الشكر سبب لزيادة النعم وثباتها، وكفرانها سبب لزوالها.", source: { title: "التفسير الميسر والسعدي", reference: "معنى إبراهيم: 7" }, tags: ["quran_meaning", "barakah", "rizq", "short"], occasions: ["daily_morning", "generic"], priority: 76, weight: 5 },
+  { id: "exp03-tafsir-21-87", type: "tafsir", text: "جمع الدعاء بين التوحيد والتنزيه والاعتراف بالذنب.", source: { title: "تفسير ابن كثير والسعدي", reference: "معنى الأنبياء: 87" }, tags: ["quran_meaning", "tawhid", "forgiveness", "short"], occasions: ["ramadan_last_night", "arafah", "generic"], priority: 78, weight: 5 },
+  { id: "exp03-tafsir-16-18", type: "tafsir", text: "نعم الله لا يحيط بها عد ولا شكر، وفي ذلك تذكير دائم بالفضل.", source: { title: "التفسير الميسر", reference: "معنى النحل: 18" }, tags: ["quran_meaning", "barakah", "hope", "short"], occasions: ["daily_morning", "generic"], priority: 74, weight: 5 },
+  { id: "exp03-tafsir-12-87", type: "tafsir", text: "لا ينقطع رجاء المؤمن في رحمة الله وفرجه مهما اشتد الأمر.", source: { title: "تفسير السعدي", reference: "معنى يوسف: 87" }, tags: ["quran_meaning", "hope", "mercy", "short"], occasions: ["daily_evening", "generic"], priority: 76, weight: 5 },
+  { id: "exp03-tafsir-28-24", type: "tafsir", text: "إظهار الفقر إلى الله من أعظم أبواب الدعاء والرزق.", source: { title: "تفسير ابن كثير والسعدي", reference: "معنى القصص: 24" }, tags: ["quran_meaning", "rizq", "dua", "short"], occasions: ["daily_morning", "generic"], priority: 78, weight: 5 },
+  { id: "exp03-tafsir-20-25", type: "tafsir", text: "سأل موسى ربه انشراح الصدر وتيسير الأمر قبل البلاغ والعمل.", source: { title: "التفسير الميسر", reference: "معنى طه: 25-26" }, tags: ["quran_meaning", "dua", "barakah", "short"], occasions: ["daily_morning", "generic"], priority: 76, weight: 5 }
+];
