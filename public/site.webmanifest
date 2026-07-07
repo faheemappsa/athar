@@ -1,34 +1,45 @@
 {
-  "name": "أثر | وقف خيري عن مسلّم عوده البويني رحمه الله",
+  "name": "أثر",
   "short_name": "أثر",
-  "description": "رفيق يومي للأذكار وورد القرآن ومشاركة الأثر.",
+  "description": "رفيق يومي للأذكار وورد القرآن.",
   "start_url": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "portrait-primary",
   "dir": "rtl",
   "lang": "ar-SA",
-  "background_color": "#FBFCFA",
+  "background_color": "#F9F3E8",
   "theme_color": "#2E7D61",
-  "categories": ["lifestyle", "books", "education"],
+  "categories": ["lifestyle", "books", "productivity"],
   "icons": [
     {
       "src": "/athar-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/athar-maskable-icon.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
     {
-      "name": "الأذكار",
+      "name": "أذكار اليوم",
       "short_name": "الأذكار",
-      "url": "/dhikr?source=pwa-shortcut"
+      "description": "افتح أذكار اليوم مباشرة.",
+      "url": "/dhikr?source=pwa-shortcut",
+      "icons": [{ "src": "/athar-maskable-icon.svg", "sizes": "512x512", "type": "image/svg+xml" }]
     },
     {
       "name": "ورد القرآن",
-      "short_name": "القرآن",
-      "url": "/quran?source=pwa-shortcut"
+      "short_name": "المصحف",
+      "description": "ارجع إلى وردك من المصحف.",
+      "url": "/quran?source=pwa-shortcut",
+      "icons": [{ "src": "/athar-maskable-icon.svg", "sizes": "512x512", "type": "image/svg+xml" }]
     }
   ]
 }
