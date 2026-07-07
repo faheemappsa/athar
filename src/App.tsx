@@ -1,12 +1,7 @@
-import { useEffect } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import "./index.css";
 import BottomNav from "./components/Navigation/BottomNav";
-import HomePage from "./pages/HomePage";
-import DhikrPage from "./pages/DhikrPage";
-import QuranPage from "./pages/QuranPage";
-import RadioPage from "./pages/RadioPage";
-import AdminAnalyticsPage from "./pages/AdminAnalyticsPage";
 import PageTransition from "./components/Shared/PageTransition";
 import ErrorBoundary from "./components/Shared/ErrorBoundary";
 import InstallPrompt from "./components/Shared/InstallPrompt";
@@ -19,6 +14,24 @@ import { runAtharBrain } from "./experience/brain";
 import { recordAtharAppReturn, recordAtharSectionVisit } from "./experience/dailyIntelligence";
 import { applySeoRoute } from "./config/seo";
 import { trackEvent } from "./utils/analytics";
+
+const HomePage = lazy(() => import("./pages/HomePage"));
+const DhikrPage = lazy(() => import("./pages/DhikrPage"));
+const QuranPage = lazy(() => import("./pages/QuranPage"));
+const RadioPage = lazy(() => import("./pages/RadioPage"));
+const AdminAnalyticsPage = lazy(() => import("./pages/AdminAnalyticsPage"));
+
+const RouteFallback = () => (
+  <div className="px-5 py-8 text-center text-sm text-[#7A6A5A]" aria-live="polite">
+    جاري تحميل أثر...
+  </div>
+);
+
+const withRouteShell = (page: React.ReactNode) => (
+  <Suspense fallback={<RouteFallback />}>
+    <PageTransition>{page}</PageTransition>
+  </Suspense>
+);
 
 const getSectionFromPath = (pathname: string) => {
   if (pathname.startsWith("/admin")) return null;
@@ -82,9 +95,11 @@ const AppShell = () => {
     return (
       <div className="admin-shell">
         <main className="admin-scroll">
-          <Routes>
-            <Route path="/admin/athar" element={<AdminAnalyticsPage />} />
-          </Routes>
+          <Suspense fallback={<RouteFallback />}>
+            <Routes>
+              <Route path="/admin/athar" element={<AdminAnalyticsPage />} />
+            </Routes>
+          </Suspense>
         </main>
       </div>
     );
@@ -100,10 +115,10 @@ const AppShell = () => {
         <div className="mx-auto w-full max-w-md">
           <ConnectionBanner />
           <Routes>
-            <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
-            <Route path="/dhikr" element={<PageTransition><DhikrPage /></PageTransition>} />
-            <Route path="/quran" element={<PageTransition><QuranPage /></PageTransition>} />
-            <Route path="/radio" element={<PageTransition><RadioPage /></PageTransition>} />
+            <Route path="/" element={withRouteShell(<HomePage />)} />
+            <Route path="/dhikr" element={withRouteShell(<DhikrPage />)} />
+            <Route path="/quran" element={withRouteShell(<QuranPage />)} />
+            <Route path="/radio" element={withRouteShell(<RadioPage />)} />
           </Routes>
         </div>
       </main>
