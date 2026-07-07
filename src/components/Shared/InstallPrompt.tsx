@@ -49,12 +49,12 @@ export default function InstallPrompt() {
     const handleBeforeInstallPrompt = (event: Event) => {
       event.preventDefault();
       setInstallEvent(event as BeforeInstallPromptEvent);
-      trackEvent("pwa_install_prompt_ready", { device });
+      trackEvent("beforeinstallprompt", { device });
     };
 
     const handleInstalled = () => {
       localStorage.setItem(INSTALL_INSTALLED_KEY, "true");
-      trackEvent("pwa_app_installed", { device });
+      trackEvent("app_installed", { device });
       setHidden(true);
     };
 
