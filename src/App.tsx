@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect } from "react";
+import { Suspense, lazy, useEffect, type ReactNode } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import "./index.css";
 import BottomNav from "./components/Navigation/BottomNav";
@@ -27,7 +27,7 @@ const RouteFallback = () => (
   </div>
 );
 
-const withRouteShell = (page: React.ReactNode) => (
+const withRouteShell = (page: ReactNode) => (
   <Suspense fallback={<RouteFallback />}>
     <PageTransition>{page}</PageTransition>
   </Suspense>
