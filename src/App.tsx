@@ -13,7 +13,7 @@ import { useActiveSection } from "./hooks/useActiveSection";
 import { runAtharBrain } from "./experience/brain";
 import { recordAtharAppReturn, recordAtharSectionVisit } from "./experience/dailyIntelligence";
 import { applySeoRoute } from "./config/seo";
-import { trackEvent } from "./utils/analytics";
+import { AnalyticsEvents, trackEvent } from "./utils/analytics";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const DhikrPage = lazy(() => import("./pages/DhikrPage"));
@@ -46,7 +46,7 @@ const AnalyticsPageView = () => {
 
   useEffect(() => {
     const route = applySeoRoute(location.pathname);
-    trackEvent("page_view", {
+    trackEvent(AnalyticsEvents.PageView, {
       page_path: `${location.pathname}${location.search}`,
       page_title: route.title,
     });
@@ -65,7 +65,7 @@ const AppShell = () => {
   useEffect(() => {
     if (isAdminRoute) return;
     const decision = runAtharBrain();
-    trackEvent("athar_brain_decision", {
+    trackEvent(AnalyticsEvents.BrainDecision, {
       state: decision.state,
       score: decision.score,
       time_band: decision.entry.timeBand,
