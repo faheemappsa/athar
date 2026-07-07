@@ -5,7 +5,7 @@ type PwaRouteRequest = {
   };
 };
 
-export const pwaAssets = ['athar-icon.svg', 'athar-maskable-icon.svg', 'og-image.svg', 'robots.txt'] as const;
+export const pwaAssets = ['athar-icon.svg', 'athar-maskable-icon.svg', 'og-image.svg'] as const;
 
 export const pwaManifest = {
   name: 'أثر',
