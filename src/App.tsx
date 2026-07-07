@@ -17,6 +17,7 @@ import AppUpdatePrompt from "./components/Shared/AppUpdatePrompt";
 import { useActiveSection } from "./hooks/useActiveSection";
 import { runAtharBrain } from "./experience/brain";
 import { recordAtharAppReturn, recordAtharSectionVisit } from "./experience/dailyIntelligence";
+import { applySeoRoute } from "./config/seo";
 import { trackEvent } from "./utils/analytics";
 
 const getSectionFromPath = (pathname: string) => {
@@ -31,9 +32,10 @@ const AnalyticsPageView = () => {
   const location = useLocation();
 
   useEffect(() => {
+    const route = applySeoRoute(location.pathname);
     trackEvent("page_view", {
       page_path: `${location.pathname}${location.search}`,
-      page_title: document.title,
+      page_title: route.title,
     });
     const section = getSectionFromPath(location.pathname);
     if (section) recordAtharSectionVisit(section);
